@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class MainProfileView: UIView {
+final class MyProfileView: UIView {
     private let profileImage = CustomProfileButton()
     private let nameLabel = UILabel()
     private let dateLabel = UILabel()
@@ -30,7 +30,7 @@ final class MainProfileView: UIView {
     
 }
 
-extension MainProfileView {
+extension MyProfileView {
     
     private func configureHierarchy() {
         self.addSubview(profileImage)
@@ -67,6 +67,7 @@ extension MainProfileView {
         }
         
         saveButton.snp.makeConstraints { make in
+            make.height.equalTo(40)
             make.horizontalEdges.equalToSuperview().inset(12)
             make.bottom.lessThanOrEqualToSuperview().offset(-12)
             make.top.equalTo(profileImage.snp.bottom).offset(12)
@@ -99,6 +100,7 @@ extension MainProfileView {
         saveButton.backgroundColor = .point
         saveButton.setTitleColor(.white, for: .normal)
         saveButton.setTitle("18 개의 무비박스 보관중", for: .normal)
+        saveButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
         
         arrow.tintColor = .customDarkGray
         arrow.setImage(UIImage(systemName: "greaterthan"), for: .normal)

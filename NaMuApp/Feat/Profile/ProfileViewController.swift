@@ -121,7 +121,7 @@ extension ProfileViewController {
     private func successButtonTapped(_ sender: UIButton) {
         print(#function)
         //TODO: - 수정
-        let vc = MainViewController()
+        let vc = TabBarController()
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first else { return }
         window.rootViewController = UINavigationController(rootViewController: vc)
     }

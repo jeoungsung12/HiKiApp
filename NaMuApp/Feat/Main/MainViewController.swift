@@ -10,7 +10,7 @@ import SnapKit
 
 final class MainViewController: UIViewController {
     private lazy var searchButton = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(searchButtonTapped))
-    private let profileView = MainProfileView()
+    private let profileView = MyProfileView()
     private let recentSearchView = MainRecentView()
     private let movieView = MainMovieView()
     
