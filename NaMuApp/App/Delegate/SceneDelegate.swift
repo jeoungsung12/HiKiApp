@@ -13,11 +13,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
-        //TOOD: - 변경
-        let vc = ViewController()
+        window = UIWindow(windowScene: scene)
+        //TODO: - 스플래시 화면 2초 유지
+        sleep(2)
         
-        window?.windowScene = scene
-        window?.rootViewController = vc
+        //TODO: - 변경
+        let vc = OnboardingViewController()
+        window?.rootViewController = UINavigationController(rootViewController: vc)
         window?.makeKeyAndVisible()
     }
 
