@@ -22,6 +22,7 @@ extension UIViewController {
         let back = UIBarButtonItem(title: backTitle, style: .plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = back
         self.navigationController?.navigationBar.tintColor = color
+        self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
     }
     
 }

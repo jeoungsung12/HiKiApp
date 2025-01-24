@@ -82,12 +82,9 @@ extension OnboardingViewController {
         descriptionLabel.text = "당신만의 영화 세상,\nNaMu를 시작해보세요."
         descriptionLabel.font = .systemFont(ofSize: 15, weight: .regular)
         
-        startButton.clipsToBounds = true
-        startButton.layer.borderWidth = 2
-        startButton.layer.cornerRadius = 15
+        startButton.setBorder()
         startButton.setTitle("시작하기", for: .normal)
         startButton.setTitleColor(.point, for: .normal)
-        startButton.layer.borderColor = UIColor.point.cgColor
         startButton.addTarget(self, action: #selector(startButtonTapped), for: .touchUpInside)
         
         
@@ -101,6 +98,7 @@ extension OnboardingViewController {
     
     @objc
     private func startButtonTapped(_ sender: UIButton) {
+        print(#function)
         let vc = ProfileViewController()
         self.push(vc)
     }
