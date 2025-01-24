@@ -17,10 +17,6 @@ final class OnboardingViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        configure()
-    }
-    
-    private func configure() {
         configureView()
     }
 
@@ -58,8 +54,8 @@ extension OnboardingViewController {
         startButton.snp.makeConstraints { make in
             make.height.equalTo(40)
             make.horizontalEdges.equalToSuperview().inset(24)
-            make.bottom.greaterThanOrEqualToSuperview().offset(-24)
-            make.top.equalTo(descriptionLabel.snp.bottom).offset(12)
+            make.bottom.lessThanOrEqualToSuperview().offset(-24)
+            make.top.equalTo(descriptionLabel.snp.bottom).offset(24)
         }
         
     }
