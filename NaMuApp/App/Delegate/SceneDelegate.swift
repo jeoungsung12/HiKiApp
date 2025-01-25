@@ -14,11 +14,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
-        //TODO: - 스플래시 화면 2초 유지
         sleep(2)
-        
-        //TODO: - 변경
-        let vc = OnboardingViewController()
+        let rootDirection = Database.shared.isUser
+        let vc = (rootDirection) ? TabBarController() : OnboardingViewController()
         window?.rootViewController = UINavigationController(rootViewController: vc)
         window?.makeKeyAndVisible()
     }

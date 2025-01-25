@@ -10,41 +10,39 @@ import SnapKit
 
 final class CustomProfileButton: UIButton {
     private let overlayImage = UIImageView()
+    private var isItemSelected: Bool = false
     let containerView = UIView()
     let profileImage = UIImageView()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureView()
+    init(_ size: CGFloat,_ isSelected: Bool) {
+        super.init(frame: .zero)
+        isItemSelected = isSelected
+        configureView(size)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure() {
-        
-    }
-    
 }
 
 extension CustomProfileButton {
     
-    private func configureHierarchy() {
+    private func configureHierarchy(_ size: CGFloat) {
         self.addSubview(profileImage)
         self.containerView.addSubview(overlayImage)
         self.addSubview(containerView)
-        configureLayout()
+        configureLayout(size)
     }
     
-    private func configureLayout() {
+    private func configureLayout(_ size: CGFloat) {
         profileImage.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(10)
+            make.size.equalTo(size)
         }
         
         containerView.snp.makeConstraints { make in
             make.size.equalTo(30)
-            make.trailing.bottom.equalToSuperview().inset(16)
+            make.trailing.bottom.equalToSuperview().inset(30)
         }
         
         overlayImage.snp.makeConstraints { make in
@@ -52,9 +50,11 @@ extension CustomProfileButton {
         }
     }
     
-    private func configureView() {
+    private func configureView(_ size: CGFloat) {
+        self.alpha = (isItemSelected ? 1 : 0.5)
+        
         profileImage.contentMode = .scaleAspectFit
-        profileImage.image = UIImage(named: "profile_0")
+        profileImage.setBorder(isItemSelected, size / 2)
         
         containerView.clipsToBounds = true
         containerView.layer.cornerRadius = 15
@@ -63,6 +63,6 @@ extension CustomProfileButton {
         overlayImage.tintColor = .white
         overlayImage.image = UIImage(systemName: "camera.fill")
         
-        configureHierarchy()
+        configureHierarchy(size)
     }
 }

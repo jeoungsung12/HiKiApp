@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 final class ProfileViewController: UIViewController {
-    private let profileButton = CustomProfileButton()
+    private let profileButton = CustomProfileButton(120, true)
     private let nameTextField = UITextField()
     private let spacingView = UIView()
     private let descriptionLabel = UILabel()
@@ -21,8 +21,13 @@ final class ProfileViewController: UIViewController {
         configureView()
     }
     
+    deinit {
+        print(self, #function)
+    }
+    
 }
 
+//MARK: - Configure UI
 extension ProfileViewController {
     
     private func configureHierarchy() {
@@ -40,7 +45,7 @@ extension ProfileViewController {
         
         profileButton.snp.makeConstraints { make in
             make.size.equalTo(150)
-            make.centerX.equalToSuperview()
+            make.centerX.equalToSuperview().offset(10)
             make.top.equalTo(self.view.safeAreaLayoutGuide).offset(24)
         }
         
@@ -71,16 +76,14 @@ extension ProfileViewController {
     private func configureView() {
         self.setNavigation("프로필 설정")
         self.view.backgroundColor = .black
-        //TODO: - 수정
-        profileButton.profileImage.setBorder(3, 60)
+        
         profileButton.addTarget(self, action: #selector(profilebuttonTapped), for: .touchUpInside)
         
-        
-        nameTextField.text = "고래밥99개"
-        nameTextField.textColor = .white
+        nameTextField.delegate = self
+        nameTextField.textColor = .lightGray
         nameTextField.textAlignment = .left
+        nameTextField.text = "닉네임을 설정해 주세요"
         nameTextField.font = .systemFont(ofSize: 15, weight: .semibold)
-//        nameTextField.placeholder 수정
         
         spacingView.backgroundColor = .white
         
@@ -88,20 +91,30 @@ extension ProfileViewController {
         descriptionLabel.textColor = .point
         descriptionLabel.textAlignment = .left
         descriptionLabel.font = .systemFont(ofSize: 12, weight: .regular)
-        descriptionLabel.text = "닉네임에 숫자는 포함할 수 없어요"
         
         successButton.setBorder()
         successButton.setTitle("완료", for: .normal)
         successButton.setTitleColor(.point, for: .normal)
         successButton.addTarget(self, action: #selector(successButtonTapped), for: .touchUpInside)
-        //TODO: - 키보드 처리
         
+        configureProfileView()
         configureHierarchy()
+    }
+    
+    private func configureProfileView() {
+        if let db = Database.shared.userInfo {
+            nameTextField.text = db[0]
+            profileButton.profileImage.image = UIImage(named: db[1])
+            descriptionLabel.text = NickName().checkNickName(nameTextField.text!).rawValue
+        } else {
+            guard let image = ProfileData.allCases.randomElement()?.rawValue else { return }
+            profileButton.profileImage.image = UIImage(named: image)
+        }
     }
     
 }
 
-
+//MARK: - Action
 extension ProfileViewController {
     
     @objc
@@ -114,15 +127,53 @@ extension ProfileViewController {
     private func profilebuttonTapped(_ sender: UIButton) {
         print(#function)
         let vc = ProfileImageViewController()
+        vc.profileImage = profileButton.profileImage.image
+        vc.returnImage = { [weak self] value in
+            guard let self = self else { return }
+            self.profileButton.profileImage.image = value
+        }
         self.push(vc)
     }
     
     @objc
     private func successButtonTapped(_ sender: UIButton) {
         print(#function)
-        //TODO: - 수정
-        let vc = TabBarController()
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first else { return }
-        window.rootViewController = UINavigationController(rootViewController: vc)
+        if let nicknameLabel = nameTextField.text, let descriptionLabel = descriptionLabel.text,
+           descriptionLabel == NickName.NickNameType.success.rawValue {
+            //TODO: - 변경
+            Database.shared.userInfo = [nicknameLabel, .checkProfileImage(profileButton.profileImage.image), ""]
+            Database.shared.isUser = true
+            let vc = TabBarController()
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first else { return }
+            window.rootViewController = UINavigationController(rootViewController: vc)
+        } else {
+            self.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
+        }
     }
+}
+
+//MARK: - TextField
+extension ProfileViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return true
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.text = ""
+        textField.textColor = .white
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        guard let text = textField.text else { return }
+        textField.textColor = ((text.isEmpty)) ? .lightGray : .white
+        textField.text = ((text.isEmpty)) ? "닉네임을 설정해 주세요" : text
+    }
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        guard let text = textField.text else { return }
+        descriptionLabel.text = NickName().checkNickName(text).rawValue
+    }
+    
 }

@@ -9,11 +9,11 @@ import UIKit
 
 extension UIImageView {
     
-    func setBorder(_ width: CGFloat = 2, _ radius: CGFloat = 15, _ color: UIColor = .point) {
+    func setBorder(_ itemSelected: Bool = true, _ radius: CGFloat = 15) {
         self.clipsToBounds = true
-        self.layer.borderWidth = width
+        self.layer.borderWidth = itemSelected ? 3 : 1
         self.layer.cornerRadius = radius
-        self.layer.borderColor = color.cgColor
+        self.layer.borderColor = itemSelected ? UIColor.point.cgColor : UIColor.gray.cgColor
     }
     
 }

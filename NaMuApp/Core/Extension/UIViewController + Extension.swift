@@ -7,6 +7,11 @@
 
 import UIKit
 
+enum AlertType: String, CaseIterable {
+    case ok = "확인"
+    case cancel = "실패"
+}
+
 extension UIViewController {
     
     func push(_ destination: UIViewController) {
@@ -23,6 +28,24 @@ extension UIViewController {
         self.navigationItem.backBarButtonItem = back
         self.navigationController?.navigationBar.tintColor = color
         self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+    }
+    
+    func customAlert(_ title: String = "",_ message: String = "",_ action: [AlertType] = [.ok],_ method: @escaping () -> Void) {
+        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        for type in action {
+            switch type {
+            case .ok:
+                let action = UIAlertAction(title: type.rawValue, style: .default) { _ in
+                    method()
+                }
+                alertVC.addAction(action)
+            case .cancel:
+                let action = UIAlertAction(title: type.rawValue, style: .destructive )
+                alertVC.addAction(action)
+            }
+        }
+        
+        self.present(alertVC, animated: true)
     }
     
 }

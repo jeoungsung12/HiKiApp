@@ -19,9 +19,14 @@ final class OnboardingViewController: UIViewController {
         super.viewDidLoad()
         configureView()
     }
+    
+    deinit {
+        print(self, #function)
+    }
 
 }
 
+//MARK: - Configure UI
 extension OnboardingViewController {
     
     private func configureHierarchy() {
@@ -42,20 +47,20 @@ extension OnboardingViewController {
         
         titleLabel.snp.makeConstraints { make in
             make.height.equalTo(40)
-            make.top.equalTo(imageView.snp.bottom).offset(24)
+            make.top.equalTo(imageView.snp.bottom).offset(12)
             make.horizontalEdges.equalToSuperview().inset(24)
         }
         
         descriptionLabel.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(24)
-            make.top.equalTo(titleLabel.snp.bottom).offset(8)
+            make.top.equalTo(titleLabel.snp.bottom).offset(12)
         }
         
         startButton.snp.makeConstraints { make in
             make.height.equalTo(40)
             make.horizontalEdges.equalToSuperview().inset(24)
             make.bottom.lessThanOrEqualToSuperview().offset(-24)
-            make.top.equalTo(descriptionLabel.snp.bottom).offset(24)
+            make.top.equalTo(descriptionLabel.snp.bottom).offset(36)
         }
         
     }
@@ -70,7 +75,7 @@ extension OnboardingViewController {
         titleLabel.textColor = .white
         titleLabel.text = "Onboarding"
         titleLabel.textAlignment = .center
-        titleLabel.font = .italicSystemFont(ofSize: 30)
+        titleLabel.font = .boldItalicFont(30)
         
         descriptionLabel.numberOfLines = 2
         descriptionLabel.textColor = .white
@@ -89,7 +94,7 @@ extension OnboardingViewController {
     
 }
 
-
+//MARK: - Action
 extension OnboardingViewController {
     
     @objc
@@ -98,4 +103,5 @@ extension OnboardingViewController {
         let vc = ProfileViewController()
         self.push(vc)
     }
+    
 }

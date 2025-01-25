@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 final class MyProfileView: UIView {
-    private let profileImage = CustomProfileButton()
+    private let profileImage = CustomProfileButton(100, true)
     private let nameLabel = UILabel()
     private let dateLabel = UILabel()
     private let arrow = UIButton()
@@ -80,7 +80,7 @@ extension MyProfileView {
         self.layer.cornerRadius = 15
         self.backgroundColor = .darkGray
         
-        profileImage.profileImage.setBorder(3, 20)
+        profileImage.profileImage.setBorder(true, 20)
         profileImage.containerView.isHidden = true
         profileImage.isUserInteractionEnabled = false
         

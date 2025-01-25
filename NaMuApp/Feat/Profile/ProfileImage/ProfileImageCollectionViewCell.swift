@@ -10,7 +10,8 @@ import SnapKit
 
 final class ProfileImageCollectionViewCell: UICollectionViewCell {
     static let id: String = "ProfileImageCollectionViewCell"
-    let profileButton = CustomProfileButton()
+    private let size = ((UIScreen.main.bounds.width) - (12 * 5)) / 4
+    lazy var profileButton = CustomProfileButton(size, false)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -19,6 +20,12 @@ final class ProfileImageCollectionViewCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override var isSelected: Bool {
+        didSet {
+            configureView()
+        }
     }
     
     func configure(_ image: UIImage?) {
@@ -40,6 +47,11 @@ extension ProfileImageCollectionViewCell {
     }
     
     private func configureView() {
+        profileButton.containerView.isHidden = true
+        profileButton.isUserInteractionEnabled = false
+        profileButton.alpha = (isSelected ? 1 : 0.5)
+        profileButton.profileImage.setBorder(isSelected, size / 2)
+        
         configureHierarchy()
     }
     

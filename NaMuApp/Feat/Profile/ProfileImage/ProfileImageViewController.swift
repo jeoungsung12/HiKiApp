@@ -9,9 +9,10 @@ import UIKit
 import SnapKit
 
 final class ProfileImageViewController: UIViewController {
-    private let profileButton = CustomProfileButton()
+    private let profileButton = CustomProfileButton(120, true)
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
-    
+    var returnImage: ((UIImage?) -> Void)?
+    var profileImage: UIImage?
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -19,6 +20,7 @@ final class ProfileImageViewController: UIViewController {
     
 }
 
+//MARK: - Configure UI
 extension ProfileImageViewController {
     
     private func configureHierarchy() {
@@ -31,7 +33,7 @@ extension ProfileImageViewController {
         
         profileButton.snp.makeConstraints { make in
             make.size.equalTo(150)
-            make.centerX.equalToSuperview()
+            make.centerX.equalToSuperview().offset(10)
             make.top.equalTo(self.view.safeAreaLayoutGuide).offset(24)
         }
         
@@ -45,14 +47,30 @@ extension ProfileImageViewController {
     private func configureView() {
         self.view.backgroundColor = .black
         self.setNavigation("프로필 이미지 설정")
-        profileButton.profileImage.setBorder(3, 60)
         profileButton.isUserInteractionEnabled = false
+        profileButton.profileImage.image = profileImage
         
+        backAction()
         setCollectionView()
         configureHierarchy()
     }
 }
 
+//MARK: - Action
+extension ProfileImageViewController {
+    
+    private func backAction() {
+        self.navigationItem.backAction = UIAction{ [weak self] _ in
+            guard let self = self else { return }
+            self.returnImage?(self.profileButton.profileImage.image)
+            self.pop()
+        }
+    }
+    
+}
+
+
+//MARK: - CollectionView
 extension ProfileImageViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     private func setCollectionView() {
@@ -64,7 +82,6 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
     }
     
     private func collectionViewLayout() -> UICollectionViewLayout {
-        //TODO: - 수정
         let layout = UICollectionViewFlowLayout()
         let spacing = 12
         let width = (Int(UIScreen.main.bounds.width) - (spacing * 5)) / 4
@@ -82,10 +99,14 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
         
         let image = UIImage(named: ProfileData.allCases[indexPath.row].rawValue)
         cell.configure(image)
-        
         cell.profileButton.containerView.isHidden = true
-        cell.profileButton.profileImage.setBorder(3, 12 * 5 / 2)
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? ProfileImageCollectionViewCell else { return }
+        cell.isSelected.toggle()
+        profileButton.profileImage.image = cell.profileButton.profileImage.image
     }
     
 }
