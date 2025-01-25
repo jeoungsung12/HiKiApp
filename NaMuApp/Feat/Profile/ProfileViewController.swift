@@ -14,7 +14,7 @@ final class ProfileViewController: UIViewController {
     private let spacingView = UIView()
     private let descriptionLabel = UILabel()
     private let successButton = UIButton()
-    private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapGestureClicked))
+    private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapGesture))
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -117,12 +117,6 @@ extension ProfileViewController {
 
 //MARK: - Action
 extension ProfileViewController {
-    
-    @objc
-    private func tapGestureClicked(_ sender: UITapGestureRecognizer) {
-        print(#function)
-        self.view.endEditing(true)
-    }
     
     @objc
     private func profilebuttonTapped(_ sender: UIButton) {

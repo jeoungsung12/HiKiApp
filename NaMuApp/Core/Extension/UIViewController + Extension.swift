@@ -30,6 +30,10 @@ extension UIViewController {
         self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
     }
     
+    @objc func tapGesture(_ sender: UIGestureRecognizer) {
+        view.endEditing(true)
+    }
+    
     func customAlert(_ title: String = "",_ message: String = "",_ action: [AlertType] = [.ok],_ method: @escaping () -> Void) {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         for type in action {

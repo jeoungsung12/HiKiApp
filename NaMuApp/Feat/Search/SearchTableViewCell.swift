@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 import SnapKit
 
 class SearchTableViewCell: UITableViewCell {
@@ -24,8 +25,13 @@ class SearchTableViewCell: UITableViewCell {
         super.init(coder: coder)
     }
     
-    func configure() {
-        
+    func configure(_ model: SearchResult) {
+        if let url = URL(string: APIEndpoint.trending.baseURL + model.poster_path) {
+            posterImageView.kf.setImage(with: url, placeholder: UIImage(systemName: ""))
+            posterImageView.kf.indicatorType = .activity
+        } else { posterImageView.image = nil }
+        titleLabel.text = model.title
+        dateLabel.text = model.release_date
     }
 
 }
@@ -68,9 +74,12 @@ extension SearchTableViewCell {
     }
     
     private func configureView() {
+        self.contentView.backgroundColor = .black
+        
         posterImageView.clipsToBounds = true
         posterImageView.layer.cornerRadius = 15
         posterImageView.contentMode = .scaleToFill
+        posterImageView.backgroundColor = .lightGray
         
         titleLabel.textColor = .white
         titleLabel.textAlignment = .left

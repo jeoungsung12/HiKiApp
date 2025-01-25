@@ -36,6 +36,7 @@ extension TabBarController {
         self.selectedIndex = 0
         self.tabBar.tintColor = .point
         self.tabBar.backgroundColor = .black
+        self.tabBar.unselectedItemTintColor = .gray
     }
     
 }
