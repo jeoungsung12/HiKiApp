@@ -42,6 +42,7 @@ extension MyPageSectionButton {
         }
         
         spacingLayer.snp.makeConstraints { make in
+            make.height.equalTo(1)
             make.horizontalEdges.equalToSuperview().inset(24)
             make.top.equalTo(buttonLabel.snp.bottom).offset(12)
         }
@@ -53,7 +54,7 @@ extension MyPageSectionButton {
         buttonLabel.textAlignment = .left
         buttonLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         
-        spacingLayer.backgroundColor = .white
+        spacingLayer.backgroundColor = .gray
         configureHierarchy()
     }
     
