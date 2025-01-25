@@ -57,7 +57,6 @@ extension MainViewController {
         self.view.backgroundColor = .black
         self.navigationItem.rightBarButtonItem = searchButton
         
-        
         configureHierarchy()
     }
 }
@@ -74,6 +73,7 @@ extension MainViewController {
 }
 
 extension MainViewController {
+    
     
     
 }

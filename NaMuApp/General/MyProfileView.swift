@@ -9,11 +9,12 @@ import UIKit
 import SnapKit
 
 final class MyProfileView: UIView {
-    private let profileImage = CustomProfileButton(100, true)
+    private let profileImage = CustomProfileButton(60, true)
     private let nameLabel = UILabel()
     private let dateLabel = UILabel()
     private let arrow = UIButton()
     private let saveButton = UIButton()
+    private let userInfo = Database.shared.getUser()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -80,26 +81,25 @@ extension MyProfileView {
         self.layer.cornerRadius = 15
         self.backgroundColor = .darkGray
         
-        profileImage.profileImage.setBorder(true, 20)
         profileImage.containerView.isHidden = true
         profileImage.isUserInteractionEnabled = false
+        profileImage.profileImage.image = userInfo.profile
         
-        //TODO: - 변경
-        nameLabel.text = "옹골찬 고래밥"
+        nameLabel.text = userInfo.nickname
         nameLabel.textColor = .white
         nameLabel.textAlignment = .left
         nameLabel.font = .boldSystemFont(ofSize: 18)
         
         dateLabel.textColor = .customDarkGray
         dateLabel.textAlignment = .left
-        dateLabel.text = "25.01.24 가입"
+        dateLabel.text = userInfo.date
         dateLabel.font = .systemFont(ofSize: 12, weight: .regular)
         
         saveButton.clipsToBounds = true
         saveButton.layer.cornerRadius = 10
         saveButton.backgroundColor = .point
         saveButton.setTitleColor(.white, for: .normal)
-        saveButton.setTitle("18 개의 무비박스 보관중", for: .normal)
+        saveButton.setTitle("\(userInfo.movie) 개의 무비박스 보관중", for: .normal)
         saveButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
         
         arrow.tintColor = .customDarkGray

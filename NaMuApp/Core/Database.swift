@@ -5,7 +5,7 @@
 //  Created by 정성윤 on 1/25/25.
 //
 
-import Foundation
+import UIKit
 
 final class Database {
     static let shared = Database()
@@ -22,9 +22,9 @@ final class Database {
         }
     }
     
-    var userInfo: [String]? {
+    var userInfo: [String] {
         get {
-            guard let userInfo = UserDefaults.standard.value(forKey: "userInfo") as? [String] else { return nil }
+            guard let userInfo = UserDefaults.standard.value(forKey: "userInfo") as? [String] else { return [] }
             return userInfo
         }
         set {
@@ -32,5 +32,8 @@ final class Database {
         }
     }
     
+    func getUser() -> UserInfo {
+        return UserInfo(nickname: self.userInfo[0], profile: UIImage(named: self.userInfo[1]), movie: self.userInfo[2], date: self.userInfo[3])
+    }
     
 }

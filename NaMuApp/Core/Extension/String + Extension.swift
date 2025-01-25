@@ -18,4 +18,13 @@ extension String {
         }
         return ""
     }
+    
+    static var currentDate: String {
+        get {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yy.MM.dd 가입"
+            dateFormatter.locale = Locale(identifier: "ko_KR")
+            return dateFormatter.string(from: Date())
+        }
+    }
 }

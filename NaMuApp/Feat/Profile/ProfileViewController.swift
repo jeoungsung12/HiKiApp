@@ -102,7 +102,8 @@ extension ProfileViewController {
     }
     
     private func configureProfileView() {
-        if let db = Database.shared.userInfo {
+        if !Database.shared.userInfo.isEmpty {
+            let db = Database.shared.userInfo
             nameTextField.text = db[0]
             profileButton.profileImage.image = UIImage(named: db[1])
             descriptionLabel.text = NickName().checkNickName(nameTextField.text!).rawValue
@@ -141,7 +142,7 @@ extension ProfileViewController {
         if let nicknameLabel = nameTextField.text, let descriptionLabel = descriptionLabel.text,
            descriptionLabel == NickName.NickNameType.success.rawValue {
             //TODO: - 변경
-            Database.shared.userInfo = [nicknameLabel, .checkProfileImage(profileButton.profileImage.image), ""]
+            Database.shared.userInfo = [nicknameLabel, .checkProfileImage(profileButton.profileImage.image), "0", .currentDate]
             Database.shared.isUser = true
             let vc = TabBarController()
             guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first else { return }
