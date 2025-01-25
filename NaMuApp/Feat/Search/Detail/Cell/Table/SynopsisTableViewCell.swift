@@ -1,16 +1,18 @@
 //
-//  SearchDetailTableViewCell.swift
+//  SynopsisTableViewCell.swift
 //  NaMuApp
 //
-//  Created by 정성윤 on 1/25/25.
+//  Created by 정성윤 on 1/26/25.
 //
 
 import UIKit
+import SnapKit
 
-final class SearchDetailTableViewCell: UITableViewCell {
-    static let id: String = "SearchDetailTableViewCell"
-    private let collectionView = UICollectionView()
+class SynopsisTableViewCell: UITableViewCell {
+    static let id: String = "SynopsisTableViewCell"
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.setcollectionViewLayout())
 
+    var movieData: SearchResult?
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureView()
@@ -20,9 +22,10 @@ final class SearchDetailTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+
 }
 
-extension SearchDetailTableViewCell {
+extension SynopsisTableViewCell {
     
     private func configureHierarchy() {
         self.addSubview(collectionView)
@@ -30,7 +33,9 @@ extension SearchDetailTableViewCell {
     }
     
     private func configureLayout() {
-        
+        collectionView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
     
     private func configureView() {
@@ -40,22 +45,27 @@ extension SearchDetailTableViewCell {
     
 }
 
-extension SearchDetailTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
+extension SynopsisTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
     
     private func configureCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(BackDropCollectionViewCell.self, forCellWithReuseIdentifier: BackDropCollectionViewCell.id)
+        collectionView.backgroundColor = .clear
         collectionView.register(SynopsisCollectionViewCell.self, forCellWithReuseIdentifier: SynopsisCollectionViewCell.id)
-        collectionView.register(CastCollectionViewCell.self, forCellWithReuseIdentifier: CastCollectionViewCell.id)
-        collectionView.register(PosterCollectionViewCell.self, forCellWithReuseIdentifier: PosterCollectionViewCell.id)
+    }
+    
+    private func setcollectionViewLayout() -> UICollectionViewLayout {
+        let layout = UICollectionViewFlowLayout()
+        
+        return layout
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 0
+        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
         
         return UICollectionViewCell()
     }

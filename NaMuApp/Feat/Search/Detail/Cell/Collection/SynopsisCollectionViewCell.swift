@@ -11,6 +11,7 @@ import SnapKit
 final class SynopsisCollectionViewCell: UICollectionViewCell {
     static let id: String = "SynopsisCollectionViewCell"
     
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         

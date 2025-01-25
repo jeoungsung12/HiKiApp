@@ -50,7 +50,7 @@ extension SearchTableViewCell {
         
         posterImageView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(12)
-            make.width.equalToSuperview().dividedBy(3)
+            make.width.equalToSuperview().dividedBy(4)
             make.verticalEdges.equalToSuperview().inset(12)
         }
         

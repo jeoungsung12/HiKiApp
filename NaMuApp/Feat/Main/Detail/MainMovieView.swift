@@ -12,7 +12,7 @@ final class MainMovieView: UIView {
     private let titleLabel = UILabel()
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
     
-    var movieData: [TrendingResult] = [] {
+    var movieData: [SearchResult] = [] {
         didSet {
             collectionView.reloadData()
         }
@@ -91,6 +91,13 @@ extension MainMovieView: UICollectionViewDelegate, UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MoviePosterCell.id, for: indexPath) as? MoviePosterCell else { return UICollectionViewCell() }
         cell.configure(movieData[indexPath.row])
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let vc = SearchDetailViewController()
+        vc.searchData = movieData[indexPath.item]
+        //TODO: - 수정
+        MainViewController().navigationController?.pushViewController(vc, animated: true)
     }
     
 }

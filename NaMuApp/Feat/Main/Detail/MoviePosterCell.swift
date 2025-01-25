@@ -25,7 +25,7 @@ final class MoviePosterCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(_ model: TrendingResult) {
+    func configure(_ model: SearchResult) {
 //        print(APIEndpoint.trending.baseURL + model.poster_path)
         if let url = URL(string: APIEndpoint.trending.baseURL + model.poster_path) {
             //TODO: - image down smapling

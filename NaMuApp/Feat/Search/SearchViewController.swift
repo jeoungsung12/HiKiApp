@@ -74,6 +74,8 @@ extension SearchViewController {
         resultLabel.textColor = .lightGray
         resultLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         
+        tapGesture.cancelsTouchesInView = false
+        
         setTableView()
         configureHierarchy()
     }
@@ -150,6 +152,13 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 150
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print(#function)
+        let vc = SearchDetailViewController()
+        vc.searchData = searchData[indexPath.row]
+        self.push(vc)
     }
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
