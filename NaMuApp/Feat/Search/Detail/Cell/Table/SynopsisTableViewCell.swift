@@ -13,13 +13,18 @@ class SynopsisTableViewCell: UITableViewCell {
     private let titleLabel = UILabel()
     private let synopsisLabel = UILabel()
     private let moreButton = UIButton()
-    private var buttonState: Bool = false
-    
+    var reloadCell: (()->Void)?
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         self.contentView.isUserInteractionEnabled = false
         configureView()
+    }
+    
+    override var isSelected: Bool {
+        didSet {
+            configureView()
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -68,14 +73,14 @@ extension SynopsisTableViewCell {
         titleLabel.textAlignment = .left
         titleLabel.font = .boldSystemFont(ofSize: 18)
         
-        moreButton.setTitle("More", for: .normal)
+        moreButton.setTitle(isSelected ? "Hide" : "More", for: .normal)
         moreButton.setTitleColor(.point, for: .normal)
         moreButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
         moreButton.addTarget(self, action: #selector(moreButtonTapped), for: .touchUpInside)
         
         synopsisLabel.textColor = .white
         synopsisLabel.textAlignment = .left
-        synopsisLabel.numberOfLines = (buttonState ? 0 : 3)
+        synopsisLabel.numberOfLines = (isSelected ? 0 : 3)
         synopsisLabel.font = .systemFont(ofSize: 15, weight: .regular)
         
         configureHierarchy()
@@ -84,8 +89,8 @@ extension SynopsisTableViewCell {
     @objc
     private func moreButtonTapped(_ sender: UIButton) {
         print(#function)
-        buttonState.toggle()
-        
+        isSelected.toggle()
+        reloadCell?()
     }
     
 }

@@ -113,7 +113,6 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
         tableView.dataSource = self
         tableView.separatorStyle = .none
         tableView.backgroundColor = .black
-
         tableView.register(BackDropTableViewCell.self, forCellReuseIdentifier: BackDropTableViewCell.id)
         tableView.register(SynopsisTableViewCell.self, forCellReuseIdentifier: SynopsisTableViewCell.id)
         tableView.register(CastTableViewCell.self, forCellReuseIdentifier: CastTableViewCell.id)
@@ -138,6 +137,10 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
         case .synopsis:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: SynopsisTableViewCell.id, for: indexPath) as? SynopsisTableViewCell else { return UITableViewCell() }
             cell.configure(searchData.overview)
+            cell.reloadCell = {
+                tableView.beginUpdates()
+                tableView.endUpdates()
+            }
             
             return cell
             
