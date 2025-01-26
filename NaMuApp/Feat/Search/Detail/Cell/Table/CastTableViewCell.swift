@@ -80,11 +80,11 @@ extension CastTableViewCell: UICollectionViewDelegate, UICollectionViewDataSourc
     
     private func setcollectionViewLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
-        let width = UIScreen.main.bounds.width / 2.5
+        let width = UIScreen.main.bounds.width / 2
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 4
         layout.minimumInteritemSpacing = 4
-        layout.estimatedItemSize = CGSize(width: width, height: 150)
+        layout.itemSize = CGSize(width: width, height: 80)
         return layout
     }
     

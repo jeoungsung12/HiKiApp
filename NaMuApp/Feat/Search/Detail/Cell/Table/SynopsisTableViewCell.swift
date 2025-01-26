@@ -12,7 +12,8 @@ class SynopsisTableViewCell: UITableViewCell {
     static let id: String = "SynopsisTableViewCell"
     private let titleLabel = UILabel()
     private let synopsisLabel = UILabel()
-    let moreButton = UIButton()
+    private let moreButton = UIButton()
+    private var buttonState: Bool = false
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -72,10 +73,9 @@ extension SynopsisTableViewCell {
         moreButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
         moreButton.addTarget(self, action: #selector(moreButtonTapped), for: .touchUpInside)
         
-        //TODO: - 수정
-        synopsisLabel.numberOfLines = 0
         synopsisLabel.textColor = .white
         synopsisLabel.textAlignment = .left
+        synopsisLabel.numberOfLines = (buttonState ? 0 : 3)
         synopsisLabel.font = .systemFont(ofSize: 15, weight: .regular)
         
         configureHierarchy()
@@ -84,6 +84,8 @@ extension SynopsisTableViewCell {
     @objc
     private func moreButtonTapped(_ sender: UIButton) {
         print(#function)
+        buttonState.toggle()
+        
     }
     
 }

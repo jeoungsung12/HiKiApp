@@ -8,11 +8,11 @@
 import UIKit
 import SnapKit
 
-class BackDropTableViewCell: UITableViewCell {
+final class BackDropTableViewCell: UITableViewCell {
     static let id: String = "BackDropTableViewCell"
     private let pageControl = UIPageControl()
-    private let genreLabel = UILabel()
-    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.setcollectionViewLayout())
+    private let genreView = GenreView()
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.setcollectionViewLayout())
 
     var backdrops: [ImageDetailModel] = [] {
         didSet {
@@ -32,8 +32,7 @@ class BackDropTableViewCell: UITableViewCell {
     }
 
     func configure(_ model: SearchResult) {
-        //TODO: Label이 아니네
-        genreLabel.text = model.release_date + model.vote_average.formatted()
+        genreView.configure(model.summaryInfo)
     }
 }
 
@@ -41,8 +40,8 @@ extension BackDropTableViewCell {
     
     private func configureHierarchy() {
         self.addSubview(collectionView)
+        self.addSubview(genreView)
         self.addSubview(pageControl)
-        self.addSubview(genreLabel)
         configureLayout()
     }
     
@@ -59,7 +58,7 @@ extension BackDropTableViewCell {
             make.bottom.equalTo(collectionView.snp.bottom).offset(-24)
         }
         
-        genreLabel.snp.makeConstraints { make in
+        genreView.snp.makeConstraints { make in
             make.height.equalTo(20)
             make.top.equalTo(collectionView.snp.bottom).offset(4)
             make.bottom.horizontalEdges.equalToSuperview().inset(12)
@@ -71,11 +70,7 @@ extension BackDropTableViewCell {
         pageControl.currentPage = 0
         pageControl.numberOfPages = 5
         pageControl.currentPageIndicatorTintColor = .white
-        pageControl.pageIndicatorTintColor = .customLightGray
-        
-        genreLabel.textColor = .lightGray
-        genreLabel.textAlignment = .center
-        genreLabel.font = .systemFont(ofSize: 13, weight: .semibold)
+        pageControl.pageIndicatorTintColor = .customDarkGray
         
         configureCollectionView()
         configureHierarchy()
@@ -83,13 +78,12 @@ extension BackDropTableViewCell {
     
 }
 
-extension BackDropTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
+extension BackDropTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate {
     
     private func configureCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.isPagingEnabled = true
-        collectionView.isExclusiveTouch = true
         collectionView.backgroundColor = .black
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.register(BackDropCollectionViewCell.self, forCellWithReuseIdentifier: BackDropCollectionViewCell.id)
@@ -111,11 +105,14 @@ extension BackDropTableViewCell: UICollectionViewDelegate, UICollectionViewDataS
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BackDropCollectionViewCell.id, for: indexPath) as? BackDropCollectionViewCell else { return UICollectionViewCell() }
-        cell.configure(backdrops[indexPath.row].file_path)
+        cell.configure(backdrops[indexPath.item].file_path)
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(#function)
+    //MARK: - 다른 방법?
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let pageWidth = scrollView.frame.width
+        let page = Int(scrollView.contentOffset.x / pageWidth)
+        pageControl.currentPage = page
     }
 }

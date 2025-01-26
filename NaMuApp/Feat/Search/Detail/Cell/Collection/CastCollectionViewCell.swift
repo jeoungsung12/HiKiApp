@@ -54,7 +54,8 @@ extension CastCollectionViewCell {
         
         imageView.snp.makeConstraints { make in
             make.size.equalTo(60)
-            make.verticalEdges.leading.equalToSuperview().inset(12)
+            make.centerY.equalToSuperview()
+            make.leading.equalToSuperview().inset(12)
         }
         
         nameLabel.snp.makeConstraints { make in
@@ -64,7 +65,7 @@ extension CastCollectionViewCell {
         
         originalLabel.snp.makeConstraints { make in
             make.trailing.equalToSuperview().offset(-12)
-            make.top.equalTo(nameLabel.snp.bottom).offset(8)
+            make.top.equalTo(nameLabel.snp.bottom).offset(4)
             make.leading.equalTo(imageView.snp.trailing).offset(8)
         }
         
