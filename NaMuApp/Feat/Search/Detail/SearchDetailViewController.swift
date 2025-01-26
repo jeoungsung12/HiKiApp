@@ -9,9 +9,10 @@ import UIKit
 import SnapKit
 
 class SearchDetailViewController: UIViewController {
-    private let heartButton = UIBarButtonItem()
     private let tableView = UITableView()
     private let loadingIndicator = UIActivityIndicatorView()
+    //TODO: 빼내기
+    private lazy var heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(heartButtonTapped))
     
     var searchData: SearchResult?
     private var imageData: ImageModel?
@@ -19,6 +20,11 @@ class SearchDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+    }
+    
+    @objc
+    private func heartButtonTapped(_ sender: UIBarButtonItem) {
+        
     }
     
 }
@@ -50,6 +56,7 @@ extension SearchDetailViewController {
         guard let searchData = searchData else { return }
         self.setNavigation(searchData.title)
         self.view.backgroundColor = .black
+        self.navigationItem.rightBarButtonItem = heartButton
         
         loadingIndicator.style = .medium
         loadingIndicator.color = .lightGray
@@ -122,31 +129,28 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
         switch SearchItems.allCases[indexPath.row] {
         case .backdrop:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: BackDropTableViewCell.id, for: indexPath) as? BackDropTableViewCell else { return UITableViewCell() }
-            cell.selectionStyle = .none
             cell.backdrops = imageData.backdrops
+            cell.configure(searchData)
             
             return cell
 
         case .synopsis:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: SynopsisTableViewCell.id, for: indexPath) as? SynopsisTableViewCell else { return UITableViewCell() }
-            cell.selectionStyle = .none
             cell.configure(searchData.overview)
             
             return cell
             
         case .cast:
-//            guard let cell = tableView.dequeueReusableCell(withIdentifier: CastTableViewCell.id, for: indexPath) as? CastTableViewCell else { return UITableViewCell() }
-//            cell.selectionStyle = .none
-//            cell.castData = creditData.cast ?? []
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: CastTableViewCell.id, for: indexPath) as? CastTableViewCell else { return UITableViewCell() }
+            cell.castData = creditData.cast ?? []
             
-            return UITableViewCell()
+            return cell
             
         case .poster:
-//            guard let cell = tableView.dequeueReusableCell(withIdentifier: PosterTableViewCell.id, for: indexPath) as? PosterTableViewCell else { return UITableViewCell() }
-//            cell.selectionStyle = .none
-//            cell.posterData = imageData.posters
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: PosterTableViewCell.id, for: indexPath) as? PosterTableViewCell else { return UITableViewCell() }
+            cell.posterData = imageData.posters
             
-            return UITableViewCell()
+            return cell
         }
     }
     

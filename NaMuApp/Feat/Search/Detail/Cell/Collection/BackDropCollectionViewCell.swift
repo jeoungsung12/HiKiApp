@@ -14,6 +14,7 @@ final class BackDropCollectionViewCell: UICollectionViewCell {
     private let imageView = UIImageView()
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.isUserInteractionEnabled = true
         configureView()
     }
     
@@ -21,12 +22,15 @@ final class BackDropCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = nil
+    }
+    
     func configure(_ image: String) {
-        if let url = URL(string: image) {
+        if let url = URL(string: APIEndpoint.trending.imagebaseURL + image) {
             imageView.kf.setImage(with: url)
             imageView.kf.indicatorType = .activity
-        } else {
-            imageView.image = nil
         }
     }
 }
@@ -48,7 +52,7 @@ extension BackDropCollectionViewCell {
     
     private func configureView() {
         self.contentView.backgroundColor = .clear
-        imageView.backgroundColor = .gray
+        imageView.backgroundColor = .darkGray
         imageView.contentMode = .scaleToFill
         configureHierarchy()
     }

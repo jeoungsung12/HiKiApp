@@ -21,6 +21,7 @@ class CastTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
         configureView()
     }
     
@@ -45,7 +46,7 @@ extension CastTableViewCell {
         }
         
         collectionView.snp.makeConstraints { make in
-            make.height.equalTo(250)
+            make.height.equalTo(180)
             make.horizontalEdges.bottom.equalToSuperview()
             make.top.equalTo(titleLabel.snp.bottom).offset(8)
         }
@@ -80,8 +81,9 @@ extension CastTableViewCell: UICollectionViewDelegate, UICollectionViewDataSourc
         let layout = UICollectionViewFlowLayout()
         let width = UIScreen.main.bounds.width / 2.5
         layout.scrollDirection = .horizontal
-        layout.itemSize = CGSize(width: width, height: 200)
-        layout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+        layout.minimumLineSpacing = 4
+        layout.minimumInteritemSpacing = 4
+        layout.estimatedItemSize = CGSize(width: width, height: 150)
         return layout
     }
     

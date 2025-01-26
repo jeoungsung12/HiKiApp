@@ -26,7 +26,7 @@ class SearchTableViewCell: UITableViewCell {
     }
     
     func configure(_ model: SearchResult) {
-        if let url = URL(string: APIEndpoint.trending.baseURL + model.poster_path) {
+        if let url = URL(string: APIEndpoint.trending.imagebaseURL + model.poster_path) {
             posterImageView.kf.setImage(with: url, placeholder: UIImage(systemName: ""))
             posterImageView.kf.indicatorType = .activity
         } else { posterImageView.image = nil }
@@ -79,7 +79,7 @@ extension SearchTableViewCell {
         posterImageView.clipsToBounds = true
         posterImageView.layer.cornerRadius = 15
         posterImageView.contentMode = .scaleToFill
-        posterImageView.backgroundColor = .lightGray
+        posterImageView.backgroundColor = .darkGray
         
         titleLabel.textColor = .white
         titleLabel.textAlignment = .left

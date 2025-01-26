@@ -23,11 +23,21 @@ extension UIViewController {
     }
     
     func setNavigation(_ title: String = "",_ backTitle: String = "",_ color: UIColor = .point) {
+        guard let navigationBar = navigationController?.navigationBar else { return }
+        
         self.navigationItem.title = title
         let back = UIBarButtonItem(title: backTitle, style: .plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = back
-        self.navigationController?.navigationBar.tintColor = color
-        self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .black
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        navigationBar.tintColor = color
+        navigationBar.compactAppearance = appearance
+        navigationBar.standardAppearance = appearance
+        navigationBar.scrollEdgeAppearance = appearance
     }
     
     @objc func tapGesture(_ sender: UIGestureRecognizer) {

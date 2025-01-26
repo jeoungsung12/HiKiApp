@@ -11,11 +11,12 @@ import SnapKit
 class SynopsisTableViewCell: UITableViewCell {
     static let id: String = "SynopsisTableViewCell"
     private let titleLabel = UILabel()
-    private let moreButton = UIButton()
     private let synopsisLabel = UILabel()
+    let moreButton = UIButton()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
         configureView()
     }
     
@@ -49,6 +50,7 @@ extension SynopsisTableViewCell {
         }
         
         synopsisLabel.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-4)
             make.horizontalEdges.equalToSuperview().inset(12)
             make.top.equalTo(moreButton.snp.bottom).offset(8)
         }
@@ -67,6 +69,7 @@ extension SynopsisTableViewCell {
         moreButton.setTitle("More", for: .normal)
         moreButton.setTitleColor(.point, for: .normal)
         moreButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
+        moreButton.addTarget(self, action: #selector(moreButtonTapped), for: .touchUpInside)
         
         //TODO: - 수정
         synopsisLabel.numberOfLines = 0
@@ -75,6 +78,11 @@ extension SynopsisTableViewCell {
         synopsisLabel.font = .systemFont(ofSize: 15, weight: .regular)
         
         configureHierarchy()
+    }
+    
+    @objc
+    private func moreButtonTapped(_ sender: UIButton) {
+        print(#function)
     }
     
 }

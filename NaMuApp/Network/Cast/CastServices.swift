@@ -10,7 +10,7 @@ import Foundation
 final class CastServices {
     
     func getCredit(_ id: Int, completion: @escaping (Result<CreditModel,Error>) -> Void) {
-        NetworkManager.shared.getData(.image(id: id)) { (response: Result<CreditModel,Error>) in
+        NetworkManager.shared.getData(.credit(id: id)) { (response: Result<CreditModel,Error>) in
             switch response {
             case let .success(data):
                 completion(.success(data))

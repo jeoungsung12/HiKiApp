@@ -21,6 +21,7 @@ class PosterTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
         configureView()
     }
     
@@ -45,7 +46,7 @@ extension PosterTableViewCell {
         }
         
         collectionView.snp.makeConstraints { make in
-            make.height.equalTo(300)
+            make.height.equalTo(200)
             make.horizontalEdges.bottom.equalToSuperview()
             make.top.equalTo(titleLabel.snp.bottom).offset(8)
         }
@@ -77,9 +78,9 @@ extension PosterTableViewCell: UICollectionViewDelegate, UICollectionViewDataSou
     
     private func setcollectionViewLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
-        let width = UIScreen.main.bounds.width / 4.5
+        let width = UIScreen.main.bounds.width / 3.5
         layout.scrollDirection = .horizontal
-        layout.itemSize = CGSize(width: width, height: 200)
+        layout.itemSize = CGSize(width: width, height: width * 1.5)
         layout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
         return layout
     }

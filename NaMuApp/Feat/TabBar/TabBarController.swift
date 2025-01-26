@@ -33,9 +33,14 @@ extension TabBarController {
         items[1].title = "UPCOMING"
         items[2].title = "PROFILE"
            
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .black
+        self.tabBar.standardAppearance = appearance
+        self.tabBar.scrollEdgeAppearance = appearance
+        
         self.selectedIndex = 0
         self.tabBar.tintColor = .point
-        self.tabBar.backgroundColor = .black
         self.tabBar.unselectedItemTintColor = .gray
     }
     

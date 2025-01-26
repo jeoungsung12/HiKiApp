@@ -26,10 +26,9 @@ final class MoviePosterCell: UICollectionViewCell {
     }
     
     func configure(_ model: SearchResult) {
-//        print(APIEndpoint.trending.baseURL + model.poster_path)
-        if let url = URL(string: APIEndpoint.trending.baseURL + model.poster_path) {
+        if let url = URL(string: APIEndpoint.trending.imagebaseURL + model.poster_path) {
             //TODO: - image down smapling
-            imageView.kf.setImage(with: url, placeholder: UIImage(named: "onboarding"))
+            imageView.kf.setImage(with: url)
             imageView.kf.indicatorType = .activity
         } else { imageView.image = nil }
         titleLabel.text = model.title
@@ -78,7 +77,7 @@ extension MoviePosterCell {
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 15
         imageView.contentMode = .scaleToFill
-        imageView.backgroundColor = .customDarkGray
+        imageView.backgroundColor = .darkGray
         
         heartButton.tintColor = .point
         heartButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)

@@ -22,11 +22,16 @@ final class PosterCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        posterImageView.image = nil
+    }
+    
     func configure(_ image: ImageDetailModel) {
-        if let url = URL(string: image.file_path) {
+        if let url = URL(string: APIEndpoint.trending.imagebaseURL + image.file_path) {
             posterImageView.kf.setImage(with: url)
             posterImageView.kf.indicatorType = .activity
-        } else { posterImageView.image = nil }
+        }
     }
     
 }
@@ -50,6 +55,7 @@ extension PosterCollectionViewCell {
         posterImageView.clipsToBounds = true
         posterImageView.layer.cornerRadius = 15
         posterImageView.contentMode = .scaleToFill
+        posterImageView.backgroundColor = .darkGray
         configureHierarchy()
     }
     
