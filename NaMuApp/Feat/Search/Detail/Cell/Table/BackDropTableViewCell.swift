@@ -23,7 +23,7 @@ class BackDropTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-        self.isUserInteractionEnabled = true
+        self.contentView.isUserInteractionEnabled = false
         configureView()
     }
     
@@ -89,7 +89,8 @@ extension BackDropTableViewCell: UICollectionViewDelegate, UICollectionViewDataS
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.isPagingEnabled = true
-        collectionView.backgroundColor = .clear
+        collectionView.isExclusiveTouch = true
+        collectionView.backgroundColor = .black
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.register(BackDropCollectionViewCell.self, forCellWithReuseIdentifier: BackDropCollectionViewCell.id)
     }

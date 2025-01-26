@@ -22,6 +22,7 @@ class PosterTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
+        self.contentView.isUserInteractionEnabled = false
         configureView()
     }
     
@@ -72,7 +73,7 @@ extension PosterTableViewCell: UICollectionViewDelegate, UICollectionViewDataSou
     private func configureCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.backgroundColor = .clear
+        collectionView.backgroundColor = .black
         collectionView.register(PosterCollectionViewCell.self, forCellWithReuseIdentifier: PosterCollectionViewCell.id)
     }
     

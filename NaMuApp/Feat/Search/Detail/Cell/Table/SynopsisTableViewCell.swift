@@ -17,6 +17,7 @@ class SynopsisTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
+        self.contentView.isUserInteractionEnabled = false
         configureView()
     }
     

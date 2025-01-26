@@ -112,7 +112,8 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
-        tableView.backgroundColor = .clear
+        tableView.backgroundColor = .black
+
         tableView.register(BackDropTableViewCell.self, forCellReuseIdentifier: BackDropTableViewCell.id)
         tableView.register(SynopsisTableViewCell.self, forCellReuseIdentifier: SynopsisTableViewCell.id)
         tableView.register(CastTableViewCell.self, forCellReuseIdentifier: CastTableViewCell.id)

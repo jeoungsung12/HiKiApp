@@ -22,6 +22,7 @@ class CastTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
+        self.contentView.isUserInteractionEnabled = false
         configureView()
     }
     
@@ -72,8 +73,8 @@ extension CastTableViewCell: UICollectionViewDelegate, UICollectionViewDataSourc
     private func configureCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.isScrollEnabled = true
-        collectionView.backgroundColor = .clear
+        collectionView.backgroundColor = .black
+        collectionView.showsHorizontalScrollIndicator = false
         collectionView.register(CastCollectionViewCell.self, forCellWithReuseIdentifier: CastCollectionViewCell.id)
     }
     
