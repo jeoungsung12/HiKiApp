@@ -33,11 +33,13 @@ extension BackDropTableViewCell {
     
     private func configureLayout() {
         collectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.horizontalEdges.equalToSuperview()
+            make.height.equalTo(UIScreen.main.bounds.height / 3)
         }
     }
     
     private func configureView() {
+        self.backgroundColor = .black
         configureCollectionView()
         configureHierarchy()
     }

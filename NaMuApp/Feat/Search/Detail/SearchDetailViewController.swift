@@ -78,18 +78,18 @@ extension SearchDetailViewController {
                 group.leave()
             }
         }
-//        group.enter()
-//        CastServices().getCredit(searchData.id) { [weak self] response in
-//            guard let self = self else { return }
-//            switch response {
-//            case let .success(data):
-//                self.creditData = data
-//                group.leave()
-//            case  let .failure(error):
-//                print(error)
-//                group.leave()
-//            }
-//        }
+        group.enter()
+        CastServices().getCredit(searchData.id) { [weak self] response in
+            guard let self = self else { return }
+            switch response {
+            case let .success(data):
+                self.creditData = data
+                group.leave()
+            case  let .failure(error):
+                print(error)
+                group.leave()
+            }
+        }
         group.notify(queue: .main) {
             self.tableView.reloadData()
             self.loadingIndicator.stopAnimating()
@@ -104,6 +104,7 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
     private func configureTableView() {
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.separatorStyle = .none
         tableView.backgroundColor = .clear
         tableView.register(BackDropTableViewCell.self, forCellReuseIdentifier: BackDropTableViewCell.id)
         tableView.register(SynopsisTableViewCell.self, forCellReuseIdentifier: SynopsisTableViewCell.id)
@@ -116,27 +117,36 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let searchData = self.searchData, let imageData = self.imageData, let creditData = self.creditData else { return UITableViewCell() }
+        
         switch SearchItems.allCases[indexPath.row] {
         case .backdrop:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: BackDropTableViewCell.id, for: indexPath) as? BackDropTableViewCell, let backdrops = self.imageData?.backdrops else { return UITableViewCell() }
-            cell.backdrops = backdrops
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: BackDropTableViewCell.id, for: indexPath) as? BackDropTableViewCell else { return UITableViewCell() }
+            cell.selectionStyle = .none
+            cell.backdrops = imageData.backdrops
             
             return cell
 
         case .synopsis:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: SynopsisTableViewCell.id, for: indexPath) as? SynopsisTableViewCell else { return UITableViewCell() }
+            cell.selectionStyle = .none
+            cell.configure(searchData.overview)
             
             return cell
             
         case .cast:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: CastTableViewCell.id, for: indexPath) as? CastTableViewCell else { return UITableViewCell() }
+//            guard let cell = tableView.dequeueReusableCell(withIdentifier: CastTableViewCell.id, for: indexPath) as? CastTableViewCell else { return UITableViewCell() }
+//            cell.selectionStyle = .none
+//            cell.castData = creditData.cast ?? []
             
-            return cell
+            return UITableViewCell()
             
         case .poster:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: PosterTableViewCell.id, for: indexPath) as? PosterTableViewCell else { return UITableViewCell() }
+//            guard let cell = tableView.dequeueReusableCell(withIdentifier: PosterTableViewCell.id, for: indexPath) as? PosterTableViewCell else { return UITableViewCell() }
+//            cell.selectionStyle = .none
+//            cell.posterData = imageData.posters
             
-            return cell
+            return UITableViewCell()
         }
     }
     

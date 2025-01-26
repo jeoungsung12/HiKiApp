@@ -10,9 +10,15 @@ import SnapKit
 
 class PosterTableViewCell: UITableViewCell {
     static let id: String = "PosterTableViewCell"
+    private let titleLabel = UILabel()
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.setcollectionViewLayout())
 
-    var movieData: SearchResult?
+    var posterData: [ImageDetailModel] = [] {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureView()
@@ -28,18 +34,33 @@ class PosterTableViewCell: UITableViewCell {
 extension PosterTableViewCell {
     
     private func configureHierarchy() {
+        self.addSubview(titleLabel)
         self.addSubview(collectionView)
         configureLayout()
     }
     
     private func configureLayout() {
+        titleLabel.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview().inset(12)
+        }
+        
         collectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.height.equalTo(300)
+            make.horizontalEdges.bottom.equalToSuperview()
+            make.top.equalTo(titleLabel.snp.bottom).offset(8)
         }
     }
     
     private func configureView() {
+        self.backgroundColor = .black
         
+        titleLabel.text = "Poster"
+        titleLabel.numberOfLines = 1
+        titleLabel.textColor = .white
+        titleLabel.textAlignment = .left
+        titleLabel.font = .boldSystemFont(ofSize: 18)
+        
+        configureCollectionView()
         configureHierarchy()
     }
     
@@ -56,17 +77,20 @@ extension PosterTableViewCell: UICollectionViewDelegate, UICollectionViewDataSou
     
     private func setcollectionViewLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
-        
+        let width = UIScreen.main.bounds.width / 4.5
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: width, height: 200)
+        layout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
         return layout
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        return posterData.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        
-        return UICollectionViewCell()
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PosterCollectionViewCell.id, for: indexPath) as? PosterCollectionViewCell else { return UICollectionViewCell() }
+        cell.configure(posterData[indexPath.row])
+        return cell
     }
 }

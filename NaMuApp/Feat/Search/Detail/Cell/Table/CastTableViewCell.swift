@@ -10,9 +10,15 @@ import SnapKit
 
 class CastTableViewCell: UITableViewCell {
     static let id: String = "CastTableViewCell"
+    private let titleLabel = UILabel()
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.setcollectionViewLayout())
 
-    var movieData: SearchResult?
+    var castData: [CreditCast] = [] {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureView()
@@ -21,25 +27,40 @@ class CastTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 
 }
 
 extension CastTableViewCell {
     
     private func configureHierarchy() {
+        self.addSubview(titleLabel)
         self.addSubview(collectionView)
         configureLayout()
     }
     
     private func configureLayout() {
+        
+        titleLabel.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview().inset(12)
+        }
+        
         collectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.height.equalTo(250)
+            make.horizontalEdges.bottom.equalToSuperview()
+            make.top.equalTo(titleLabel.snp.bottom).offset(8)
         }
     }
     
     private func configureView() {
+        self.backgroundColor = .black
         
+        titleLabel.text = "Cast"
+        titleLabel.numberOfLines = 1
+        titleLabel.textColor = .white
+        titleLabel.textAlignment = .left
+        titleLabel.font = .boldSystemFont(ofSize: 18)
+        
+        configureCollectionView()
         configureHierarchy()
     }
     
@@ -50,23 +71,27 @@ extension CastTableViewCell: UICollectionViewDelegate, UICollectionViewDataSourc
     private func configureCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.isScrollEnabled = true
         collectionView.backgroundColor = .clear
         collectionView.register(CastCollectionViewCell.self, forCellWithReuseIdentifier: CastCollectionViewCell.id)
     }
     
     private func setcollectionViewLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
-        
+        let width = UIScreen.main.bounds.width / 2.5
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: width, height: 200)
+        layout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
         return layout
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        return castData.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        
-        return UICollectionViewCell()
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CastCollectionViewCell.id, for: indexPath) as? CastCollectionViewCell else { return UICollectionViewCell() }
+        cell.configure(castData[indexPath.row])
+        return cell
     }
 }
