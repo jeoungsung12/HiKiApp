@@ -26,7 +26,8 @@ final class MoviePosterCell: UICollectionViewCell {
     }
     
     func configure(_ model: SearchResult) {
-        if let url = URL(string: APIEndpoint.trending.imagebaseURL + model.poster_path) {
+        if let poster_path = model.poster_path,
+            let url = URL(string: APIEndpoint.trending.imagebaseURL + poster_path) {
             //TODO: - image down smapling
             imageView.kf.setImage(with: url)
             imageView.kf.indicatorType = .activity

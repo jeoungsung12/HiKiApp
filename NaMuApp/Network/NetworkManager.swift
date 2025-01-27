@@ -17,7 +17,6 @@ final class NetworkManager {
         AF.request(api.endpoint, method: api.method, parameters: api.parmas, encoding: URLEncoding.queryString, headers: api.headers)
             .validate(statusCode: 200...500)
             .responseDecodable(of: T.self) { response in
-//                print(response.debugDescription)
                 switch response.result {
                 case let .success(data):
                     completion(.success(data))

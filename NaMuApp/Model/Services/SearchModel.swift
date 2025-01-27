@@ -12,14 +12,15 @@ struct SearchModel: Decodable {
 }
 
 struct SearchResult: Decodable {
+    //TODO: - 옵셔널 처리
     let id: Int
     let title: String
     let genre_ids: [Int]
     let overview: String
-    let poster_path: String
+    let poster_path: String?
     let release_date: String
     let vote_average: Double
-    let backdrop_path: String
+    let backdrop_path: String?
     
     var genreString: [String] {
         get {
@@ -51,8 +52,10 @@ struct SearchResult: Decodable {
 }
 
 struct SearchResponse {
-    let searchPage: Int
-    let searchText: String
+    var searchPage: Int
+    var searchText: String
+    var searchPhase: SearchPhase
+    var searchResult: [SearchResult]
 }
 
 struct SummaryInfo {

@@ -15,12 +15,11 @@ class SearchViewController: UIViewController {
     private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapGesture))
     private let loadingIndicator = UIActivityIndicatorView()
 
-    private var searchData: [SearchResult] = [] {
+    private var searchData: SearchResponse = SearchResponse(searchPage: 1, searchText: "", searchPhase: .notRequest, searchResult: []) {
         didSet {
             tableView.reloadData()
         }
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -47,7 +46,7 @@ extension SearchViewController {
         
         tableView.snp.makeConstraints { make in
             make.horizontalEdges.bottom.equalToSuperview()
-            make.top.equalTo(searchBar.snp.bottom).offset(24)
+            make.top.equalTo(searchBar.snp.bottom).offset(12)
         }
         
         resultLabel.snp.makeConstraints { make in
@@ -72,7 +71,8 @@ extension SearchViewController {
         searchBar.searchTextField.text = "영화를 검색해보세요."
         
         resultLabel.textColor = .lightGray
-        resultLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        resultLabel.textAlignment = .center
+        resultLabel.font = .systemFont(ofSize: 13, weight: .semibold)
         
         tapGesture.cancelsTouchesInView = false
         
@@ -104,6 +104,10 @@ extension SearchViewController: UISearchBarDelegate {
         guard let text = searchBar.text else { return }
         searchBar.text = ((text.isEmpty)) ? "영화를 검색해보세요." : text
         searchBar.searchTextField.textColor = ((text.isEmpty)) ? .lightGray : .white
+        //TODO: - 변경
+        searchData.searchPage = 1
+        searchData.searchResult = []
+        searchData.searchPhase = .notFound
         fetchData()
     }
     
@@ -112,18 +116,35 @@ extension SearchViewController: UISearchBarDelegate {
 extension SearchViewController {
     
     private func fetchData() {
+        //TODO: - 공백 체크!
         guard let text = searchBar.text else { return }
+        searchData.searchText = text
         loadingIndicator.startAnimating()
-        SearchServices().getSearch(SearchResponse(searchPage: 1, searchText: text)) { [weak self] response in
+        SearchServices().getSearch(searchData) { [weak self] response in
             guard let self = self else { return }
             switch response {
             case let .success(data):
-                self.searchData = data
+                self.checkPhase(data)
+                self.searchData.searchResult += data
                 self.loadingIndicator.stopAnimating()
             case let .failure(error):
+                self.searchData.searchPhase = .notFound
+                self.resultLabel.text = self.searchData.searchPhase.message
                 print(error)
                 self.loadingIndicator.stopAnimating()
             }
+        }
+    }
+    
+    private func checkPhase(_ data: [SearchResult]) {
+        if (data.isEmpty) && (searchData.searchPage == 1) {
+            searchData.searchPhase = .notFound
+            resultLabel.text = searchData.searchPhase.message
+        } else if (data.isEmpty) {
+            searchData.searchPhase = .endPage
+        } else {
+            searchData.searchPhase = .success
+            resultLabel.text = searchData.searchPhase.message
         }
     }
     
@@ -137,16 +158,17 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
         tableView.dataSource = self
         tableView.backgroundColor = .black
         tableView.prefetchDataSource = self
+        tableView.showsVerticalScrollIndicator = true
         tableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.id)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchData.count
+        return searchData.searchResult.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.id, for: indexPath) as? SearchTableViewCell else { return UITableViewCell() }
-        cell.configure(searchData[indexPath.row])
+        cell.configure(searchData.searchResult[indexPath.row])
         return cell
     }
     
@@ -157,12 +179,26 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(#function)
         let vc = SearchDetailViewController()
-        vc.searchData = searchData[indexPath.row]
+        vc.searchData = searchData.searchResult[indexPath.row]
         self.push(vc)
     }
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        
+        if let indexPath = indexPaths.last,
+           searchData.searchResult.count - 2 < indexPath.row {
+            switch searchData.searchPhase {
+            case .success:
+                searchData.searchPage += 1
+                fetchData()
+            case .notRequest:
+                return
+            case .notFound:
+                return
+            case .endPage:
+                self.customAlert("", searchData.searchPhase.message, [.ok]) {}
+                self.searchData.searchPhase = .notRequest
+            }
+        }
     }
     
     func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {

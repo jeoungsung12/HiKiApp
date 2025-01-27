@@ -15,6 +15,8 @@ class SearchTableViewCell: UITableViewCell {
     private let titleLabel = UILabel()
     private let dateLabel = UILabel()
     private let heartButton = UIButton()
+    private let genreView = GenreView()
+    
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -25,13 +27,20 @@ class SearchTableViewCell: UITableViewCell {
         super.init(coder: coder)
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        posterImageView.image = nil
+    }
+    
     func configure(_ model: SearchResult) {
-        if let url = URL(string: APIEndpoint.trending.imagebaseURL + model.poster_path) {
+        if let poster_path = model.poster_path,
+            let url = URL(string: APIEndpoint.trending.imagebaseURL + poster_path) {
             posterImageView.kf.setImage(with: url, placeholder: UIImage(systemName: ""))
             posterImageView.kf.indicatorType = .activity
-        } else { posterImageView.image = nil }
+        }
         titleLabel.text = model.title
         dateLabel.text = model.release_date
+        genreView.configure(model, .search)
     }
 
 }
@@ -43,6 +52,8 @@ extension SearchTableViewCell {
         self.addSubview(titleLabel)
         self.addSubview(dateLabel)
         self.addSubview(heartButton)
+        self.addSubview(genreView)
+        
         configureLayout()
     }
     
@@ -57,18 +68,25 @@ extension SearchTableViewCell {
         titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(12)
             make.trailing.equalToSuperview().offset(-12)
-            make.leading.equalTo(posterImageView.snp.trailing).offset(8)
+            make.leading.equalTo(posterImageView.snp.trailing).offset(12)
         }
         
         dateLabel.snp.makeConstraints { make in
             make.trailing.equalToSuperview().offset(-12)
             make.top.equalTo(titleLabel.snp.bottom).offset(4)
-            make.leading.equalTo(posterImageView.snp.trailing).offset(8)
+            make.leading.equalTo(posterImageView.snp.trailing).offset(12)
         }
         
         heartButton.snp.makeConstraints { make in
             make.size.equalTo(30)
             make.bottom.trailing.equalToSuperview().inset(12)
+        }
+        
+        genreView.snp.makeConstraints { make in
+            make.height.equalTo(20)
+            make.bottom.equalToSuperview().inset(12)
+            make.trailing.equalTo(heartButton.snp.leading).offset(-12)
+            make.leading.equalTo(posterImageView.snp.trailing).offset(12)
         }
         
     }
@@ -81,6 +99,7 @@ extension SearchTableViewCell {
         posterImageView.contentMode = .scaleToFill
         posterImageView.backgroundColor = .darkGray
         
+        titleLabel.numberOfLines = 2
         titleLabel.textColor = .white
         titleLabel.textAlignment = .left
         titleLabel.font = .boldSystemFont(ofSize: 15)

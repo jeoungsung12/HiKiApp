@@ -7,6 +7,11 @@
 
 import Foundation
 
+enum GenreLocation {
+    case search
+    case detail
+}
+
 enum GenreTypes: Int, CaseIterable {
     case action = 28
     case animation = 16

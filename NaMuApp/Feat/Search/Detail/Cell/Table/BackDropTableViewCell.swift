@@ -32,7 +32,7 @@ final class BackDropTableViewCell: UITableViewCell {
     }
 
     func configure(_ model: SearchResult) {
-        genreView.configure(model.summaryInfo)
+        genreView.configure(model, .detail)
     }
 }
 

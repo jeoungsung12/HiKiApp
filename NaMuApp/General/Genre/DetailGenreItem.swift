@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class GenreItem: UIStackView {
+final class DetailGenreItem: UIStackView {
     private let genreLabel = UILabel()
     private let genreImage = UIImageView()
     
@@ -27,7 +27,7 @@ final class GenreItem: UIStackView {
     }
 }
 
-extension GenreItem {
+extension DetailGenreItem {
     
     private func configureHierarchy() {
         self.addArrangedSubview(genreImage)
