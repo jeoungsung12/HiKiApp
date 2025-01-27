@@ -16,8 +16,8 @@ final class MainViewController: UIViewController {
     private let loadingIndicator = UIActivityIndicatorView()
     private let titleLabel = UILabel()
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
-    
     private var db = Database.shared
+    
     var movieData: [SearchResult] = [] {
         didSet {
             collectionView.reloadData()
@@ -31,8 +31,8 @@ final class MainViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        recentSearchView.configure(db.recentSearch.reversed())
         //TODO: - 수정 필요
+        recentSearchView.configure(db.recentSearch.reversed())
         profileView = MyProfileView()
         configureView()
     }
@@ -142,7 +142,7 @@ extension MainViewController {
         }
         recentSearchView.removeTapped = { [weak self] recent in
             guard let self = self else { return }
-            self.db.recentSearch = self.db.removeRecentSearch(recent)
+            self.db.removeRecentSearch(recent)
             self.recentSearchView.configure(db.recentSearch.reversed())
             //TODO: - 뷰를 전부 다시 그려야하는가?
             self.configureView()
@@ -196,6 +196,9 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MoviePosterCell.id, for: indexPath) as? MoviePosterCell else { return UICollectionViewCell() }
         cell.configure(movieData[indexPath.row])
+        cell.isButton = {
+            collectionView.reloadItems(at: [indexPath])
+        }
         return cell
     }
     

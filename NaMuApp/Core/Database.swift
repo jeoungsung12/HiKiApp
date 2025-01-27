@@ -25,11 +25,23 @@ final class Database {
     
     var userInfo: [String] {
         get {
-            guard let userInfo = UserDefaults.standard.value(forKey: "userInfo") as? [String] else { return [] }
+            guard var userInfo = UserDefaults.standard.value(forKey: "userInfo") as? [String] else { return [] }
+            let heartList = self.heartList
+            userInfo[2] = heartList.count.formatted()
             return userInfo
         }
         set {
             UserDefaults.standard.set(newValue, forKey: "userInfo")
+        }
+    }
+    
+    var heartList: [String] {
+        get {
+            guard let heartList = UserDefaults.standard.value(forKey: "heartList") as? [String] else { return [] }
+            return heartList
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "heartList")
         }
     }
     
@@ -56,11 +68,21 @@ extension Database {
         UserDefaults.standard.removeObject(forKey: "userInfo")
     }
     
-    func removeRecentSearch(_ remove: String) -> [String] {
+    //TODO: - 중복되는 기능 줄일수 있을듯?
+    func removeHeartButton(_ remove: String) {
+        guard var heartList = UserDefaults.standard.value(forKey: "heartList") as? [String],
+              let index = heartList.lastIndex(where: { $0 == remove }) else { return }
+        heartList.remove(at: index)
+        //TODO: - 반환하지말고 여기서!
+        self.heartList = heartList
+    }
+    
+    func removeRecentSearch(_ remove: String) {
         guard var recentSearch = UserDefaults.standard.value(forKey: "recentSearch") as? [String],
-              let index = recentSearch.lastIndex(where: { $0 == remove }) else { return [] }
+              let index = recentSearch.lastIndex(where: { $0 == remove }) else { return }
         recentSearch.remove(at: index)
-        return recentSearch
+        //TODO: - 반환하지말고 여기서!
+        self.recentSearch = recentSearch
     }
     
     func getUser() -> UserInfo {

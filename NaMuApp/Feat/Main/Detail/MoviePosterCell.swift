@@ -15,7 +15,10 @@ final class MoviePosterCell: UICollectionViewCell {
     private let titleLabel = UILabel()
     private let descriptionLabel = UILabel()
     private let heartButton = UIButton()
+    private let db = Database.shared
+    private var buttonTapped: Bool = false
     
+    var isButton: (()->Void)?
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureView()
@@ -25,15 +28,22 @@ final class MoviePosterCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = nil
+    }
+    
     func configure(_ model: SearchResult) {
         if let poster_path = model.poster_path,
             let url = URL(string: APIEndpoint.trending.imagebaseURL + poster_path) {
             //TODO: - image down smapling
             imageView.kf.setImage(with: url)
             imageView.kf.indicatorType = .activity
-        } else { imageView.image = nil }
+        }
         titleLabel.text = model.title
         descriptionLabel.text = model.overview
+        buttonTapped = db.heartList.contains(model.title)
+        heartButton.setImage(UIImage(systemName: (db.heartList.contains(model.title)) ? "heart.fill" : "heart"), for: .normal)
     }
     
 }
@@ -81,7 +91,7 @@ extension MoviePosterCell {
         imageView.backgroundColor = .darkGray
         
         heartButton.tintColor = .point
-        heartButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+        heartButton.addTarget(self, action: #selector(heartButtonTapped), for: .touchUpInside)
         
         titleLabel.numberOfLines = 1
         titleLabel.textColor = .white
@@ -94,6 +104,27 @@ extension MoviePosterCell {
         descriptionLabel.font = .systemFont(ofSize: 15, weight: .regular)
         
         configureHierarchy()
+    }
+    
+}
+
+extension MoviePosterCell {
+    
+    @objc
+    private func heartButtonTapped(_ sender: UIButton) {
+        print(#function)
+        if let text = titleLabel.text {
+            buttonTapped.toggle()
+            if buttonTapped {
+                var list = db.heartList
+                list.append(text)
+                db.heartList = list
+                isButton?()
+            } else {
+                db.removeHeartButton(text)
+                isButton?()
+            }
+        }
     }
     
 }
