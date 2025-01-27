@@ -11,6 +11,7 @@ final class Database {
     static let shared = Database()
     
     private init() { }
+    //TODO: - 제네릭 타입으로 바꿀수 있지 않을까?
     
     var isUser: Bool {
         get {
@@ -32,9 +33,34 @@ final class Database {
         }
     }
     
+    var recentSearch: [String] {
+        get {
+            guard let recentSearch = UserDefaults.standard.value(forKey: "recentSearch") as? [String] else { return [] }
+            return recentSearch
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "recentSearch")
+        }
+    }
+    
+}
+
+extension Database {
+    
+    func removeAll(_ model: String) {
+        UserDefaults.standard.removeObject(forKey: model)
+    }
+    
     func removeUserInfo() {
         self.isUser = false
         UserDefaults.standard.removeObject(forKey: "userInfo")
+    }
+    
+    func removeRecentSearch(_ remove: String) -> [String] {
+        guard var recentSearch = UserDefaults.standard.value(forKey: "recentSearch") as? [String],
+              let index = recentSearch.lastIndex(where: { $0 == remove }) else { return [] }
+        recentSearch.remove(at: index)
+        return recentSearch
     }
     
     func getUser() -> UserInfo {

@@ -9,17 +9,18 @@ import UIKit
 import SnapKit
 
 class SearchViewController: UIViewController {
-    private let searchBar = UISearchBar()
     private let tableView = UITableView()
     private let resultLabel = UILabel()
     private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapGesture))
     private let loadingIndicator = UIActivityIndicatorView()
-
-    private var searchData: SearchResponse = SearchResponse(searchPage: 1, searchText: "", searchPhase: .notRequest, searchResult: []) {
+    private let db = Database.shared
+    var searchBar = UISearchBar()
+    var searchData: SearchResponse = SearchResponse(searchPage: 1, searchText: "", searchPhase: .notRequest, searchResult: []) {
         didSet {
             tableView.reloadData()
         }
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -68,7 +69,9 @@ extension SearchViewController {
         searchBar.delegate = self
         searchBar.searchBarStyle = .minimal
         searchBar.searchTextField.textColor = .lightGray
-        searchBar.searchTextField.text = "영화를 검색해보세요."
+        if (searchData.searchText == "") {
+            searchBar.searchTextField.text =  "영화를 검색해보세요."
+        }
         
         resultLabel.textColor = .lightGray
         resultLabel.textAlignment = .center
@@ -105,6 +108,9 @@ extension SearchViewController: UISearchBarDelegate {
         searchBar.text = ((text.isEmpty)) ? "영화를 검색해보세요." : text
         searchBar.searchTextField.textColor = ((text.isEmpty)) ? .lightGray : .white
         //TODO: - 변경
+        var recentSearch = db.recentSearch
+        recentSearch.append(text)
+        db.recentSearch = recentSearch
         searchData.searchPage = 1
         searchData.searchResult = []
         searchData.searchPhase = .notFound
@@ -115,7 +121,7 @@ extension SearchViewController: UISearchBarDelegate {
 
 extension SearchViewController {
     
-    private func fetchData() {
+    func fetchData() {
         //TODO: - 공백 체크!
         guard let text = searchBar.text else { return }
         searchData.searchText = text
@@ -202,6 +208,6 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
     }
     
     func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
-        
+        //TODO: - Cancel
     }
 }

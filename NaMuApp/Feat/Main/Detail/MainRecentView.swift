@@ -11,19 +11,23 @@ import SnapKit
 final class MainRecentView: UIView {
     private let titleLabel = UILabel()
     private let resultLabel = UILabel()
+    private let removeButton = UIButton()
+    private let stackView = UIStackView()
     private let scrollView = UIScrollView()
     
+    var removeAll: (()->Void)?
+    var recentTapped: ((String)->Void)?
+    var removeTapped: ((String)->Void)?
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureView()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure() {
-        
+    func configure(_ recentSearch: [String]) {
+        configureView(recentSearch)
     }
     
 }
@@ -31,21 +35,33 @@ final class MainRecentView: UIView {
 extension MainRecentView {
     
     private func configureHierarchy() {
+        self.addSubview(removeButton)
         self.addSubview(titleLabel)
+        self.scrollView.addSubview(stackView)
         self.addSubview(scrollView)
         self.addSubview(resultLabel)
         configureLayout()
     }
     
     private func configureLayout() {
+        removeButton.snp.makeConstraints { make in
+            make.top.trailing.equalToSuperview().inset(12)
+        }
+        
         titleLabel.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalToSuperview().inset(12)
+            make.top.leading.equalToSuperview().inset(12)
+            make.trailing.equalTo(removeButton.snp.leading).offset(-12)
+        }
+        
+        stackView.snp.makeConstraints { make in
+            make.verticalEdges.equalToSuperview()
+            make.horizontalEdges.equalToSuperview().inset(12)
         }
         
         scrollView.snp.makeConstraints { make in
-            make.height.equalTo(100)
+            make.height.equalTo(60)
             make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(titleLabel.snp.bottom).offset(4)
+            make.top.equalTo(titleLabel.snp.bottom).offset(12)
         }
         
         resultLabel.snp.makeConstraints { make in
@@ -53,7 +69,12 @@ extension MainRecentView {
         }
     }
     
-    private func configureView() {
+    private func configureView(_ recentSearch: [String]) {
+        removeButton.setTitle("전체 삭제", for: .normal)
+        removeButton.setTitleColor(.point, for: .normal)
+        removeButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
+        removeButton.addTarget(self, action: #selector(removeButtonTapped), for: .touchUpInside)
+        
         titleLabel.text = "최근검색어"
         titleLabel.textColor = .white
         titleLabel.textAlignment = .left
@@ -61,12 +82,47 @@ extension MainRecentView {
         
         resultLabel.textColor = .lightGray
         resultLabel.textAlignment = .center
-        resultLabel.text = "최근 검색어 내역이 없습니다."
         resultLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        resultLabel.text = (recentSearch.isEmpty) ? "최근 검색어 내역이 없습니다." : ""
         
+        stackView.spacing = 8
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
         
+        scrollView.showsHorizontalScrollIndicator = false
         
+        configureStackView(recentSearch)
         configureHierarchy()
     }
     
+    private func configureStackView(_ recentSearch: [String]) {
+        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        for search in recentSearch {
+            let recentView = RecentView()
+            recentView.configure(search)
+            recentView.titleTapped = recentItemTapped
+            recentView.removeTapped = removeItemTapped
+            stackView.addArrangedSubview(recentView)
+        }
+    }
+    
+}
+
+extension MainRecentView {
+    
+    @objc
+    private func removeButtonTapped(_ sender: UIButton) {
+        print(#function)
+        removeAll?()
+    }
+    
+    private func recentItemTapped(_ sender: String) {
+        print(#function)
+        recentTapped?(sender)
+    }
+    
+    private func removeItemTapped(_ sender: String) {
+        print(#function)
+        removeTapped?(sender)
+    }
 }

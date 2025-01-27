@@ -17,6 +17,7 @@ final class MainViewController: UIViewController {
     private let titleLabel = UILabel()
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
     
+    private var db = Database.shared
     var movieData: [SearchResult] = [] {
         didSet {
             collectionView.reloadData()
@@ -30,8 +31,10 @@ final class MainViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.profileView = MyProfileView()
-        self.configureView()
+        recentSearchView.configure(db.recentSearch.reversed())
+        //TODO: - 수정 필요
+        profileView = MyProfileView()
+        configureView()
     }
     
 }
@@ -78,6 +81,7 @@ extension MainViewController {
             make.center.equalToSuperview()
         }
         fetchData()
+        recentTapped()
     }
     
     private func configureView() {
@@ -118,6 +122,31 @@ extension MainViewController {
             self.configureView()
         }
         self.sheet(vc)
+    }
+    
+    private func recentTapped() {
+        //TODO: - 델리겟으로 바꿀까?
+        recentSearchView.removeAll = {
+            self.db.removeAll("recentSearch")
+            self.recentSearchView.configure(self.db.recentSearch.reversed())
+            //TODO: - 뷰를 전부 다시 그려야하는가?
+            self.configureView()
+        }
+        recentSearchView.recentTapped = { [weak self] recent in
+            guard let self = self else { return }
+            let vc = SearchViewController()
+            vc.searchBar.searchTextField.text = recent
+            vc.searchData.searchText = recent
+            vc.fetchData()
+            self.push(vc)
+        }
+        recentSearchView.removeTapped = { [weak self] recent in
+            guard let self = self else { return }
+            self.db.recentSearch = self.db.removeRecentSearch(recent)
+            self.recentSearchView.configure(db.recentSearch.reversed())
+            //TODO: - 뷰를 전부 다시 그려야하는가?
+            self.configureView()
+        }
     }
     
 }

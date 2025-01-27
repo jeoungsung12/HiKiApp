@@ -33,6 +33,7 @@ final class BackDropTableViewCell: UITableViewCell {
 
     func configure(_ model: SearchResult) {
         genreView.configure(model, .detail)
+        pageControl.numberOfPages = (backdrops.count > 5) ? 5 : backdrops.count
     }
 }
 
@@ -68,7 +69,6 @@ extension BackDropTableViewCell {
     private func configureView() {
         self.backgroundColor = .black
         pageControl.currentPage = 0
-        pageControl.numberOfPages = 5
         pageControl.currentPageIndicatorTintColor = .white
         pageControl.pageIndicatorTintColor = .customDarkGray
         
@@ -100,7 +100,7 @@ extension BackDropTableViewCell: UICollectionViewDelegate, UICollectionViewDataS
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return (backdrops.count > 5) ? 5 : backdrops.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
