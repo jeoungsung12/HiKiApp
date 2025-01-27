@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class MyProfileView: UIView {
+final class MyProfileView: UIButton {
     private let profileImage = CustomProfileButton(60, true)
     private let nameLabel = UILabel()
     private let dateLabel = UILabel()
@@ -23,10 +23,6 @@ final class MyProfileView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    func configure() {
-        
     }
     
 }
@@ -102,6 +98,8 @@ extension MyProfileView {
         saveButton.setTitle("\(userInfo.movie) 개의 무비박스 보관중", for: .normal)
         saveButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
         
+        //TODO: - 이미지 수정
+        arrow.isEnabled = false
         arrow.tintColor = .customDarkGray
         arrow.setImage(UIImage(systemName: "greaterthan"), for: .normal)
         

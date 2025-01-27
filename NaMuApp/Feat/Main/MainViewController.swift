@@ -10,11 +10,10 @@ import SnapKit
 
 final class MainViewController: UIViewController {
     private lazy var searchButton = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(searchButtonTapped))
-    private let profileView = MyProfileView()
+    private var profileView = MyProfileView()
     //TODO: - 최근 검색어 기능구현
     private let recentSearchView = MainRecentView()
     private let loadingIndicator = UIActivityIndicatorView()
-    
     private let titleLabel = UILabel()
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
     
@@ -27,6 +26,12 @@ final class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.profileView = MyProfileView()
+        self.configureView()
     }
     
 }
@@ -88,6 +93,8 @@ extension MainViewController {
         titleLabel.textAlignment = .left
         titleLabel.font = .boldSystemFont(ofSize: 20)
         
+        profileView.addTarget(self, action: #selector(myProfileTapped), for: .touchUpInside)
+        
         configureCollectionView()
         configureHierarchy()
     }
@@ -100,6 +107,17 @@ extension MainViewController {
         print(#function)
         let vc = SearchViewController()
         self.push(vc)
+    }
+    
+    @objc
+    private func myProfileTapped(_ sender: UIButton) {
+        print(#function)
+        let vc = SheetProfileViewController()
+        vc.dismissClosure = {
+            self.profileView = MyProfileView()
+            self.configureView()
+        }
+        self.sheet(vc)
     }
     
 }

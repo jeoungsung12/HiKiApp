@@ -9,13 +9,19 @@ import UIKit
 import SnapKit
 
 final class MyPageViewController: UIViewController {
-    private let myProfileView = MyProfileView()
+    private var myProfileView = MyProfileView()
     private let buttonStackView = UIStackView()
     private let db = Database.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.myProfileView = MyProfileView()
+        self.configureView()
     }
     
 }
@@ -48,8 +54,11 @@ extension MyPageViewController {
         self.setNavigation("설정")
         self.view.backgroundColor = .black
         
+        myProfileView.addTarget(self, action: #selector(myProfileTapped), for: .touchUpInside)
+        
         buttonStackView.spacing = 10
         buttonStackView.axis = .vertical
+        buttonStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         for (type) in MyPageType.allCases {
             let button = MyPageSectionButton()
             if type == .withdraw {
@@ -66,6 +75,17 @@ extension MyPageViewController {
 
 
 extension MyPageViewController {
+    
+    @objc
+    private func myProfileTapped(_ sender: UIButton) {
+        print(#function)
+        let vc = SheetProfileViewController()
+        vc.dismissClosure = {
+            self.myProfileView = MyProfileView()
+            self.configureView()
+        }
+        self.sheet(vc)
+    }
     
     @objc
     private func withdrawTapped(_ sender: UIButton) {

@@ -22,9 +22,14 @@ extension UIViewController {
         self.navigationController?.popViewController(animated: true)
     }
     
+    func sheet(_ vc: UIViewController) {
+        let nv = UINavigationController(rootViewController: vc)
+        self.present(nv, animated: true)
+    }
+    
     func setRootView(_ rootVC: UIViewController) {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first else { return }
-        window.rootViewController = rootVC
+        window.rootViewController = UINavigationController(rootViewController: rootVC)
     }
     
     func setNavigation(_ title: String = "",_ backTitle: String = "",_ color: UIColor = .point) {
