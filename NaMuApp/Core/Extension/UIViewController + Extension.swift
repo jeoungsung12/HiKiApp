@@ -9,7 +9,7 @@ import UIKit
 
 enum AlertType: String, CaseIterable {
     case ok = "확인"
-    case cancel = "실패"
+    case cancel = "취소"
 }
 
 extension UIViewController {
@@ -20,6 +20,11 @@ extension UIViewController {
     
     func pop() {
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    func setRootView(_ rootVC: UIViewController) {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first else { return }
+        window.rootViewController = rootVC
     }
     
     func setNavigation(_ title: String = "",_ backTitle: String = "",_ color: UIColor = .point) {

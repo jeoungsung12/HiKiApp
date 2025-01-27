@@ -11,6 +11,7 @@ import SnapKit
 final class MyPageViewController: UIViewController {
     private let myProfileView = MyProfileView()
     private let buttonStackView = UIStackView()
+    private let db = Database.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,9 +50,11 @@ extension MyPageViewController {
         
         buttonStackView.spacing = 10
         buttonStackView.axis = .vertical
-        for (index, type) in MyPageType.allCases.enumerated() {
+        for (type) in MyPageType.allCases {
             let button = MyPageSectionButton()
-            button.tag = index
+            if type == .withdraw {
+                button.addTarget(self, action: #selector(withdrawTapped), for: .touchUpInside)
+            }
             button.configure(type.rawValue)
             buttonStackView.addArrangedSubview(button)
         }
@@ -59,4 +62,22 @@ extension MyPageViewController {
         configureHierarchy()
     }
     
+}
+
+
+extension MyPageViewController {
+    
+    @objc
+    private func withdrawTapped(_ sender: UIButton) {
+        print(#function)
+        self.customAlert(
+            "탈퇴하기",
+            "탈퇴를 하면 데이터가 모두 초기화됩니다. 탈퇴 하시겠습니까?",
+            [.ok, .cancel]
+        ) {
+            self.db.removeUserInfo()
+            let rootVC = OnboardingViewController()
+            self.setRootView(rootVC)
+        }
+    }
 }

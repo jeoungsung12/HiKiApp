@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		E46EB9112D43653E00F0E536 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = E46EB9102D43653E00F0E536 /* .gitignore */; };
-		E46EB9142D43663600F0E536 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = E46EB9132D43663600F0E536 /* SnapKit */; };
-		E46EB9172D43663F00F0E536 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E46EB9162D43663F00F0E536 /* Kingfisher */; };
-		E46EB91A2D43664800F0E536 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E46EB9192D43664800F0E536 /* Alamofire */; };
+		E47889172D474177008D4B3A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E47889162D474177008D4B3A /* Alamofire */; };
+		E478891A2D47417D008D4B3A /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E47889192D47417D008D4B3A /* Kingfisher */; };
+		E478891D2D474184008D4B3A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = E478891C2D474184008D4B3A /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,9 +44,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E46EB91A2D43664800F0E536 /* Alamofire in Frameworks */,
-				E46EB9172D43663F00F0E536 /* Kingfisher in Frameworks */,
-				E46EB9142D43663600F0E536 /* SnapKit in Frameworks */,
+				E478891D2D474184008D4B3A /* SnapKit in Frameworks */,
+				E478891A2D47417D008D4B3A /* Kingfisher in Frameworks */,
+				E47889172D474177008D4B3A /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,9 +90,9 @@
 			);
 			name = NaMuApp;
 			packageProductDependencies = (
-				E46EB9132D43663600F0E536 /* SnapKit */,
-				E46EB9162D43663F00F0E536 /* Kingfisher */,
-				E46EB9192D43664800F0E536 /* Alamofire */,
+				E47889162D474177008D4B3A /* Alamofire */,
+				E47889192D47417D008D4B3A /* Kingfisher */,
+				E478891C2D474184008D4B3A /* SnapKit */,
 			);
 			productName = NaMuApp;
 			productReference = E46EB8F22D43631200F0E536 /* NaMuApp.app */;
@@ -123,9 +123,9 @@
 			mainGroup = E46EB8E92D43631200F0E536;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				E46EB9122D43663600F0E536 /* XCRemoteSwiftPackageReference "SnapKit" */,
-				E46EB9152D43663F00F0E536 /* XCRemoteSwiftPackageReference "Kingfisher" */,
-				E46EB9182D43664800F0E536 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				E47889152D474177008D4B3A /* XCRemoteSwiftPackageReference "Alamofire" */,
+				E47889182D47417D008D4B3A /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				E478891B2D474184008D4B3A /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E46EB8F32D43631200F0E536 /* Products */;
@@ -181,6 +181,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = WEDLE.NaMuApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -215,6 +216,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = WEDLE.NaMuApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -370,23 +372,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E46EB9122D43663600F0E536 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.7.1;
-			};
-		};
-		E46EB9152D43663F00F0E536 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 8.1.3;
-			};
-		};
-		E46EB9182D43664800F0E536 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+		E47889152D474177008D4B3A /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
 			requirement = {
@@ -394,23 +380,39 @@
 				minimumVersion = 5.10.2;
 			};
 		};
+		E47889182D47417D008D4B3A /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.1.3;
+			};
+		};
+		E478891B2D474184008D4B3A /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E46EB9132D43663600F0E536 /* SnapKit */ = {
+		E47889162D474177008D4B3A /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E46EB9122D43663600F0E536 /* XCRemoteSwiftPackageReference "SnapKit" */;
-			productName = SnapKit;
+			package = E47889152D474177008D4B3A /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
 		};
-		E46EB9162D43663F00F0E536 /* Kingfisher */ = {
+		E47889192D47417D008D4B3A /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E46EB9152D43663F00F0E536 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			package = E47889182D47417D008D4B3A /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
 		};
-		E46EB9192D43664800F0E536 /* Alamofire */ = {
+		E478891C2D474184008D4B3A /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E46EB9182D43664800F0E536 /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = Alamofire;
+			package = E478891B2D474184008D4B3A /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -32,6 +32,11 @@ final class Database {
         }
     }
     
+    func removeUserInfo() {
+        self.isUser = false
+        UserDefaults.standard.removeObject(forKey: "userInfo")
+    }
+    
     func getUser() -> UserInfo {
         return UserInfo(nickname: self.userInfo[0], profile: UIImage(named: self.userInfo[1]), movie: self.userInfo[2], date: self.userInfo[3])
     }

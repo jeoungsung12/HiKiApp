@@ -138,9 +138,8 @@ extension ProfileViewController {
             //TODO: - 변경
             Database.shared.userInfo = [nicknameLabel, .checkProfileImage(profileButton.profileImage.image), "0", .currentDate]
             Database.shared.isUser = true
-            let vc = TabBarController()
-            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first else { return }
-            window.rootViewController = UINavigationController(rootViewController: vc)
+            let rootVC = TabBarController()
+            self.setRootView(rootVC)
         } else {
             self.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
         }
