@@ -9,22 +9,25 @@ import UIKit
 import SnapKit
 
 class SearchDetailViewController: UIViewController {
+    private lazy var heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(heartButtonTapped))
     private let tableView = UITableView()
     private let loadingIndicator = UIActivityIndicatorView()
-    //TODO: 빼내기
-    private lazy var heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(heartButtonTapped))
-    
-    var searchData: SearchResult?
     private var imageData: ImageModel?
     private var creditData: CreditModel?
+    private let db = Database.shared
+    private var buttonTapped: Bool = false
+    
+    var isButton: (()->Void)?
+    var searchData: SearchResult?
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
     }
     
-    @objc
-    private func heartButtonTapped(_ sender: UIBarButtonItem) {
-        
+    func configure() {
+        guard let data = searchData else { return }
+        buttonTapped = db.heartList.contains(data.title)
+        heartButton.image = UIImage(systemName: (db.heartList.contains(data.title) ? "heart.fill" : "heart"))
     }
     
 }
@@ -61,6 +64,7 @@ extension SearchDetailViewController {
         loadingIndicator.style = .medium
         loadingIndicator.color = .lightGray
         
+        configure()
         configureTableView()
         configureHierarchy()
     }
@@ -100,6 +104,23 @@ extension SearchDetailViewController {
         group.notify(queue: .main) {
             self.tableView.reloadData()
             self.loadingIndicator.stopAnimating()
+        }
+    }
+    
+    @objc
+    private func heartButtonTapped(_ sender: UIButton) {
+        print(#function)
+        if let data = self.searchData {
+            buttonTapped.toggle()
+            if buttonTapped {
+                var list = db.heartList
+                list.append(data.title)
+                db.heartList = list
+            } else {
+                db.removeHeartButton(data.title)
+            }
+            self.configure()
+            self.isButton?()
         }
     }
     

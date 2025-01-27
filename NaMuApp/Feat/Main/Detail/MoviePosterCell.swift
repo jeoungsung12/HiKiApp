@@ -119,12 +119,10 @@ extension MoviePosterCell {
                 var list = db.heartList
                 list.append(text)
                 db.heartList = list
-                isButton?()
             } else {
                 db.removeHeartButton(text)
-                isButton?()
             }
+            isButton?()
         }
     }
-    
 }

@@ -65,7 +65,8 @@ extension Database {
     
     func removeUserInfo() {
         self.isUser = false
-        UserDefaults.standard.removeObject(forKey: "userInfo")
+        removeAll("userInfo")
+        removeAll("heartList")
     }
     
     //TODO: - 중복되는 기능 줄일수 있을듯?

@@ -175,6 +175,9 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.id, for: indexPath) as? SearchTableViewCell else { return UITableViewCell() }
         cell.configure(searchData.searchResult[indexPath.row])
+        cell.isButton = {
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+        }
         return cell
     }
     
@@ -183,9 +186,13 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(#function)
+        guard let cell = tableView.cellForRow(at: indexPath) as? SearchTableViewCell else { return }
         let vc = SearchDetailViewController()
-        vc.searchData = searchData.searchResult[indexPath.row]
+        let movie = searchData.searchResult[indexPath.row]
+        vc.searchData = movie
+        vc.isButton = {
+            cell.configure(movie)
+        }
         self.push(vc)
     }
     

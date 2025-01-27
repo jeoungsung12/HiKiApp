@@ -11,7 +11,6 @@ import SnapKit
 final class MainViewController: UIViewController {
     private lazy var searchButton = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(searchButtonTapped))
     private var profileView = MyProfileView()
-    //TODO: - 최근 검색어 기능구현
     private let recentSearchView = MainRecentView()
     private let loadingIndicator = UIActivityIndicatorView()
     private let titleLabel = UILabel()
@@ -31,10 +30,8 @@ final class MainViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        //TODO: - 수정 필요
+        profileView.configure(db.getUser())
         recentSearchView.configure(db.recentSearch.reversed())
-        profileView = MyProfileView()
-        configureView()
     }
     
 }
@@ -89,6 +86,7 @@ extension MainViewController {
         self.view.backgroundColor = .black
         self.navigationItem.rightBarButtonItem = searchButton
         
+        
         loadingIndicator.style = .medium
         loadingIndicator.color = .customLightGray
         
@@ -98,14 +96,12 @@ extension MainViewController {
         titleLabel.font = .boldSystemFont(ofSize: 20)
         
         profileView.addTarget(self, action: #selector(myProfileTapped), for: .touchUpInside)
-        
         configureCollectionView()
         configureHierarchy()
     }
 }
 
 extension MainViewController {
-    
     @objc
     private func searchButtonTapped(_ sender: UIBarButtonItem) {
         print(#function)
@@ -118,8 +114,7 @@ extension MainViewController {
         print(#function)
         let vc = SheetProfileViewController()
         vc.dismissClosure = {
-            self.profileView = MyProfileView()
-            self.configureView()
+            self.profileView.configure(self.db.getUser())
         }
         self.sheet(vc)
     }
@@ -197,14 +192,20 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MoviePosterCell.id, for: indexPath) as? MoviePosterCell else { return UICollectionViewCell() }
         cell.configure(movieData[indexPath.row])
         cell.isButton = {
+            self.profileView.configure(self.db.getUser())
             collectionView.reloadItems(at: [indexPath])
         }
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? MoviePosterCell else { return }
         let vc = SearchDetailViewController()
-        vc.searchData = movieData[indexPath.row]
+        let movie = movieData[indexPath.row]
+        vc.searchData = movie
+        vc.isButton = {
+            cell.configure(movie)
+        }
         self.push(vc)
     }
     

@@ -16,8 +16,10 @@ class SearchTableViewCell: UITableViewCell {
     private let dateLabel = UILabel()
     private let heartButton = UIButton()
     private let genreView = GenreView()
+    private let db = Database.shared
+    private var buttonTapped: Bool = false
     
-    
+    var isButton: (()->Void)?
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureView()
@@ -41,6 +43,8 @@ class SearchTableViewCell: UITableViewCell {
         titleLabel.text = model.title
         dateLabel.text = model.release_date
         genreView.configure(model, .search)
+        buttonTapped = db.heartList.contains(model.title)
+        heartButton.setImage(UIImage(systemName: (db.heartList.contains(model.title)) ? "heart.fill" : "heart"), for: .normal)
     }
 
 }
@@ -109,8 +113,28 @@ extension SearchTableViewCell {
         dateLabel.font = .systemFont(ofSize: 13, weight: .regular)
         
         heartButton.tintColor = .point
-        heartButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+        heartButton.addTarget(self, action: #selector(heartButtonTapped), for: .touchUpInside)
         
         configureHierarchy()
     }
+}
+
+extension SearchTableViewCell {
+    
+    @objc
+    private func heartButtonTapped(_ sender: UIButton) {
+        print(#function)
+        if let text = titleLabel.text {
+            buttonTapped.toggle()
+            if buttonTapped {
+                var list = db.heartList
+                list.append(text)
+                db.heartList = list
+            } else {
+                db.removeHeartButton(text)
+            }
+            isButton?()
+        }
+    }
+    
 }
