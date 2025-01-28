@@ -109,8 +109,11 @@ extension SearchViewController: UISearchBarDelegate {
         searchBar.searchTextField.textColor = ((text.isEmpty)) ? .lightGray : .white
         //TODO: - 변경
         var recentSearch = db.recentSearch
+        //TODO: - 검색내역 중복처리
+        recentSearch.removeAll { $0 == text }
         recentSearch.append(text)
         db.recentSearch = recentSearch
+        
         searchData.searchPage = 1
         searchData.searchResult = []
         searchData.searchPhase = .notFound
@@ -173,8 +176,9 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.id, for: indexPath) as? SearchTableViewCell else { return UITableViewCell() }
-        cell.configure(searchData.searchResult[indexPath.row])
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.id, for: indexPath) as? SearchTableViewCell,
+              let text = searchBar.text else { return UITableViewCell() }
+        cell.configure(text, searchData.searchResult[indexPath.row])
         cell.isButton = {
             tableView.reloadRows(at: [indexPath], with: .automatic)
         }
@@ -186,12 +190,12 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let cell = tableView.cellForRow(at: indexPath) as? SearchTableViewCell else { return }
+        guard let cell = tableView.cellForRow(at: indexPath) as? SearchTableViewCell,  let text = searchBar.text else { return }
         let vc = SearchDetailViewController()
         let movie = searchData.searchResult[indexPath.row]
         vc.searchData = movie
         vc.isButton = {
-            cell.configure(movie)
+            cell.configure(text, movie)
         }
         self.push(vc)
     }

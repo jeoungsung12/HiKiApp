@@ -34,13 +34,13 @@ class SearchTableViewCell: UITableViewCell {
         posterImageView.image = nil
     }
     
-    func configure(_ model: SearchResult) {
+    func configure(_ search: String,_ model: SearchResult) {
         if let poster_path = model.poster_path,
             let url = URL(string: APIEndpoint.trending.imagebaseURL + poster_path) {
             posterImageView.kf.setImage(with: url, placeholder: UIImage(systemName: ""))
             posterImageView.kf.indicatorType = .activity
         }
-        titleLabel.text = model.title
+        highlightLabel(search, model.title)
         dateLabel.text = model.release_date
         genreView.configure(model, .search)
         buttonTapped = db.heartList.contains(model.title)
@@ -120,6 +120,17 @@ extension SearchTableViewCell {
 }
 
 extension SearchTableViewCell {
+    
+    private func highlightLabel(_ search: String,_ text: String) {
+        if let range = text.range(of: search, options: .caseInsensitive) {
+            let nsRange = NSRange(range, in: text)
+            let attributes = NSMutableAttributedString(string: text)
+            attributes.addAttribute(.foregroundColor, value: UIColor.point, range: nsRange)
+            titleLabel.attributedText = attributes
+        } else {
+            titleLabel.text = text
+        }
+    }
     
     @objc
     private func heartButtonTapped(_ sender: UIButton) {
