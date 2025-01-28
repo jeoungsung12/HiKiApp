@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 import SnapKit
 
 class SearchViewController: UIViewController {
@@ -24,6 +25,11 @@ class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        showKeyboard()
     }
     
 }
@@ -86,7 +92,6 @@ extension SearchViewController {
 
 extension SearchViewController: UISearchBarDelegate {
     
-    //TODO: 간소화
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         guard let text = searchBar.text else { return true }
         searchBar.searchTextField.textColor = .customWhite
@@ -106,25 +111,27 @@ extension SearchViewController: UISearchBarDelegate {
         guard let text = searchBar.text else { return }
         searchBar.text = ((text.isEmpty)) ? "영화를 검색해보세요." : text
         searchBar.searchTextField.textColor = ((text.isEmpty)) ? .customDarkGray : .customWhite
-        //TODO: - 변경
-        var recentSearch = db.recentSearch
-        //TODO: - 검색내역 중복처리
-        recentSearch.removeAll { $0 == text }
-        recentSearch.append(text)
-        db.recentSearch = recentSearch
+        db.removeRecentSearch(text)
+        db.recentSearch.append(text)
         
-        searchData.searchPage = 1
-        searchData.searchResult = []
-        searchData.searchPhase = .notFound
+        initData(text)
         fetchData()
     }
     
+    private func showKeyboard() {
+        if let text = searchBar.text, text == "영화를 검색해보세요." {
+            searchBar.becomeFirstResponder()
+        }
+    }
+    
+    private func initData(_ text: String) {
+        searchData = SearchResponse(searchPage: 1, searchText: text, searchPhase: .notFound, searchResult: [])
+    }
 }
 
 extension SearchViewController {
     
     func fetchData() {
-        //TODO: - 공백 체크!
         guard let text = searchBar.text else { return }
         searchData.searchText = text
         loadingIndicator.startAnimating()
@@ -135,11 +142,12 @@ extension SearchViewController {
                 self.checkPhase(data)
                 self.searchData.searchResult += data
                 self.loadingIndicator.stopAnimating()
+                
             case let .failure(error):
                 self.searchData.searchPhase = .notFound
                 self.resultLabel.text = self.searchData.searchPhase.message
-                print(error)
                 self.loadingIndicator.stopAnimating()
+                print(error)
             }
         }
     }
@@ -164,8 +172,8 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
     private func setTableView() {
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.backgroundColor = .customBlack
         tableView.prefetchDataSource = self
+        tableView.backgroundColor = .customBlack
         tableView.showsVerticalScrollIndicator = true
         tableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.id)
     }
@@ -217,7 +225,4 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
         }
     }
     
-    func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
-        //TODO: - Cancel
-    }
 }

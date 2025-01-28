@@ -37,7 +37,7 @@ extension MyPageViewController {
         
         myProfileView.snp.makeConstraints { make in
             make.height.equalToSuperview().dividedBy(6)
-            make.horizontalEdges.equalToSuperview().inset(24)
+            make.horizontalEdges.equalToSuperview().inset(12)
             make.top.equalTo(self.view.safeAreaLayoutGuide).offset(12)
         }
         

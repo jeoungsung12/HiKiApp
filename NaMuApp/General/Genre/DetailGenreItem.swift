@@ -55,10 +55,10 @@ extension DetailGenreItem {
         self.distribution = .fill
         
         genreLabel.textAlignment = .left
-        genreLabel.textColor = .customDarkGray
+        genreLabel.textColor = .customLightGray
         genreLabel.font = .systemFont(ofSize: 12, weight: .regular)
         
-        genreImage.tintColor = .customDarkGray
+        genreImage.tintColor = .customLightGray
         genreImage.contentMode = .scaleAspectFit
         configureHierarchy()
     }

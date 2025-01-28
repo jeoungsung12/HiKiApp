@@ -38,12 +38,12 @@ extension MyPageSectionButton {
     private func configureLayout() {
         
         buttonLabel.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview().inset(24)
+            make.horizontalEdges.equalToSuperview().inset(12)
         }
         
         spacingLayer.snp.makeConstraints { make in
             make.height.equalTo(1)
-            make.horizontalEdges.equalToSuperview().inset(24)
+            make.horizontalEdges.equalToSuperview().inset(12)
             make.top.equalTo(buttonLabel.snp.bottom).offset(12)
         }
         

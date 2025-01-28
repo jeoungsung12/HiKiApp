@@ -7,51 +7,65 @@
 
 import UIKit
 
+//TODO: - 제네릭으로 바꿀수있지 않을까?
 final class Database {
     static let shared = Database()
     
     private init() { }
-    //TODO: - 제네릭 타입으로 바꿀수 있지 않을까?
+    
+    private let ud = UserDefaults.standard
+    private enum Key: String {
+        case isUser = "isUser"
+        case userInfo = "userInfo"
+        case heartList = "heartList"
+        case recentSearch = "recentSearch"
+    }
+    
+    private func get<T>(_ key: Key, binding: T) -> T {
+        return ud.value(forKey: key.rawValue) as? T ?? binding
+    }
+    
+    private func set<T>(_ key: Key, value: T) {
+        ud.setValue(value, forKey: key.rawValue)
+    }
     
     var isUser: Bool {
         get {
-            guard let isUser = UserDefaults.standard.value(forKey: "isUser") as? Bool else { return false }
-            return isUser
+            return self.get(.isUser, binding: false)
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: "isUser")
+            self.set(.isUser, value: newValue)
         }
     }
     
     var userInfo: [String] {
         get {
-            guard var userInfo = UserDefaults.standard.value(forKey: "userInfo") as? [String] else { return [] }
+            //TODO: 수정필요
+            guard var userInfo = self.get(.userInfo, binding: []) as? [String] else { return [] }
             let heartList = self.heartList
             userInfo[2] = heartList.count.formatted()
             return userInfo
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: "userInfo")
+            self.set(.userInfo, value: newValue)
         }
     }
     
     var heartList: [String] {
         get {
-            guard let heartList = UserDefaults.standard.value(forKey: "heartList") as? [String] else { return [] }
-            return heartList
+            return self.get(.heartList, binding: [])
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: "heartList")
+            self.set(.heartList, value: newValue)
         }
     }
     
     var recentSearch: [String] {
         get {
-            guard let recentSearch = UserDefaults.standard.value(forKey: "recentSearch") as? [String] else { return [] }
-            return recentSearch
+            return self.get(.recentSearch, binding: [])
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: "recentSearch")
+            self.set(.recentSearch, value: newValue)
         }
     }
     
@@ -65,26 +79,17 @@ extension Database {
     
     func removeUserInfo() {
         self.isUser = false
-        removeAll("userInfo")
-        removeAll("heartList")
-        removeAll("recentSearch")
+        removeAll(Key.userInfo.rawValue)
+        removeAll(Key.heartList.rawValue)
+        removeAll(Key.recentSearch.rawValue)
     }
     
-    //TODO: - 중복되는 기능 줄일수 있을듯?
     func removeHeartButton(_ remove: String) {
-        guard var heartList = UserDefaults.standard.value(forKey: "heartList") as? [String],
-              let index = heartList.lastIndex(where: { $0 == remove }) else { return }
-        heartList.remove(at: index)
-        //TODO: - 반환하지말고 여기서!
-        self.heartList = heartList
+        self.heartList = heartList.filter { $0 != remove }
     }
     
     func removeRecentSearch(_ remove: String) {
-        guard var recentSearch = UserDefaults.standard.value(forKey: "recentSearch") as? [String],
-              let index = recentSearch.lastIndex(where: { $0 == remove }) else { return }
-        recentSearch.remove(at: index)
-        //TODO: - 반환하지말고 여기서!
-        self.recentSearch = recentSearch
+        self.recentSearch = recentSearch.filter { $0 != remove }
     }
     
     func getUser() -> UserInfo {

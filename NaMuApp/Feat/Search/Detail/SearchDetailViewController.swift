@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class SearchDetailViewController: UIViewController {
+final class SearchDetailViewController: UIViewController {
     private lazy var heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(heartButtonTapped))
     private let tableView = UITableView()
     private let loadingIndicator = UIActivityIndicatorView()
@@ -152,7 +152,6 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
             guard let cell = tableView.dequeueReusableCell(withIdentifier: BackDropTableViewCell.id, for: indexPath) as? BackDropTableViewCell else { return UITableViewCell() }
             cell.backdrops = imageData.backdrops
             cell.configure(searchData)
-            
             return cell
 
         case .synopsis:
@@ -162,19 +161,16 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
                 tableView.beginUpdates()
                 tableView.endUpdates()
             }
-            
             return cell
             
         case .cast:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: CastTableViewCell.id, for: indexPath) as? CastTableViewCell else { return UITableViewCell() }
             cell.castData = creditData.cast ?? []
-            
             return cell
             
         case .poster:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: PosterTableViewCell.id, for: indexPath) as? PosterTableViewCell else { return UITableViewCell() }
             cell.posterData = imageData.posters
-            
             return cell
         }
     }

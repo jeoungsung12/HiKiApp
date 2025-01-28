@@ -9,14 +9,15 @@ import UIKit
 import SnapKit
 
 final class SheetProfileViewController: UIViewController {
-    private let profileButton = CustomProfileButton(120, true)
-    private let nameTextField = UITextField()
-    private let spacingView = UIView()
-    private let descriptionLabel = UILabel()
     private lazy var successButton = UIBarButtonItem(title: "저장", style: .plain, target: self, action: #selector(successButtonTapped))
     private lazy var cancelButton = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(cancelButtonTapped))
     private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapGesture))
     
+    private let profileButton = CustomProfileButton(120, true)
+    private let nameTextField = UITextField()
+    private let spacingView = UIView()
+    private let descriptionLabel = UILabel()
+    private let db = Database.shared
     
     var dismissClosure: (()->Void)?
     override func viewDidLoad() {
@@ -95,11 +96,11 @@ extension SheetProfileViewController {
     }
     
     private func configureProfileView() {
-        if !Database.shared.userInfo.isEmpty {
-            let db = Database.shared.userInfo
-            nameTextField.text = db[0]
-            profileButton.profileImage.image = UIImage(named: db[1])
-            descriptionLabel.text = NickName().checkNickName(nameTextField.text!).rawValue
+        let userInfo = db.userInfo
+        if let text = nameTextField.text, !userInfo.isEmpty {
+            nameTextField.text = userInfo[0]
+            profileButton.profileImage.image = UIImage(named: userInfo[1])
+            descriptionLabel.text = NickName().checkNickName(text).rawValue
         } else {
             guard let image = ProfileData.allCases.randomElement()?.rawValue else { return }
             profileButton.profileImage.image = UIImage(named: image)
@@ -133,9 +134,8 @@ extension SheetProfileViewController {
         print(#function)
         if let nicknameLabel = nameTextField.text, let descriptionLabel = descriptionLabel.text,
            descriptionLabel == NickName.NickNameType.success.rawValue {
-            //TODO: - 변경
-            Database.shared.userInfo = [nicknameLabel, .checkProfileImage(profileButton.profileImage.image), "0", .currentDate]
-            Database.shared.isUser = true
+            db.isUser = true
+            db.userInfo = [nicknameLabel, .checkProfileImage(profileButton.profileImage.image), "0", .currentDate]
             self.dismissClosure?()
             self.dismiss(animated: true)
         } else {

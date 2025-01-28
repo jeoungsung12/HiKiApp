@@ -11,7 +11,7 @@ import SnapKit
 
 class SearchTableViewCell: UITableViewCell {
     static let id: String = "SearchTableViewCell"
-    private let posterImageView = UIImageView()
+    let posterImageView = UIImageView()
     private let titleLabel = UILabel()
     private let dateLabel = UILabel()
     private let heartButton = UIButton()
