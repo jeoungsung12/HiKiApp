@@ -29,7 +29,7 @@ extension UIViewController {
     
     func setRootView(_ rootVC: UIViewController) {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first else { return }
-        window.rootViewController = UINavigationController(rootViewController: rootVC)
+        window.rootViewController = rootVC
     }
     
     func setNavigation(_ title: String = "",_ backTitle: String = "",_ color: UIColor = .point) {
@@ -41,8 +41,8 @@ extension UIViewController {
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .black
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.backgroundColor = .customBlack
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.customWhite]
         
         navigationBar.tintColor = color
         navigationBar.compactAppearance = appearance

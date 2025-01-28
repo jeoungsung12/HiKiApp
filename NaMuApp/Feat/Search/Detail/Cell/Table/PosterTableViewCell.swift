@@ -54,13 +54,13 @@ extension PosterTableViewCell {
     }
     
     private func configureView() {
-        self.backgroundColor = .black
+        self.backgroundColor = .customBlack
         
         titleLabel.text = "Poster"
         titleLabel.numberOfLines = 1
-        titleLabel.textColor = .white
+        titleLabel.textColor = .customWhite
         titleLabel.textAlignment = .left
-        titleLabel.font = .boldSystemFont(ofSize: 18)
+        titleLabel.font = .boldSystemFont(ofSize: 16)
         
         configureCollectionView()
         configureHierarchy()
@@ -73,7 +73,7 @@ extension PosterTableViewCell: UICollectionViewDelegate, UICollectionViewDataSou
     private func configureCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.backgroundColor = .black
+        collectionView.backgroundColor = .customBlack
         collectionView.register(PosterCollectionViewCell.self, forCellWithReuseIdentifier: PosterCollectionViewCell.id)
     }
     

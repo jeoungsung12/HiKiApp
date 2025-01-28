@@ -20,6 +20,7 @@ final class MainRecentView: UIView {
     var removeTapped: ((String)->Void)?
     override init(frame: CGRect) {
         super.init(frame: frame)
+        configureView()
     }
     
     required init?(coder: NSCoder) {
@@ -27,11 +28,13 @@ final class MainRecentView: UIView {
     }
     
     func configure(_ recentSearch: [String]) {
-        configureView(recentSearch)
+        configureStackView(recentSearch)
+        resultLabel.text = (recentSearch.isEmpty) ? "최근 검색어 내역이 없습니다." : ""
     }
     
 }
 
+//MARK: - Configure UI
 extension MainRecentView {
     
     private func configureHierarchy() {
@@ -50,7 +53,7 @@ extension MainRecentView {
         
         titleLabel.snp.makeConstraints { make in
             make.top.leading.equalToSuperview().inset(12)
-            make.trailing.equalTo(removeButton.snp.leading).offset(-12)
+            make.trailing.lessThanOrEqualTo(removeButton.snp.leading).offset(-12)
         }
         
         stackView.snp.makeConstraints { make in
@@ -61,7 +64,7 @@ extension MainRecentView {
         scrollView.snp.makeConstraints { make in
             make.height.equalTo(60)
             make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(titleLabel.snp.bottom).offset(12)
+            make.top.equalTo(removeButton.snp.bottom).offset(12)
         }
         
         resultLabel.snp.makeConstraints { make in
@@ -69,21 +72,20 @@ extension MainRecentView {
         }
     }
     
-    private func configureView(_ recentSearch: [String]) {
+    private func configureView() {
         removeButton.setTitle("전체 삭제", for: .normal)
         removeButton.setTitleColor(.point, for: .normal)
         removeButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
         removeButton.addTarget(self, action: #selector(removeButtonTapped), for: .touchUpInside)
         
         titleLabel.text = "최근검색어"
-        titleLabel.textColor = .white
+        titleLabel.textColor = .customWhite
         titleLabel.textAlignment = .left
-        titleLabel.font = .boldSystemFont(ofSize: 20)
+        titleLabel.font = .boldSystemFont(ofSize: 16)
         
-        resultLabel.textColor = .lightGray
+        resultLabel.textColor = .customDarkGray
         resultLabel.textAlignment = .center
         resultLabel.font = .systemFont(ofSize: 12, weight: .semibold)
-        resultLabel.text = (recentSearch.isEmpty) ? "최근 검색어 내역이 없습니다." : ""
         
         stackView.spacing = 8
         stackView.axis = .horizontal
@@ -91,7 +93,6 @@ extension MainRecentView {
         
         scrollView.showsHorizontalScrollIndicator = false
         
-        configureStackView(recentSearch)
         configureHierarchy()
     }
     
@@ -108,6 +109,7 @@ extension MainRecentView {
     
 }
 
+//MARK: - Action
 extension MainRecentView {
     
     @objc

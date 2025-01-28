@@ -58,11 +58,11 @@ extension SearchDetailViewController {
     private func configureView() {
         guard let searchData = searchData else { return }
         self.setNavigation(searchData.title)
-        self.view.backgroundColor = .black
+        self.view.backgroundColor = .customBlack
         self.navigationItem.rightBarButtonItem = heartButton
         
         loadingIndicator.style = .medium
-        loadingIndicator.color = .lightGray
+        loadingIndicator.color = .customLightGray
         
         configure()
         configureTableView()
@@ -133,7 +133,7 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
-        tableView.backgroundColor = .black
+        tableView.backgroundColor = .customBlack
         tableView.register(BackDropTableViewCell.self, forCellReuseIdentifier: BackDropTableViewCell.id)
         tableView.register(SynopsisTableViewCell.self, forCellReuseIdentifier: SynopsisTableViewCell.id)
         tableView.register(CastTableViewCell.self, forCellReuseIdentifier: CastTableViewCell.id)

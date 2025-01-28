@@ -65,20 +65,20 @@ extension SynopsisTableViewCell {
     }
     
     private func configureView() {
-        self.backgroundColor = .black
+        self.backgroundColor = .customBlack
         
         titleLabel.text = "Synopsis"
         titleLabel.numberOfLines = 1
-        titleLabel.textColor = .white
+        titleLabel.textColor = .customWhite
         titleLabel.textAlignment = .left
-        titleLabel.font = .boldSystemFont(ofSize: 18)
+        titleLabel.font = .boldSystemFont(ofSize: 16)
         
         moreButton.setTitle(isSelected ? "Hide" : "More", for: .normal)
         moreButton.setTitleColor(.point, for: .normal)
         moreButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
         moreButton.addTarget(self, action: #selector(moreButtonTapped), for: .touchUpInside)
         
-        synopsisLabel.textColor = .white
+        synopsisLabel.textColor = .customWhite
         synopsisLabel.textAlignment = .left
         synopsisLabel.numberOfLines = (isSelected ? 0 : 3)
         synopsisLabel.font = .systemFont(ofSize: 15, weight: .regular)

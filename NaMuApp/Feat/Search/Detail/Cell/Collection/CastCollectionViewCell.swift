@@ -72,13 +72,13 @@ extension CastCollectionViewCell {
     }
     
     private func configureView() {
-        self.backgroundColor = .black
+        self.backgroundColor = .customBlack
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 30
         imageView.contentMode = .scaleToFill
         imageView.backgroundColor = .darkGray
         
-        nameLabel.textColor = .white
+        nameLabel.textColor = .customWhite
         nameLabel.font = .boldSystemFont(ofSize: 15)
         
         originalLabel.textColor = .customLightGray

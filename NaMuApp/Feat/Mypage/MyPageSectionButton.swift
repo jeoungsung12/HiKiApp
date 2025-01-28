@@ -50,11 +50,11 @@ extension MyPageSectionButton {
     }
     
     private func configureView() {
-        buttonLabel.textColor = .white
+        buttonLabel.textColor = .customWhite
         buttonLabel.textAlignment = .left
         buttonLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         
-        spacingLayer.backgroundColor = .gray
+        spacingLayer.backgroundColor = .customDarkGray
         configureHierarchy()
     }
     

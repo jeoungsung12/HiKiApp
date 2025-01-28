@@ -33,6 +33,7 @@ final class ProfileImageCollectionViewCell: UICollectionViewCell {
     }
 }
 
+//MARK: - Configure UI
 extension ProfileImageCollectionViewCell {
     
     private func configureHierarchy() {
@@ -48,8 +49,8 @@ extension ProfileImageCollectionViewCell {
     
     private func configureView() {
         profileButton.containerView.isHidden = true
-        profileButton.isUserInteractionEnabled = false
         profileButton.alpha = (isSelected ? 1 : 0.5)
+        profileButton.isUserInteractionEnabled = false
         profileButton.profileImage.setBorder(isSelected, size / 2)
         
         configureHierarchy()

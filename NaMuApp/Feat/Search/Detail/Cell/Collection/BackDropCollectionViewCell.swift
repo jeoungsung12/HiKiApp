@@ -51,7 +51,7 @@ extension BackDropCollectionViewCell {
     }
     
     private func configureView() {
-        self.backgroundColor = .black
+        self.backgroundColor = .customBlack
         imageView.backgroundColor = .darkGray
         imageView.contentMode = .scaleToFill
         configureHierarchy()

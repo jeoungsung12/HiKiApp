@@ -9,8 +9,9 @@ import UIKit
 import SnapKit
 
 final class ProfileImageViewController: UIViewController {
-    private let profileButton = CustomProfileButton(120, true)
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
+    private let profileButton = CustomProfileButton(120, true)
+    
     var returnImage: ((UIImage?) -> Void)?
     var profileImage: UIImage?
     override func viewDidLoad() {
@@ -30,7 +31,6 @@ extension ProfileImageViewController {
     }
     
     private func configureLayout() {
-        
         profileButton.snp.makeConstraints { make in
             make.size.equalTo(150)
             make.centerX.equalToSuperview().offset(10)
@@ -41,17 +41,17 @@ extension ProfileImageViewController {
             make.bottom.horizontalEdges.equalToSuperview()
             make.top.equalTo(profileButton.snp.bottom).offset(36)
         }
-        
     }
     
     private func configureView() {
-        self.view.backgroundColor = .black
         self.setNavigation("프로필 이미지 설정")
+        self.view.backgroundColor = .customBlack
+        
         profileButton.isUserInteractionEnabled = false
         profileButton.profileImage.image = profileImage
         
         backAction()
-        setCollectionView()
+        configureCollectionView()
         configureHierarchy()
     }
 }
@@ -73,7 +73,7 @@ extension ProfileImageViewController {
 //MARK: - CollectionView
 extension ProfileImageViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
-    private func setCollectionView() {
+    private func configureCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.isScrollEnabled = false
@@ -100,6 +100,7 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
         let image = UIImage(named: ProfileData.allCases[indexPath.row].rawValue)
         cell.configure(image)
         cell.profileButton.containerView.isHidden = true
+        
         return cell
     }
     

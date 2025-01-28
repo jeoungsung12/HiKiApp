@@ -54,13 +54,13 @@ extension CastTableViewCell {
     }
     
     private func configureView() {
-        self.backgroundColor = .black
+        self.backgroundColor = .customBlack
         
         titleLabel.text = "Cast"
         titleLabel.numberOfLines = 1
-        titleLabel.textColor = .white
+        titleLabel.textColor = .customWhite
         titleLabel.textAlignment = .left
-        titleLabel.font = .boldSystemFont(ofSize: 18)
+        titleLabel.font = .boldSystemFont(ofSize: 16)
         
         configureCollectionView()
         configureHierarchy()
@@ -73,7 +73,7 @@ extension CastTableViewCell: UICollectionViewDelegate, UICollectionViewDataSourc
     private func configureCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.backgroundColor = .black
+        collectionView.backgroundColor = .customBlack
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.register(CastCollectionViewCell.self, forCellWithReuseIdentifier: CastCollectionViewCell.id)
     }

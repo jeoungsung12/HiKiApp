@@ -67,9 +67,9 @@ extension BackDropTableViewCell {
     }
     
     private func configureView() {
-        self.backgroundColor = .black
+        self.backgroundColor = .customBlack
         pageControl.currentPage = 0
-        pageControl.currentPageIndicatorTintColor = .white
+        pageControl.currentPageIndicatorTintColor = .customWhite
         pageControl.pageIndicatorTintColor = .customDarkGray
         
         configureCollectionView()
@@ -84,7 +84,7 @@ extension BackDropTableViewCell: UICollectionViewDelegate, UICollectionViewDataS
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.isPagingEnabled = true
-        collectionView.backgroundColor = .black
+        collectionView.backgroundColor = .customBlack
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.register(BackDropCollectionViewCell.self, forCellWithReuseIdentifier: BackDropCollectionViewCell.id)
     }

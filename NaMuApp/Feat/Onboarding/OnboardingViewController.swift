@@ -7,7 +7,6 @@
 
 import UIKit
 import SnapKit
-import SwiftUI
 
 final class OnboardingViewController: UIViewController {
     private let imageView = UIImageView()
@@ -62,7 +61,6 @@ extension OnboardingViewController {
             make.bottom.lessThanOrEqualToSuperview().offset(-24)
             make.top.equalTo(descriptionLabel.snp.bottom).offset(36)
         }
-        
     }
     
     private func configureView() {
@@ -72,14 +70,14 @@ extension OnboardingViewController {
         imageView.contentMode = .scaleToFill
         imageView.image = UIImage(named: "onboarding")
         
-        titleLabel.textColor = .white
         titleLabel.text = "Onboarding"
+        titleLabel.textColor = .customWhite
         titleLabel.textAlignment = .center
         titleLabel.font = .boldItalicFont(30)
         
         descriptionLabel.numberOfLines = 2
-        descriptionLabel.textColor = .white
         descriptionLabel.textAlignment = .center
+        descriptionLabel.textColor = .customWhite
         descriptionLabel.text = "당신만의 영화 세상,\nNaMu를 시작해보세요."
         descriptionLabel.font = .systemFont(ofSize: 15, weight: .regular)
         
@@ -87,7 +85,6 @@ extension OnboardingViewController {
         startButton.setTitle("시작하기", for: .normal)
         startButton.setTitleColor(.point, for: .normal)
         startButton.addTarget(self, action: #selector(startButtonTapped), for: .touchUpInside)
-        
         
         configureHierarchy()
     }

@@ -35,13 +35,13 @@ extension TabBarController {
            
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .black
+        appearance.backgroundColor = .customBlack
         self.tabBar.standardAppearance = appearance
         self.tabBar.scrollEdgeAppearance = appearance
         
         self.selectedIndex = 0
         self.tabBar.tintColor = .point
-        self.tabBar.unselectedItemTintColor = .gray
+        self.tabBar.unselectedItemTintColor = .customDarkGray
     }
     
 }

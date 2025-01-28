@@ -67,6 +67,7 @@ extension Database {
         self.isUser = false
         removeAll("userInfo")
         removeAll("heartList")
+        removeAll("recentSearch")
     }
     
     //TODO: - 중복되는 기능 줄일수 있을듯?

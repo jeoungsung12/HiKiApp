@@ -30,8 +30,7 @@ final class MainViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        profileView.configure(db.getUser())
-        recentSearchView.configure(db.recentSearch.reversed())
+        updateProfileAndRecentSearch()
     }
     
 }
@@ -49,10 +48,9 @@ extension MainViewController {
     }
     
     private func configureLayout() {
-        
         profileView.snp.makeConstraints { make in
             make.height.equalToSuperview().dividedBy(6)
-            make.horizontalEdges.equalToSuperview().inset(24)
+            make.horizontalEdges.equalToSuperview().inset(12)
             make.top.equalTo(self.view.safeAreaLayoutGuide).offset(12)
         }
         
@@ -63,6 +61,7 @@ extension MainViewController {
         }
         
         titleLabel.snp.makeConstraints { make in
+            make.height.equalTo(20)
             make.horizontalEdges.equalToSuperview().inset(12)
             make.top.equalTo(recentSearchView.snp.bottom).offset(12)
         }
@@ -83,25 +82,27 @@ extension MainViewController {
     
     private func configureView() {
         self.setNavigation("NaMu")
-        self.view.backgroundColor = .black
+        self.view.backgroundColor = .customBlack
         self.navigationItem.rightBarButtonItem = searchButton
-        
         
         loadingIndicator.style = .medium
         loadingIndicator.color = .customLightGray
         
         titleLabel.text = "오늘의 영화"
-        titleLabel.textColor = .white
         titleLabel.textAlignment = .left
-        titleLabel.font = .boldSystemFont(ofSize: 20)
+        titleLabel.textColor = .customWhite
+        titleLabel.font = .boldSystemFont(ofSize: 16)
         
         profileView.addTarget(self, action: #selector(myProfileTapped), for: .touchUpInside)
+        
         configureCollectionView()
         configureHierarchy()
     }
 }
 
+//MARK: - Action
 extension MainViewController {
+    
     @objc
     private func searchButtonTapped(_ sender: UIBarButtonItem) {
         print(#function)
@@ -113,19 +114,23 @@ extension MainViewController {
     private func myProfileTapped(_ sender: UIButton) {
         print(#function)
         let vc = SheetProfileViewController()
-        vc.dismissClosure = {
+        vc.dismissClosure = { [weak self] in
+            guard let self = self else { return }
             self.profileView.configure(self.db.getUser())
         }
         self.sheet(vc)
     }
     
     private func recentTapped() {
-        //TODO: - 델리겟으로 바꿀까?
-        recentSearchView.removeAll = {
+        recentSearchView.removeAll = { [weak self] in
+            guard let self = self else { return }
             self.db.removeAll("recentSearch")
             self.recentSearchView.configure(self.db.recentSearch.reversed())
-            //TODO: - 뷰를 전부 다시 그려야하는가?
-            self.configureView()
+        }
+        recentSearchView.removeTapped = { [weak self] recent in
+            guard let self = self else { return }
+            self.db.removeRecentSearch(recent)
+            self.recentSearchView.configure(db.recentSearch.reversed())
         }
         recentSearchView.recentTapped = { [weak self] recent in
             guard let self = self else { return }
@@ -135,18 +140,12 @@ extension MainViewController {
             vc.fetchData()
             self.push(vc)
         }
-        recentSearchView.removeTapped = { [weak self] recent in
-            guard let self = self else { return }
-            self.db.removeRecentSearch(recent)
-            self.recentSearchView.configure(db.recentSearch.reversed())
-            //TODO: - 뷰를 전부 다시 그려야하는가?
-            self.configureView()
-        }
     }
     
-}
-
-extension MainViewController {
+    private func updateProfileAndRecentSearch() {
+        profileView.configure(db.getUser())
+        recentSearchView.configure(db.recentSearch.reversed())
+    }
     
     private func fetchData() {
         loadingIndicator.startAnimating()
@@ -179,7 +178,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         let width = ((UIScreen.main.bounds.width) / 2)
-        layout.itemSize = CGSize(width: width, height: ((UIScreen.main.bounds.height / 2) - 100))
+        layout.itemSize = CGSize(width: width, height: ((UIScreen.main.bounds.height / 2)))
         layout.sectionInset = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
         return layout
     }
@@ -191,7 +190,8 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MoviePosterCell.id, for: indexPath) as? MoviePosterCell else { return UICollectionViewCell() }
         cell.configure(movieData[indexPath.row])
-        cell.isButton = {
+        cell.isButton = { [weak self] in
+            guard let self = self else { return }
             self.profileView.configure(self.db.getUser())
             collectionView.reloadItems(at: [indexPath])
         }

@@ -55,11 +55,11 @@ extension RecentView {
         stackView.axis = .horizontal
         stackView.distribution = .fill
         
-        titleButton.setTitleColor(.black, for: .normal)
+        titleButton.setTitleColor(.customBlack, for: .normal)
         titleButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
         titleButton.addTarget(self, action: #selector(recentItemTapped), for: .touchUpInside)
         
-        removeButton.tintColor = .black
+        removeButton.tintColor = .customBlack
         removeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
         removeButton.addTarget(self, action: #selector(removeItemTapped), for: .touchUpInside)
         configureHierarchy()

@@ -60,7 +60,7 @@ extension CustomProfileButton {
         containerView.layer.cornerRadius = 15
         containerView.backgroundColor = .point
         
-        overlayImage.tintColor = .white
+        overlayImage.tintColor = .customWhite
         overlayImage.image = UIImage(systemName: "camera.fill")
         
         configureHierarchy(size)

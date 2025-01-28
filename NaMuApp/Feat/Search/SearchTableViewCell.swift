@@ -96,7 +96,7 @@ extension SearchTableViewCell {
     }
     
     private func configureView() {
-        self.contentView.backgroundColor = .black
+        self.contentView.backgroundColor = .customBlack
         
         posterImageView.clipsToBounds = true
         posterImageView.layer.cornerRadius = 15
@@ -104,11 +104,11 @@ extension SearchTableViewCell {
         posterImageView.backgroundColor = .darkGray
         
         titleLabel.numberOfLines = 2
-        titleLabel.textColor = .white
+        titleLabel.textColor = .customWhite
         titleLabel.textAlignment = .left
         titleLabel.font = .boldSystemFont(ofSize: 15)
         
-        dateLabel.textColor = .gray
+        dateLabel.textColor = .customDarkGray
         dateLabel.textAlignment = .left
         dateLabel.font = .systemFont(ofSize: 13, weight: .regular)
         
@@ -128,7 +128,8 @@ extension SearchTableViewCell {
             attributes.addAttribute(.foregroundColor, value: UIColor.point, range: nsRange)
             titleLabel.attributedText = attributes
         } else {
-            titleLabel.text = text
+            let attributes = NSMutableAttributedString(string: text)
+            titleLabel.attributedText = attributes
         }
     }
     

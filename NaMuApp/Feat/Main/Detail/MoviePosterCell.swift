@@ -94,13 +94,13 @@ extension MoviePosterCell {
         heartButton.addTarget(self, action: #selector(heartButtonTapped), for: .touchUpInside)
         
         titleLabel.numberOfLines = 1
-        titleLabel.textColor = .white
         titleLabel.textAlignment = .left
-        titleLabel.font = .boldSystemFont(ofSize: 18)
+        titleLabel.textColor = .customWhite
+        titleLabel.font = .boldSystemFont(ofSize: 16)
         
         descriptionLabel.numberOfLines = 2
-        descriptionLabel.textColor = .white
         descriptionLabel.textAlignment = .left
+        descriptionLabel.textColor = .customWhite
         descriptionLabel.font = .systemFont(ofSize: 15, weight: .regular)
         
         configureHierarchy()

@@ -59,21 +59,20 @@ extension SearchViewController {
             make.size.equalTo(40)
             make.center.equalToSuperview().offset(20)
         }
-        
     }
     
     private func configureView() {
         self.setNavigation("영화검색")
-        self.view.backgroundColor = .black
+        self.view.backgroundColor = .customBlack
         
         searchBar.delegate = self
         searchBar.searchBarStyle = .minimal
-        searchBar.searchTextField.textColor = .lightGray
+        searchBar.searchTextField.textColor = .customDarkGray
         if (searchData.searchText == "") {
             searchBar.searchTextField.text =  "영화를 검색해보세요."
         }
         
-        resultLabel.textColor = .lightGray
+        resultLabel.textColor = .customDarkGray
         resultLabel.textAlignment = .center
         resultLabel.font = .systemFont(ofSize: 13, weight: .semibold)
         
@@ -90,7 +89,7 @@ extension SearchViewController: UISearchBarDelegate {
     //TODO: 간소화
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         guard let text = searchBar.text else { return true }
-        searchBar.searchTextField.textColor = .white
+        searchBar.searchTextField.textColor = .customWhite
         searchBar.text = ((text == "영화를 검색해보세요.")) ? "" : text
         return true
     }
@@ -98,7 +97,7 @@ extension SearchViewController: UISearchBarDelegate {
     func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
         guard let text = searchBar.text else { return true }
         searchBar.text = ((text.isEmpty)) ? "영화를 검색해보세요." : text
-        searchBar.searchTextField.textColor = ((text.isEmpty)) ? .lightGray : .white
+        searchBar.searchTextField.textColor = ((text.isEmpty)) ? .customDarkGray : .customWhite
         return true
     }
     
@@ -106,7 +105,7 @@ extension SearchViewController: UISearchBarDelegate {
         view.endEditing(true)
         guard let text = searchBar.text else { return }
         searchBar.text = ((text.isEmpty)) ? "영화를 검색해보세요." : text
-        searchBar.searchTextField.textColor = ((text.isEmpty)) ? .lightGray : .white
+        searchBar.searchTextField.textColor = ((text.isEmpty)) ? .customDarkGray : .customWhite
         //TODO: - 변경
         var recentSearch = db.recentSearch
         //TODO: - 검색내역 중복처리
@@ -165,7 +164,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
     private func setTableView() {
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.backgroundColor = .black
+        tableView.backgroundColor = .customBlack
         tableView.prefetchDataSource = self
         tableView.showsVerticalScrollIndicator = true
         tableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.id)

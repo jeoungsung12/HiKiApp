@@ -9,7 +9,6 @@ import UIKit
 import SnapKit
 
 final class SheetProfileViewController: UIViewController {
-    //TODO: - 간소화 가능하지 않을까?
     private let profileButton = CustomProfileButton(120, true)
     private let nameTextField = UITextField()
     private let spacingView = UIView()
@@ -72,19 +71,19 @@ extension SheetProfileViewController {
     
     private func configureView() {
         self.setNavigation("프로필 설정")
-        self.view.backgroundColor = .black
+        self.view.backgroundColor = .customBlack
         self.navigationItem.leftBarButtonItem = cancelButton
         self.navigationItem.rightBarButtonItem = successButton
         
         profileButton.addTarget(self, action: #selector(profilebuttonTapped), for: .touchUpInside)
         
         nameTextField.delegate = self
-        nameTextField.textColor = .lightGray
+        nameTextField.textColor = .customDarkGray
         nameTextField.textAlignment = .left
         nameTextField.text = "닉네임을 설정해 주세요"
         nameTextField.font = .systemFont(ofSize: 15, weight: .semibold)
         
-        spacingView.backgroundColor = .white
+        spacingView.backgroundColor = .customWhite
         
         descriptionLabel.numberOfLines = 1
         descriptionLabel.textColor = .point
@@ -155,12 +154,12 @@ extension SheetProfileViewController: UITextFieldDelegate {
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.text = ""
-        textField.textColor = .white
+        textField.textColor = .customWhite
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         guard let text = textField.text else { return }
-        textField.textColor = ((text.isEmpty)) ? .lightGray : .white
+        textField.textColor = ((text.isEmpty)) ? .customDarkGray : .customWhite
         textField.text = ((text.isEmpty)) ? "닉네임을 설정해 주세요" : text
     }
     

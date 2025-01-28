@@ -52,7 +52,7 @@ extension PosterCollectionViewCell {
     }
     
     private func configureView() {
-        self.backgroundColor = .black
+        self.backgroundColor = .customBlack
         posterImageView.clipsToBounds = true
         posterImageView.layer.cornerRadius = 15
         posterImageView.contentMode = .scaleToFill

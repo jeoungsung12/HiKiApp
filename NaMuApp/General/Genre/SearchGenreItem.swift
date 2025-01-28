@@ -48,7 +48,7 @@ extension SearchGenreItem {
         self.distribution = .fill
         
         genreLabel.textAlignment = .left
-        genreLabel.textColor = .white
+        genreLabel.textColor = .customWhite
         genreLabel.clipsToBounds = true
         genreLabel.layer.cornerRadius = 5
         genreLabel.backgroundColor = .darkGray

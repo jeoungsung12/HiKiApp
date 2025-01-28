@@ -51,7 +51,7 @@ extension MyPageViewController {
     
     private func configureView() {
         self.setNavigation("설정")
-        self.view.backgroundColor = .black
+        self.view.backgroundColor = .customBlack
         
         myProfileView.addTarget(self, action: #selector(myProfileTapped), for: .touchUpInside)
         
@@ -94,7 +94,7 @@ extension MyPageViewController {
             [.ok, .cancel]
         ) {
             self.db.removeUserInfo()
-            let rootVC = OnboardingViewController()
+            let rootVC = UINavigationController(rootViewController: OnboardingViewController())
             self.setRootView(rootVC)
         }
     }

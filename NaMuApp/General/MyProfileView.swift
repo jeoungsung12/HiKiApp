@@ -74,7 +74,7 @@ extension MyProfileView {
             make.height.equalTo(40)
             make.horizontalEdges.equalToSuperview().inset(12)
             make.bottom.lessThanOrEqualToSuperview().offset(-12)
-            make.top.equalTo(profileImage.snp.bottom).offset(12)
+            make.top.equalTo(profileImage.snp.bottom).offset(16)
         }
         
     }
@@ -87,9 +87,9 @@ extension MyProfileView {
         profileImage.containerView.isHidden = true
         profileImage.isUserInteractionEnabled = false
         
-        nameLabel.textColor = .white
+        nameLabel.textColor = .customWhite
         nameLabel.textAlignment = .left
-        nameLabel.font = .boldSystemFont(ofSize: 18)
+        nameLabel.font = .boldSystemFont(ofSize: 16)
         
         dateLabel.textColor = .customDarkGray
         dateLabel.textAlignment = .left
@@ -98,7 +98,7 @@ extension MyProfileView {
         saveButton.clipsToBounds = true
         saveButton.layer.cornerRadius = 10
         saveButton.backgroundColor = .point
-        saveButton.setTitleColor(.white, for: .normal)
+        saveButton.setTitleColor(.customWhite, for: .normal)
         saveButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
         
         //TODO: - 이미지 수정
