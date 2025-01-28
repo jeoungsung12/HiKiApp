@@ -27,6 +27,12 @@ extension UIViewController {
         self.present(nv, animated: true)
     }
     
+    func errorPresent(_ type: NetworkError.CustomError) {
+        let vc = ErrorViewController(type.errorDescription ?? "")
+        vc.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: false)
+    }
+    
     func setRootView(_ rootVC: UIViewController) {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first else { return }
         window.rootViewController = rootVC

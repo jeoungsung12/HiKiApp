@@ -156,7 +156,7 @@ extension MainViewController {
                 self.movieData = data
                 self.loadingIndicator.stopAnimating()
             case let .failure(error):
-                print(error)
+                self.errorPresent(error)
                 self.loadingIndicator.stopAnimating()
             }
         }

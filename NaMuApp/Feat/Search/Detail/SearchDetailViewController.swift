@@ -85,7 +85,7 @@ extension SearchDetailViewController {
                 self.imageData = data
                 group.leave()
             case  let .failure(error):
-                print(error)
+                self.errorPresent(error)
                 group.leave()
             }
         }
@@ -97,7 +97,7 @@ extension SearchDetailViewController {
                 self.creditData = data
                 group.leave()
             case  let .failure(error):
-                print(error)
+                self.errorPresent(error)
                 group.leave()
             }
         }

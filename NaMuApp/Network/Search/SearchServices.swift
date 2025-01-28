@@ -9,8 +9,8 @@ import Foundation
 
 final class SearchServices {
     
-    func getSearch(_ model: SearchResponse, completion: @escaping (Result<[SearchResult],Error>) -> Void) {
-        NetworkManager.shared.getData(.search(model: model)) { (response: Result<SearchModel,Error>) in
+    func getSearch(_ model: SearchResponse, completion: @escaping (Result<[SearchResult],NetworkError.CustomError>) -> Void) {
+        NetworkManager.shared.getData(.search(model: model)) { (response: Result<SearchModel,NetworkError.CustomError>) in
 //            print(response)
             switch response {
             case let .success(data):

@@ -10,8 +10,8 @@ import Alamofire
 
 final class TrendingServices {
     
-    func getTrending(completion: @escaping (Result<[SearchResult],Error>) -> Void) {
-        NetworkManager.shared.getData(.trending) { (response: Result<SearchModel,Error>) in
+    func getTrending(completion: @escaping (Result<[SearchResult],NetworkError.CustomError>) -> Void) {
+        NetworkManager.shared.getData(.trending) { (response: Result<SearchModel,NetworkError.CustomError>) in
             switch response {
             case let .success(data):
                 completion(.success(data.results))

@@ -9,8 +9,8 @@ import Foundation
 
 final class ImageServices {
     
-    func getImage(_ id: Int, completion: @escaping (Result<ImageModel,Error>) -> Void) {
-        NetworkManager.shared.getData(.image(id: id)) { (response: Result<ImageModel,Error>) in
+    func getImage(_ id: Int, completion: @escaping (Result<ImageModel,NetworkError.CustomError>) -> Void) {
+        NetworkManager.shared.getData(.image(id: id)) { (response: Result<ImageModel,NetworkError.CustomError>) in
             switch response {
             case let .success(data):
                 completion(.success(data))

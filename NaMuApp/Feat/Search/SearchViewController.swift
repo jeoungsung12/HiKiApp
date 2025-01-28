@@ -147,7 +147,6 @@ extension SearchViewController {
                 self.searchData.searchPhase = .notFound
                 self.resultLabel.text = self.searchData.searchPhase.message
                 self.loadingIndicator.stopAnimating()
-                print(error)
             }
         }
     }
