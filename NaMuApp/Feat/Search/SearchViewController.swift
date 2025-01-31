@@ -143,10 +143,14 @@ extension SearchViewController {
                 self.searchData.searchResult += data
                 self.loadingIndicator.stopAnimating()
                 
-            case .failure:
-                self.searchData.searchPhase = .notFound
-                self.resultLabel.text = self.searchData.searchPhase.message
-                self.loadingIndicator.stopAnimating()
+            case let .failure(error):
+                if error == .network {
+                    self.errorPresent(error)
+                } else {
+                    self.searchData.searchPhase = .notFound
+                    self.resultLabel.text = self.searchData.searchPhase.message
+                    self.loadingIndicator.stopAnimating()
+                }
             }
         }
     }
@@ -172,6 +176,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
         tableView.delegate = self
         tableView.dataSource = self
         tableView.prefetchDataSource = self
+        tableView.keyboardDismissMode = .onDrag
         tableView.backgroundColor = .customBlack
         tableView.showsVerticalScrollIndicator = true
         tableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.id)
@@ -207,7 +212,6 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
     }
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        print(searchData.searchResult.count, indexPaths.last)
         if let indexPath = indexPaths.last,
            searchData.searchResult.count - 2 < indexPath.row {
             switch searchData.searchPhase {
