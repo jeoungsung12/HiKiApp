@@ -11,10 +11,12 @@ import SnapKit
 class PosterTableViewCell: UITableViewCell {
     static let id: String = "PosterTableViewCell"
     private let titleLabel = UILabel()
+    private let imageResult = UILabel()
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.setcollectionViewLayout())
 
     var posterData: [ImageDetailModel] = [] {
         didSet {
+            updateResultLabel()
             collectionView.reloadData()
         }
     }
@@ -38,6 +40,7 @@ extension PosterTableViewCell {
     private func configureHierarchy() {
         self.addSubview(titleLabel)
         self.addSubview(collectionView)
+        self.addSubview(imageResult)
         configureLayout()
     }
     
@@ -51,10 +54,23 @@ extension PosterTableViewCell {
             make.horizontalEdges.bottom.equalToSuperview()
             make.top.equalTo(titleLabel.snp.bottom).offset(8)
         }
+        
+        imageResult.snp.makeConstraints { make in
+            make.height.equalTo(200)
+            make.horizontalEdges.bottom.equalToSuperview()
+            make.top.equalTo(titleLabel.snp.bottom).offset(8)
+        }
     }
     
     private func configureView() {
         self.backgroundColor = .customBlack
+        updateResultLabel()
+        imageResult.numberOfLines = 0
+        imageResult.textColor = .white
+        imageResult.textAlignment = .center
+        imageResult.backgroundColor = .clear
+        imageResult.font = .boldSystemFont(ofSize: 15)
+        imageResult.text = (!posterData.isEmpty) ? nil : NetworkError.noImage
         
         titleLabel.text = "Poster"
         titleLabel.numberOfLines = 1
@@ -64,6 +80,10 @@ extension PosterTableViewCell {
         
         configureCollectionView()
         configureHierarchy()
+    }
+    
+    private func updateResultLabel() {
+        imageResult.text = (!posterData.isEmpty) ? nil : NetworkError.noImage
     }
     
 }

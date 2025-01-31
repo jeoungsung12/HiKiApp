@@ -11,6 +11,7 @@ import SnapKit
 
 final class MoviePosterCell: UICollectionViewCell {
     static let id: String = "MoviePosterCell"
+    private let imageResult = UILabel()
     private let imageView = UIImageView()
     private let titleLabel = UILabel()
     private let descriptionLabel = UILabel()
@@ -18,7 +19,7 @@ final class MoviePosterCell: UICollectionViewCell {
     private let db = Database.shared
     private var buttonTapped: Bool = false
     
-    var isButton: (()->Void)?
+    var isButton: ((Bool)->Void)?
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureView()
@@ -31,6 +32,7 @@ final class MoviePosterCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
+        imageResult.text = nil
     }
     
     func configure(_ model: SearchResult) {
@@ -52,6 +54,8 @@ final class MoviePosterCell: UICollectionViewCell {
                     self.imageView.kf.setImage(with: url)
                 }
             }
+        } else {
+            imageResult.text = NetworkError.noImage
         }
     }
     
@@ -61,6 +65,7 @@ extension MoviePosterCell {
     
     private func configureHierarchy() {
         self.addSubview(imageView)
+        self.addSubview(imageResult)
         self.addSubview(heartButton)
         self.addSubview(titleLabel)
         self.addSubview(descriptionLabel)
@@ -68,7 +73,13 @@ extension MoviePosterCell {
     }
     
     private func configureLayout() {
+        
         imageView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview()
+            make.height.equalToSuperview().dividedBy(1.5)
+        }
+        
+        imageResult.snp.makeConstraints { make in
             make.top.horizontalEdges.equalToSuperview()
             make.height.equalToSuperview().dividedBy(1.5)
         }
@@ -94,6 +105,12 @@ extension MoviePosterCell {
     }
     
     private func configureView() {
+        imageResult.numberOfLines = 0
+        imageResult.textColor = .white
+        imageResult.textAlignment = .center
+        imageResult.backgroundColor = .clear
+        imageResult.font = .boldSystemFont(ofSize: 15)
+        
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 15
         imageView.contentMode = .scaleToFill
@@ -128,10 +145,11 @@ extension MoviePosterCell {
                 var list = db.heartList
                 list.append(text)
                 db.heartList = list
+                isButton?(true)
             } else {
                 db.removeHeartButton(text)
+                isButton?(false)
             }
-            isButton?()
         }
     }
 }

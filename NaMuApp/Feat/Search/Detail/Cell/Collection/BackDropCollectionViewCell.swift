@@ -50,11 +50,9 @@ extension BackDropCollectionViewCell {
     }
     
     private func configureLayout() {
-        
         imageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
     }
     
     private func configureView() {

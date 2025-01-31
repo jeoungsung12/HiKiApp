@@ -12,6 +12,7 @@ import SnapKit
 class SearchTableViewCell: UITableViewCell {
     static let id: String = "SearchTableViewCell"
     private let posterImageView = UIImageView()
+    private let imageResult = UILabel()
     private let titleLabel = UILabel()
     private let dateLabel = UILabel()
     private let heartButton = UIButton()
@@ -19,7 +20,7 @@ class SearchTableViewCell: UITableViewCell {
     private let db = Database.shared
     private var buttonTapped: Bool = false
     
-    var isButton: (()->Void)?
+    var isButton: ((Bool)->Void)?
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureView()
@@ -32,6 +33,7 @@ class SearchTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         posterImageView.image = nil
+        imageResult.text = NetworkError.noImage
     }
     
     func configure(_ search: String,_ model: SearchResult) {
@@ -46,6 +48,7 @@ class SearchTableViewCell: UITableViewCell {
     private func configureImage(_ urlString: String?) {
         if let poster_path = urlString,
             let url = URL(string: APIEndpoint.trending.imagebaseURL + poster_path) {
+            imageResult.text = nil
             posterImageView.kf.setImage(with: url) { result in
                 switch result {
                 case .success:
@@ -63,6 +66,7 @@ extension SearchTableViewCell {
     
     private func configureHierarchy() {
         self.addSubview(posterImageView)
+        self.addSubview(imageResult)
         self.addSubview(titleLabel)
         self.addSubview(dateLabel)
         self.addSubview(heartButton)
@@ -74,6 +78,12 @@ extension SearchTableViewCell {
     private func configureLayout() {
         
         posterImageView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(12)
+            make.width.equalToSuperview().dividedBy(4)
+            make.verticalEdges.equalToSuperview().inset(12)
+        }
+        
+        imageResult.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(12)
             make.width.equalToSuperview().dividedBy(4)
             make.verticalEdges.equalToSuperview().inset(12)
@@ -107,6 +117,11 @@ extension SearchTableViewCell {
     
     private func configureView() {
         self.contentView.backgroundColor = .customBlack
+        imageResult.numberOfLines = 0
+        imageResult.textColor = .white
+        imageResult.textAlignment = .center
+        imageResult.backgroundColor = .clear
+        imageResult.font = .boldSystemFont(ofSize: 15)
         
         posterImageView.clipsToBounds = true
         posterImageView.layer.cornerRadius = 15
@@ -152,10 +167,11 @@ extension SearchTableViewCell {
                 var list = db.heartList
                 list.append(text)
                 db.heartList = list
+                isButton?(true)
             } else {
                 db.removeHeartButton(text)
+                isButton?(false)
             }
-            isButton?()
         }
     }
     

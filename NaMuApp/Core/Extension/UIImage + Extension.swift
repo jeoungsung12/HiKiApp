@@ -20,7 +20,7 @@ extension UIImage {
         ] as CFDictionary
         
         let scaledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options)!
-        print(scaledImage)
+//        print(scaledImage)
         return UIImage(cgImage: scaledImage)
     }
     

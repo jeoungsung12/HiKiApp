@@ -11,10 +11,12 @@ import SnapKit
 class CastTableViewCell: UITableViewCell {
     static let id: String = "CastTableViewCell"
     private let titleLabel = UILabel()
+    private let imageResult = UILabel()
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.setcollectionViewLayout())
 
     var castData: [CreditCast] = [] {
         didSet {
+            updateResultLabel()
             collectionView.reloadData()
         }
     }
@@ -37,6 +39,7 @@ extension CastTableViewCell {
     private func configureHierarchy() {
         self.addSubview(titleLabel)
         self.addSubview(collectionView)
+        self.addSubview(imageResult)
         configureLayout()
     }
     
@@ -51,10 +54,22 @@ extension CastTableViewCell {
             make.horizontalEdges.bottom.equalToSuperview()
             make.top.equalTo(titleLabel.snp.bottom).offset(8)
         }
+        
+        imageResult.snp.makeConstraints { make in
+            make.height.equalTo(180)
+            make.horizontalEdges.bottom.equalToSuperview()
+            make.top.equalTo(titleLabel.snp.bottom).offset(8)
+        }
     }
     
     private func configureView() {
         self.backgroundColor = .customBlack
+        updateResultLabel()
+        imageResult.numberOfLines = 0
+        imageResult.textColor = .white
+        imageResult.textAlignment = .center
+        imageResult.backgroundColor = .clear
+        imageResult.font = .boldSystemFont(ofSize: 15)
         
         titleLabel.text = "Cast"
         titleLabel.numberOfLines = 1
@@ -66,6 +81,9 @@ extension CastTableViewCell {
         configureHierarchy()
     }
     
+    private func updateResultLabel() {
+        imageResult.text = (!castData.isEmpty) ? nil : NetworkError.noImage
+    }
 }
 
 extension CastTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {

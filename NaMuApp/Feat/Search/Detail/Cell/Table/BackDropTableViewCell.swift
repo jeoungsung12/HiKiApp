@@ -12,10 +12,12 @@ final class BackDropTableViewCell: UITableViewCell {
     static let id: String = "BackDropTableViewCell"
     private let pageControl = UIPageControl()
     private let genreView = GenreView()
+    private let imageResult = UILabel()
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.setcollectionViewLayout())
 
     var backdrops: [ImageDetailModel] = [] {
         didSet {
+            updateResultLabel()
             collectionView.reloadData()
         }
     }
@@ -41,6 +43,7 @@ extension BackDropTableViewCell {
     
     private func configureHierarchy() {
         self.addSubview(collectionView)
+        self.addSubview(imageResult)
         self.addSubview(genreView)
         self.addSubview(pageControl)
         configureLayout()
@@ -49,6 +52,11 @@ extension BackDropTableViewCell {
     private func configureLayout() {
         
         collectionView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview()
+            make.height.equalTo(UIScreen.main.bounds.height / 3)
+        }
+        
+        imageResult.snp.makeConstraints { make in
             make.top.horizontalEdges.equalToSuperview()
             make.height.equalTo(UIScreen.main.bounds.height / 3)
         }
@@ -68,12 +76,23 @@ extension BackDropTableViewCell {
     
     private func configureView() {
         self.backgroundColor = .customBlack
+        updateResultLabel()
+        imageResult.numberOfLines = 0
+        imageResult.textColor = .white
+        imageResult.textAlignment = .center
+        imageResult.backgroundColor = .clear
+        imageResult.font = .boldSystemFont(ofSize: 15)
+        
         pageControl.currentPage = 0
         pageControl.currentPageIndicatorTintColor = .customWhite
         pageControl.pageIndicatorTintColor = .customDarkGray
         
         configureCollectionView()
         configureHierarchy()
+    }
+    
+    private func updateResultLabel() {
+        imageResult.text = (!backdrops.isEmpty) ? nil : NetworkError.noImage
     }
     
 }

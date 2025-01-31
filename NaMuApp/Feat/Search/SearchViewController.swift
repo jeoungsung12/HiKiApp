@@ -190,7 +190,8 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.id, for: indexPath) as? SearchTableViewCell,
               let text = searchBar.text else { return UITableViewCell() }
         cell.configure(text, searchData.searchResult[indexPath.row])
-        cell.isButton = {
+        cell.isButton = { [weak self] value in
+            self?.customAlert((value) ? "보관 성공!" : "삭제 성공!") { }
             tableView.reloadRows(at: [indexPath], with: .automatic)
         }
         return cell

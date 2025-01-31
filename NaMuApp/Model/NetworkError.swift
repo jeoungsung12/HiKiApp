@@ -8,6 +8,8 @@
 import Foundation
 
 struct NetworkError {
+    static let noImage: String = "정보 준비 중 입니다..⚠️"
+    
     enum CustomError: Int, Error, CaseIterable, LocalizedError {
         case badRequest = 400
         case unauthorized = 401

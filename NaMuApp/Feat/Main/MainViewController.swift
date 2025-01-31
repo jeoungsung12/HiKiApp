@@ -190,8 +190,9 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MoviePosterCell.id, for: indexPath) as? MoviePosterCell else { return UICollectionViewCell() }
         cell.configure(movieData[indexPath.row])
-        cell.isButton = { [weak self] in
+        cell.isButton = { [weak self] value in
             guard let self = self else { return }
+            self.customAlert((value) ? "보관 성공!" : "삭제 성공!") { }
             self.profileView.configure(self.db.getUser())
             collectionView.reloadItems(at: [indexPath])
         }

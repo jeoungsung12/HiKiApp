@@ -115,9 +115,11 @@ extension SearchDetailViewController {
             if buttonTapped {
                 var list = db.heartList
                 list.append(data.title)
+                self.customAlert("보관 성공!") { }
                 db.heartList = list
             } else {
                 db.removeHeartButton(data.title)
+                self.customAlert("삭제 성공!") { }
             }
             self.configure()
             self.isButton?()

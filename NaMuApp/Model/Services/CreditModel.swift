@@ -17,5 +17,4 @@ struct CreditCast: Decodable {
     let original_name: String
     let character: String
     let profile_path: String?
-    //TODO: - 옵셔널 처리
 }

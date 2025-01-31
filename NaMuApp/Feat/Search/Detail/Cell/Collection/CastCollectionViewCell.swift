@@ -83,6 +83,7 @@ extension CastCollectionViewCell {
     
     private func configureView() {
         self.backgroundColor = .customBlack
+        
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 30
         imageView.contentMode = .scaleToFill

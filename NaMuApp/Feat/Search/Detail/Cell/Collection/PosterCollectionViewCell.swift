@@ -12,7 +12,6 @@ import SnapKit
 final class PosterCollectionViewCell: UICollectionViewCell {
     static let id: String = "PosterCollectionViewCell"
     private let posterImageView = UIImageView()
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureView()
@@ -54,7 +53,6 @@ extension PosterCollectionViewCell {
         posterImageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
     }
     
     private func configureView() {
