@@ -93,8 +93,7 @@ extension MainViewController {
         titleLabel.textColor = .customWhite
         titleLabel.font = .boldSystemFont(ofSize: 16)
         
-        profileView.addTarget(self, action: #selector(myProfileTapped), for: .touchUpInside)
-        
+        profileTapped()
         configureCollectionView()
         configureHierarchy()
     }
@@ -110,15 +109,16 @@ extension MainViewController {
         self.push(vc)
     }
     
-    @objc
-    private func myProfileTapped(_ sender: UIButton) {
+    private func profileTapped() {
         print(#function)
-        let vc = SheetProfileViewController()
-        vc.dismissClosure = { [weak self] in
-            guard let self = self else { return }
-            self.profileView.configure(self.db.getUser())
+        profileView.profileTapped = { [weak self] in
+            let vc = SheetProfileViewController()
+            vc.dismissClosure = { [weak self] in
+                guard let self = self else { return }
+                self.profileView.configure(self.db.getUser())
+            }
+            self?.sheet(vc)
         }
-        self.sheet(vc)
     }
     
     private func recentTapped() {
@@ -130,7 +130,7 @@ extension MainViewController {
         recentSearchView.removeTapped = { [weak self] recent in
             guard let self = self else { return }
             self.db.removeRecentSearch(recent)
-            self.recentSearchView.configure(db.recentSearch.reversed())
+            self.recentSearchView.configure(self.db.recentSearch.reversed())
         }
         recentSearchView.recentTapped = { [weak self] recent in
             guard let self = self else { return }

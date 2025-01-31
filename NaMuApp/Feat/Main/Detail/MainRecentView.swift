@@ -29,6 +29,7 @@ final class MainRecentView: UIView {
     
     func configure(_ recentSearch: [String]) {
         configureStackView(recentSearch)
+        removeButton.isHidden = (recentSearch.isEmpty) ? true : false
         resultLabel.text = (recentSearch.isEmpty) ? "최근 검색어 내역이 없습니다." : ""
     }
     

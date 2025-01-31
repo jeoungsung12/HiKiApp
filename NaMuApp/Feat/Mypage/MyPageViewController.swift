@@ -53,7 +53,7 @@ extension MyPageViewController {
         self.setNavigation("설정")
         self.view.backgroundColor = .customBlack
         
-        myProfileView.addTarget(self, action: #selector(myProfileTapped), for: .touchUpInside)
+        profileTapped()
         
         buttonStackView.spacing = 10
         buttonStackView.axis = .vertical
@@ -75,14 +75,16 @@ extension MyPageViewController {
 
 extension MyPageViewController {
     
-    @objc
-    private func myProfileTapped(_ sender: UIButton) {
+    private func profileTapped() {
         print(#function)
-        let vc = SheetProfileViewController()
-        vc.dismissClosure = {
-            self.myProfileView.configure(self.db.getUser())
+        myProfileView.profileTapped = { [weak self] in
+            let vc = SheetProfileViewController()
+            vc.dismissClosure = { [weak self] in
+                guard let self = self else { return }
+                self.myProfileView.configure(self.db.getUser())
+            }
+            self?.sheet(vc)
         }
-        self.sheet(vc)
     }
     
     @objc
