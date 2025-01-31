@@ -34,16 +34,25 @@ final class MoviePosterCell: UICollectionViewCell {
     }
     
     func configure(_ model: SearchResult) {
-        if let poster_path = model.poster_path,
-            let url = URL(string: APIEndpoint.trending.imagebaseURL + poster_path) {
-            //TODO: - image down smapling
-            imageView.kf.setImage(with: url)
-            imageView.kf.indicatorType = .activity
-        }
+        configureImage(model.poster_path)
         titleLabel.text = model.title
         descriptionLabel.text = model.overview
         buttonTapped = db.heartList.contains(model.title)
         heartButton.setImage(UIImage(systemName: (db.heartList.contains(model.title)) ? "heart.fill" : "heart"), for: .normal)
+    }
+    
+    private func configureImage(_ urlString: String?) {
+        if let poster_path = urlString,
+            let url = URL(string: APIEndpoint.trending.imagebaseURL + poster_path) {
+            imageView.kf.setImage(with: url) { result in
+                switch result {
+                case .success:
+                    self.imageView.image = self.imageView.image?.downSampling(scale: 0.5)
+                case .failure:
+                    self.imageView.kf.setImage(with: url)
+                }
+            }
+        }
     }
     
 }

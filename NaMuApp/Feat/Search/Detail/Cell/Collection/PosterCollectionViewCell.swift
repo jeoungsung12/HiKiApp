@@ -29,8 +29,14 @@ final class PosterCollectionViewCell: UICollectionViewCell {
     
     func configure(_ image: ImageDetailModel) {
         if let url = URL(string: APIEndpoint.trending.imagebaseURL + image.file_path) {
-            posterImageView.kf.setImage(with: url)
-            posterImageView.kf.indicatorType = .activity
+            posterImageView.kf.setImage(with: url) { result in
+                switch result {
+                case .success:
+                    self.posterImageView.image = self.posterImageView.image?.downSampling(scale: 0.3)
+                case .failure:
+                    self.posterImageView.kf.setImage(with: url)
+                }
+            }
         }
     }
     

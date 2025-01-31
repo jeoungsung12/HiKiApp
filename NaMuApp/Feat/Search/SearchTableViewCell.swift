@@ -35,16 +35,26 @@ class SearchTableViewCell: UITableViewCell {
     }
     
     func configure(_ search: String,_ model: SearchResult) {
-        if let poster_path = model.poster_path,
-            let url = URL(string: APIEndpoint.trending.imagebaseURL + poster_path) {
-            posterImageView.kf.setImage(with: url, placeholder: UIImage(systemName: ""))
-            posterImageView.kf.indicatorType = .activity
-        }
+        configureImage(model.poster_path)
         highlightLabel(search, model.title)
         dateLabel.text = model.release_date
         genreView.configure(model, .search)
         buttonTapped = db.heartList.contains(model.title)
         heartButton.setImage(UIImage(systemName: (db.heartList.contains(model.title)) ? "heart.fill" : "heart"), for: .normal)
+    }
+    
+    private func configureImage(_ urlString: String?) {
+        if let poster_path = urlString,
+            let url = URL(string: APIEndpoint.trending.imagebaseURL + poster_path) {
+            posterImageView.kf.setImage(with: url) { result in
+                switch result {
+                case .success:
+                    self.posterImageView.image = self.posterImageView.image?.downSampling(scale: 0.2)
+                case .failure:
+                    self.posterImageView.kf.setImage(with: url)
+                }
+            }
+        }
     }
 
 }

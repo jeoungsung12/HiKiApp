@@ -14,6 +14,10 @@ enum AlertType: String, CaseIterable {
 
 extension UIViewController {
     
+    @objc func tapGesture(_ sender: UIGestureRecognizer) {
+        view.endEditing(true)
+    }
+    
     func push(_ destination: UIViewController) {
         self.navigationController?.pushViewController(destination, animated: true)
     }
@@ -54,10 +58,6 @@ extension UIViewController {
         navigationBar.compactAppearance = appearance
         navigationBar.standardAppearance = appearance
         navigationBar.scrollEdgeAppearance = appearance
-    }
-    
-    @objc func tapGesture(_ sender: UIGestureRecognizer) {
-        view.endEditing(true)
     }
     
     func customAlert(_ title: String = "",_ message: String = "",_ action: [AlertType] = [.ok],_ method: @escaping () -> Void) {
