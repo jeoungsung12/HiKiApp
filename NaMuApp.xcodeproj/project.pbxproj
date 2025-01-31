@@ -6,8 +6,16 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E46EB9112D43653E00F0E536 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = E46EB9102D43653E00F0E536 /* .gitignore */; };
+		E47889172D474177008D4B3A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E47889162D474177008D4B3A /* Alamofire */; };
+		E478891A2D47417D008D4B3A /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E47889192D47417D008D4B3A /* Kingfisher */; };
+		E478891D2D474184008D4B3A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = E478891C2D474184008D4B3A /* SnapKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		E46EB8F22D43631200F0E536 /* NaMuApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NaMuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E46EB9102D43653E00F0E536 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +44,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E478891D2D474184008D4B3A /* SnapKit in Frameworks */,
+				E478891A2D47417D008D4B3A /* Kingfisher in Frameworks */,
+				E47889172D474177008D4B3A /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,6 +56,7 @@
 		E46EB8E92D43631200F0E536 = {
 			isa = PBXGroup;
 			children = (
+				E46EB9102D43653E00F0E536 /* .gitignore */,
 				E46EB8F42D43631200F0E536 /* NaMuApp */,
 				E46EB8F32D43631200F0E536 /* Products */,
 			);
@@ -78,6 +90,9 @@
 			);
 			name = NaMuApp;
 			packageProductDependencies = (
+				E47889162D474177008D4B3A /* Alamofire */,
+				E47889192D47417D008D4B3A /* Kingfisher */,
+				E478891C2D474184008D4B3A /* SnapKit */,
 			);
 			productName = NaMuApp;
 			productReference = E46EB8F22D43631200F0E536 /* NaMuApp.app */;
@@ -107,6 +122,11 @@
 			);
 			mainGroup = E46EB8E92D43631200F0E536;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E47889152D474177008D4B3A /* XCRemoteSwiftPackageReference "Alamofire" */,
+				E47889182D47417D008D4B3A /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				E478891B2D474184008D4B3A /* XCRemoteSwiftPackageReference "SnapKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E46EB8F32D43631200F0E536 /* Products */;
 			projectDirPath = "";
@@ -122,6 +142,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E46EB9112D43653E00F0E536 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,15 +172,16 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "정성윤";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = WEDLE.NaMuApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -185,15 +207,16 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "정성윤";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = WEDLE.NaMuApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -347,6 +370,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E47889152D474177008D4B3A /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+		E47889182D47417D008D4B3A /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.1.3;
+			};
+		};
+		E478891B2D474184008D4B3A /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E47889162D474177008D4B3A /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E47889152D474177008D4B3A /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		E47889192D47417D008D4B3A /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E47889182D47417D008D4B3A /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		E478891C2D474184008D4B3A /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E478891B2D474184008D4B3A /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E46EB8EA2D43631200F0E536 /* Project object */;
 }
