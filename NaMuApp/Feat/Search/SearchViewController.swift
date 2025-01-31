@@ -78,8 +78,8 @@ extension SearchViewController {
             searchBar.searchTextField.text =  "영화를 검색해보세요."
         }
         
-        resultLabel.textColor = .customDarkGray
         resultLabel.textAlignment = .center
+        resultLabel.textColor = .customDarkGray
         resultLabel.font = .systemFont(ofSize: 13, weight: .semibold)
         
         tapGesture.cancelsTouchesInView = false
@@ -207,6 +207,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
     }
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        print(searchData.searchResult.count, indexPaths.last)
         if let indexPath = indexPaths.last,
            searchData.searchResult.count - 2 < indexPath.row {
             switch searchData.searchPhase {

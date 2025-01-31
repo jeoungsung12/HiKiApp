@@ -11,7 +11,7 @@ import SnapKit
 
 class SearchTableViewCell: UITableViewCell {
     static let id: String = "SearchTableViewCell"
-    let posterImageView = UIImageView()
+    private let posterImageView = UIImageView()
     private let titleLabel = UILabel()
     private let dateLabel = UILabel()
     private let heartButton = UIButton()
@@ -104,12 +104,12 @@ extension SearchTableViewCell {
         posterImageView.backgroundColor = .darkGray
         
         titleLabel.numberOfLines = 2
-        titleLabel.textColor = .customWhite
         titleLabel.textAlignment = .left
+        titleLabel.textColor = .customWhite
         titleLabel.font = .boldSystemFont(ofSize: 15)
         
-        dateLabel.textColor = .customDarkGray
         dateLabel.textAlignment = .left
+        dateLabel.textColor = .customDarkGray
         dateLabel.font = .systemFont(ofSize: 13, weight: .regular)
         
         heartButton.tintColor = .point
