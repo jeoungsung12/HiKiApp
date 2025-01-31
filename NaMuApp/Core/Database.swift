@@ -40,10 +40,9 @@ final class Database {
     
     var userInfo: [String] {
         get {
-            //TODO: 수정필요
             guard var userInfo = self.get(.userInfo, binding: []) as? [String] else { return [] }
             let heartList = self.heartList
-            userInfo[2] = heartList.count.formatted()
+            if userInfo.count > 1 { userInfo[2] = heartList.count.formatted() }
             return userInfo
         }
         set {

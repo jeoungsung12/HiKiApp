@@ -124,8 +124,7 @@ extension ProfileViewController {
         let vc = ProfileImageViewController()
         vc.profileImage = profileButton.profileImage.image
         vc.returnImage = { [weak self] value in
-            guard let self = self else { return }
-            self.profileButton.profileImage.image = value
+            self?.profileButton.profileImage.image = value
         }
         self.push(vc)
     }

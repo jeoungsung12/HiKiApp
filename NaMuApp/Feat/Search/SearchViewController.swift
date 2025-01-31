@@ -143,7 +143,7 @@ extension SearchViewController {
                 self.searchData.searchResult += data
                 self.loadingIndicator.stopAnimating()
                 
-            case let .failure(error):
+            case .failure:
                 self.searchData.searchPhase = .notFound
                 self.resultLabel.text = self.searchData.searchPhase.message
                 self.loadingIndicator.stopAnimating()

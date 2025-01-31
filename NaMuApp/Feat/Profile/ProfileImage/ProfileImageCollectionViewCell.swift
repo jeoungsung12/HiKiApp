@@ -24,12 +24,17 @@ final class ProfileImageCollectionViewCell: UICollectionViewCell {
     
     override var isSelected: Bool {
         didSet {
-            configureView()
+            self.updateProfile()
         }
     }
     
     func configure(_ image: UIImage?) {
         profileButton.profileImage.image = image
+    }
+    
+    private func updateProfile() {
+        profileButton.alpha = (isSelected ? 1 : 0.5)
+        profileButton.profileImage.setBorder(isSelected, size / 2)
     }
 }
 
