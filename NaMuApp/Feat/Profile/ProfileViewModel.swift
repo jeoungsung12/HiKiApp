@@ -12,17 +12,21 @@ final class ProfileViewModel: ViewModelType {
     private let db = Database.shared
     
     struct Input {
+        
         let configureViewTrigger: Observable<Void>
         let successButtonTrigger: Observable<ProfileSuccessButton>
         let profileButtonTrigger: Observable<Void>
         let nameTextFieldTrigger: Observable<String?>
+        let buttonEnabledTrigger: Observable<ProfileSuccessButton>
     }
     
     struct Output {
+        
         let successButtonResult: Observable<Bool?> = Observable(nil)
         let profileButtonResult: Observable<Void> = Observable(())
         let configureViewResult: Observable<[String]> = Observable(([]))
         let nameTextFieldResult: Observable<String?> = Observable(nil)
+        let buttonEnabledResult: Observable<Bool?> = Observable(nil)
     }
     
     init() {
@@ -57,6 +61,10 @@ extension ProfileViewModel {
         input.nameTextFieldTrigger.lazyBind { text in
             let nicknameText = NickName().checkNickName(text)
             output.nameTextFieldResult.value = nicknameText.rawValue
+        }
+        
+        input.buttonEnabledTrigger.lazyBind { [weak self] enable in
+            output.buttonEnabledResult.value = self?.validateText(enable)
         }
         
         return output
@@ -130,7 +138,6 @@ extension ProfileViewModel {
             return NickNameType.success
         }
     }
-    
     
     enum MbtiType: CaseIterable {
         case IE

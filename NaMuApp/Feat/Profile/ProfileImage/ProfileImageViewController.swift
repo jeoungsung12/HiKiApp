@@ -11,11 +11,31 @@ import SnapKit
 final class ProfileImageViewController: UIViewController {
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
     private let profileButton = CustomProfileButton(120, true)
+    
+    private let viewModel = ProfileImageViewModel()
+    private let inputTrigger = ProfileImageViewModel.Input(
+        backButtonTrigger: Observable(())
+    )
+    
     var returnImage: ((UIImage?) -> Void)?
     var profileImage: UIImage?
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        setBinding()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        inputTrigger.backButtonTrigger.value = ()
+    }
+    
+    private func setBinding() {
+        let output = ProfileImageViewModel().transform(input: inputTrigger)
+        
+        output.backButtonResult.lazyBind { [weak self] _ in
+            self?.returnImage?(self?.profileButton.profileImage.image)
+        }
     }
 }
 
@@ -49,23 +69,10 @@ extension ProfileImageViewController {
         profileButton.isUserInteractionEnabled = false
         profileButton.profileImage.image = profileImage
         
-        backAction()
         configureCollectionView()
         configureHierarchy()
     }
 }
-
-//MARK: - Action
-extension ProfileImageViewController {
-    private func backAction() {
-        self.navigationItem.backAction = UIAction{ [weak self] _ in
-            guard let self = self else { return }
-            self.returnImage?(self.profileButton.profileImage.image)
-            self.pop()
-        }
-    }
-}
-
 
 //MARK: - CollectionView
 extension ProfileImageViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -88,13 +95,13 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return ProfileData.allCases.count
+        return viewModel.profileData.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProfileImageCollectionViewCell.id, for: indexPath) as? ProfileImageCollectionViewCell else { return UICollectionViewCell() }
         
-        let image = UIImage(named: ProfileData.allCases[indexPath.row].rawValue)
+        let image = UIImage(named: viewModel.profileData[indexPath.row].rawValue)
         cell.configure(image)
         cell.profileButton.containerView.isHidden = true
         

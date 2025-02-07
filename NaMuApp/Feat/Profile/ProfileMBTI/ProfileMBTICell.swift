@@ -13,8 +13,13 @@ final class ProfileMBTICell: UICollectionViewCell {
     private let topButton = UIButton()
     private let bottomButton = UIButton()
     private let stackView = UIStackView()
-    var isClicked: Bool? = nil
+    var isClicked: Bool? = nil {
+        didSet {
+            tapped?()
+        }
+    }
     
+    var tapped: (()->Void)?
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureView()
@@ -95,8 +100,8 @@ extension ProfileMBTICell {
             return
         }
         topButton.backgroundColor = (isClicked) ? .point : .white
-        topButton.setTitleColor((isClicked) ? .white : .gray, for: .normal)
         bottomButton.backgroundColor = (isClicked) ? .white : .point
+        topButton.setTitleColor((isClicked) ? .white : .gray, for: .normal)
         bottomButton.setTitleColor((isClicked) ? .gray : .white, for: .normal)
     }
     

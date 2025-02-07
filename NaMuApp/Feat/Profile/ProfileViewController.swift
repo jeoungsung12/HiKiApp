@@ -23,7 +23,8 @@ final class ProfileViewController: UIViewController {
         configureViewTrigger: Observable(()),
         successButtonTrigger: Observable(ProfileViewModel.ProfileSuccessButton(textFields: [], mbtiBools: [])),
         profileButtonTrigger: Observable(()),
-        nameTextFieldTrigger: Observable(nil)
+        nameTextFieldTrigger: Observable(nil),
+        buttonEnabledTrigger: Observable(ProfileViewModel.ProfileSuccessButton(textFields: [], mbtiBools: []))
     )
     
     override func viewDidLoad() {
@@ -66,10 +67,18 @@ final class ProfileViewController: UIViewController {
         output.nameTextFieldResult.lazyBind { [weak self] text in
             self?.descriptionLabel.text = text
         }
+        
+        output.buttonEnabledResult.lazyBind { [weak self] valid in
+            guard let valid = valid else {
+                self?.successButton.isEnabled = false
+                return
+            }
+            self?.successButton.isEnabled = (valid) ? true : false
+        }
     }
     
     deinit {
-        print(self, #function)
+        print(#function, self)
     }
     
 }
@@ -139,6 +148,7 @@ extension ProfileViewController {
         descriptionLabel.font = .systemFont(ofSize: 12, weight: .regular)
         
         successButton.setBorder()
+        successButton.isEnabled = false
         successButton.setTitle("완료", for: .normal)
         successButton.setTitleColor(.point, for: .normal)
         successButton.addTarget(self, action: #selector(successButtonTapped), for: .touchUpInside)
@@ -172,6 +182,7 @@ extension ProfileViewController {
         let bools = indexPaths
             .map {
                 if let cell = mbtiView.collectionView.cellForItem(at: $0) as? ProfileMBTICell {
+                    cell.tapped = checkTapped
                     return cell.isClicked
                 }
                 return nil
@@ -185,6 +196,29 @@ extension ProfileViewController: UITextFieldDelegate {
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         inputTrigger.nameTextFieldTrigger.value = textField.text
+        let indexPaths = Array(0...3).map({ return IndexPath(row: $0, section: 0) })
+        let bools = indexPaths
+            .map {
+                if let cell = mbtiView.collectionView.cellForItem(at: $0) as? ProfileMBTICell {
+                    cell.tapped = checkTapped
+                    return cell.isClicked
+                }
+                return nil
+            }
+        inputTrigger.buttonEnabledTrigger.value = ProfileViewModel.ProfileSuccessButton(profileImage: profileButton.profileImage.image, textFields: [nameTextField.text, descriptionLabel.text], mbtiBools: bools)
+    }
+    
+    private func checkTapped() {
+        let indexPaths = Array(0...3).map({ return IndexPath(row: $0, section: 0) })
+        let bools = indexPaths
+            .map {
+                if let cell = mbtiView.collectionView.cellForItem(at: $0) as? ProfileMBTICell {
+                    cell.tapped = checkTapped
+                    return cell.isClicked
+                }
+                return nil
+            }
+        inputTrigger.buttonEnabledTrigger.value = ProfileViewModel.ProfileSuccessButton(profileImage: profileButton.profileImage.image, textFields: [nameTextField.text, descriptionLabel.text], mbtiBools: bools)
     }
     
 }
