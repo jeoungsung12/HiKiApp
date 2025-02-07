@@ -169,7 +169,7 @@ extension ProfileViewController {
 
 //MARK: - TextField
 extension ProfileViewController: UITextFieldDelegate {
-    
+    //TODO: - ViewModel
     func textFieldDidChangeSelection(_ textField: UITextField) {
         guard let text = textField.text else { return }
         descriptionLabel.text = NickName().checkNickName(text).rawValue

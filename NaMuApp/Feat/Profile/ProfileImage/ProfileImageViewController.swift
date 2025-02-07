@@ -11,22 +11,21 @@ import SnapKit
 final class ProfileImageViewController: UIViewController {
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
     private let profileButton = CustomProfileButton(120, true)
-    
     var returnImage: ((UIImage?) -> Void)?
     var profileImage: UIImage?
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
     }
-    
 }
 
 //MARK: - Configure UI
 extension ProfileImageViewController {
     
     private func configureHierarchy() {
-        self.view.addSubview(profileButton)
-        self.view.addSubview(collectionView)
+        [profileButton, collectionView].forEach({
+            self.view.addSubview($0)
+        })
         configureLayout()
     }
     
@@ -58,7 +57,6 @@ extension ProfileImageViewController {
 
 //MARK: - Action
 extension ProfileImageViewController {
-    
     private func backAction() {
         self.navigationItem.backAction = UIAction{ [weak self] _ in
             guard let self = self else { return }
@@ -66,7 +64,6 @@ extension ProfileImageViewController {
             self.pop()
         }
     }
-    
 }
 
 

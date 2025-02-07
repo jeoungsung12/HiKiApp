@@ -43,8 +43,9 @@ extension ProfileMBTIView {
         }
         
         collectionView.snp.makeConstraints { make in
+            make.width.equalTo(250)
+            make.height.equalTo(110)
             make.trailing.top.equalToSuperview().inset(24)
-            make.leading.equalTo(titleLabel.snp.trailing).offset(12)
         }
     }
     
@@ -75,7 +76,8 @@ extension ProfileMBTIView: UICollectionViewDelegate, UICollectionViewDataSource 
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 4
         layout.minimumInteritemSpacing = 4
-        layout.itemSize = CGSize(width: 60, height: 60)
+        layout.itemSize = CGSize(width: 50, height: 110)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 4)
         return layout
     }
     
