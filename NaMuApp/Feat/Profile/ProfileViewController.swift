@@ -21,8 +21,9 @@ final class ProfileViewController: UIViewController {
     private let viewModel = ProfileViewModel()
     private let inputTrigger = ProfileViewModel.Input(
         configureViewTrigger: Observable(()),
-        successButtonTrigger: Observable(ProfileSuccessButton(textFields: [])),
-        profileButtonTrigger: Observable(())
+        successButtonTrigger: Observable(ProfileViewModel.ProfileSuccessButton(textFields: [], mbtiBools: [])),
+        profileButtonTrigger: Observable(()),
+        nameTextFieldTrigger: Observable(nil)
     )
     
     override func viewDidLoad() {
@@ -35,10 +36,9 @@ final class ProfileViewController: UIViewController {
         let output = viewModel.transform(input: inputTrigger)
         
         output.configureViewResult.bind { [weak self] userInfo in
-            if let text = self?.nameTextField.text, !userInfo.isEmpty {
+            if !userInfo.isEmpty {
                 self?.nameTextField.text = userInfo[0]
                 self?.profileButton.profileImage.image = UIImage(named: userInfo[1])
-                self?.descriptionLabel.text = NickName().checkNickName(text).rawValue
             } else {
                 guard let image = ProfileData.allCases.randomElement()?.rawValue else { return }
                 self?.profileButton.profileImage.image = UIImage(named: image)
@@ -61,6 +61,10 @@ final class ProfileViewController: UIViewController {
             } else {
                 self?.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
             }
+        }
+        
+        output.nameTextFieldResult.lazyBind { [weak self] text in
+            self?.descriptionLabel.text = text
         }
     }
     
@@ -163,16 +167,24 @@ extension ProfileViewController {
     @objc
     private func successButtonTapped(_ sender: UIButton) {
         print(#function)
-        inputTrigger.successButtonTrigger.value = ProfileSuccessButton(profileImage: profileButton.profileImage.image, textFields: [nameTextField.text, descriptionLabel.text])
+        //TODO: ViewModel
+        let indexPaths = Array(0...3).map({ return IndexPath(row: $0, section: 0) })
+        let bools = indexPaths
+            .map {
+                if let cell = mbtiView.collectionView.cellForItem(at: $0) as? ProfileMBTICell {
+                    return cell.isClicked
+                }
+                return nil
+            }
+        inputTrigger.successButtonTrigger.value = ProfileViewModel.ProfileSuccessButton(profileImage: profileButton.profileImage.image, textFields: [nameTextField.text, descriptionLabel.text], mbtiBools: bools)
     }
 }
 
 //MARK: - TextField
 extension ProfileViewController: UITextFieldDelegate {
-    //TODO: - ViewModel
+    
     func textFieldDidChangeSelection(_ textField: UITextField) {
-        guard let text = textField.text else { return }
-        descriptionLabel.text = NickName().checkNickName(text).rawValue
+        inputTrigger.nameTextFieldTrigger.value = textField.text
     }
     
 }

@@ -10,7 +10,7 @@ import SnapKit
 
 final class ProfileMBTIView: UIView {
     private let titleLabel = UILabel()
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createCollectionViewLayout())
+    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createCollectionViewLayout())
     
     private let viewModel = ProfileMBTIViewModel()
     

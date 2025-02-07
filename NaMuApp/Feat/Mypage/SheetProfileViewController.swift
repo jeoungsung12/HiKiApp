@@ -100,7 +100,7 @@ extension SheetProfileViewController {
         if let text = nameTextField.text, !userInfo.isEmpty {
             nameTextField.text = userInfo[0]
             profileButton.profileImage.image = UIImage(named: userInfo[1])
-            descriptionLabel.text = NickName().checkNickName(text).rawValue
+            descriptionLabel.text = ProfileViewModel.NickName().checkNickName(text).rawValue
         } else {
             guard let image = ProfileData.allCases.randomElement()?.rawValue else { return }
             profileButton.profileImage.image = UIImage(named: image)
@@ -133,7 +133,7 @@ extension SheetProfileViewController {
     private func successButtonTapped(_ sender: UIBarButtonItem) {
         print(#function)
         if let nicknameLabel = nameTextField.text, let descriptionLabel = descriptionLabel.text,
-           descriptionLabel == NickName.NickNameType.success.rawValue {
+           descriptionLabel == ProfileViewModel.NickName.NickNameType.success.rawValue {
             db.isUser = true
             db.userInfo = [nicknameLabel, .checkProfileImage(profileButton.profileImage.image), "0", .currentDate]
             self.dismissClosure?()
@@ -165,7 +165,7 @@ extension SheetProfileViewController: UITextFieldDelegate {
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         guard let text = textField.text else { return }
-        descriptionLabel.text = NickName().checkNickName(text).rawValue
+        descriptionLabel.text = ProfileViewModel.NickName().checkNickName(text).rawValue
     }
     
 }

@@ -13,7 +13,7 @@ final class ProfileMBTICell: UICollectionViewCell {
     private let topButton = UIButton()
     private let bottomButton = UIButton()
     private let stackView = UIStackView()
-    private var isClicked: Bool? = nil
+    var isClicked: Bool? = nil
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -24,7 +24,7 @@ final class ProfileMBTICell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(_ type: MbtiType) {
+    func configure(_ type: ProfileViewModel.MbtiType) {
         switch type {
         case .IE:
             topButton.setTitle("E", for: .normal)
@@ -87,7 +87,13 @@ extension ProfileMBTICell {
     }
     
     private func configureButton() {
-        guard let isClicked = isClicked else { return }
+        guard let isClicked = isClicked else {
+            [topButton, bottomButton].forEach({
+                $0.backgroundColor = .white
+                $0.setTitleColor(.gray, for: .normal)
+            })
+            return
+        }
         topButton.backgroundColor = (isClicked) ? .point : .white
         topButton.setTitleColor((isClicked) ? .white : .gray, for: .normal)
         bottomButton.backgroundColor = (isClicked) ? .white : .point
@@ -100,10 +106,14 @@ extension ProfileMBTICell {
     
     @objc
     private func buttonTapped(_ sender: UIButton) {
-        if sender == topButton {
-            isClicked = true
+        print(#function)
+        //TODO: - viewModel
+        if let isClicked {
+            if ((!isClicked && sender.isEqual(topButton)) || (isClicked && sender.isEqual(bottomButton))) {
+                self.isClicked?.toggle()
+            } else { self.isClicked = nil }
         } else {
-            isClicked = false
+            self.isClicked = sender.isEqual(topButton) ? true : false
         }
         configureButton()
     }

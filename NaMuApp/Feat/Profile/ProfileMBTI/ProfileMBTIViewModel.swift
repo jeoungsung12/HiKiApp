@@ -8,7 +8,7 @@
 import Foundation
 
 final class ProfileMBTIViewModel {
-    let mbti = MbtiType.allCases
+    let mbti = ProfileViewModel.MbtiType.allCases
     
     init() {
         print(#function, self)
