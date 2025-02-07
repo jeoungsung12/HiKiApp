@@ -9,17 +9,59 @@ import UIKit
 import SnapKit
 
 final class ProfileViewController: UIViewController {
+    //MARK: - Components
     private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapGesture))
     private let profileButton = CustomProfileButton(120, true)
     private let nameTextField = UITextField()
     private let spacingView = UIView()
     private let descriptionLabel = UILabel()
     private let successButton = UIButton()
-    private let db = Database.shared
+    private let mbtiView = ProfileMBTIView()
+    
+    private let viewModel = ProfileViewModel()
+    private let inputTrigger = ProfileViewModel.Input(
+        configureViewTrigger: Observable(()),
+        successButtonTrigger: Observable(ProfileSuccessButton(textFields: [])),
+        profileButtonTrigger: Observable(())
+    )
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        setBinding()
+    }
+    
+    private func setBinding() {
+        let output = viewModel.transform(input: inputTrigger)
+        
+        output.configureViewResult.bind { [weak self] userInfo in
+            if let text = self?.nameTextField.text, !userInfo.isEmpty {
+                self?.nameTextField.text = userInfo[0]
+                self?.profileButton.profileImage.image = UIImage(named: userInfo[1])
+                self?.descriptionLabel.text = NickName().checkNickName(text).rawValue
+            } else {
+                guard let image = ProfileData.allCases.randomElement()?.rawValue else { return }
+                self?.profileButton.profileImage.image = UIImage(named: image)
+            }
+        }
+        
+        output.profileButtonResult.lazyBind { [weak self] _ in
+            let vc = ProfileImageViewController()
+            vc.profileImage = self?.profileButton.profileImage.image
+            vc.returnImage = { [weak self] value in
+                self?.profileButton.profileImage.image = value
+            }
+            self?.push(vc)
+        }
+        
+        output.successButtonResult.lazyBind { [weak self] valid in
+            if let valid = valid, valid {
+                let rootVC = TabBarController()
+                self?.setRootView(rootVC)
+            } else {
+                self?.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
+            }
+        }
     }
     
     deinit {
@@ -32,13 +74,10 @@ final class ProfileViewController: UIViewController {
 extension ProfileViewController {
     
     private func configureHierarchy() {
-        self.view.addSubview(profileButton)
-        self.view.addSubview(nameTextField)
-        self.view.addSubview(spacingView)
-        self.view.addSubview(descriptionLabel)
-        self.view.addSubview(successButton)
+        [profileButton, nameTextField, spacingView, descriptionLabel, mbtiView, successButton].forEach {
+            self.view.addSubview($0)
+        }
         self.view.addGestureRecognizer(tapGesture)
-        
         configureLayout()
     }
     
@@ -65,25 +104,30 @@ extension ProfileViewController {
             make.top.equalTo(spacingView.snp.bottom).offset(16)
         }
         
+        mbtiView.snp.makeConstraints { make in
+            make.height.equalTo(150)
+            make.horizontalEdges.equalToSuperview()
+            make.top.equalTo(descriptionLabel.snp.bottom).offset(24)
+        }
+        
         successButton.snp.makeConstraints { make in
-            make.height.equalTo(40)
-            make.horizontalEdges.equalToSuperview().inset(12)
-            make.bottom.lessThanOrEqualToSuperview().offset(-24)
-            make.top.equalTo(descriptionLabel.snp.bottom).offset(32)
+            make.height.equalTo(45)
+            make.bottom.equalToSuperview().offset(-44)
+            make.horizontalEdges.equalToSuperview().inset(24)
         }
     }
     
     private func configureView() {
-        self.setNavigation("프로필 설정")
-        self.view.backgroundColor = .customBlack
+        self.setNavigation("PROFILE SETTING")
+        self.view.backgroundColor = .customWhite
         
         nameTextField.delegate = self
+        nameTextField.textColor = .black
         nameTextField.textAlignment = .left
-        nameTextField.text = "닉네임을 설정해 주세요"
-        nameTextField.textColor = .customDarkGray
+        nameTextField.placeholder = "닉네임을 설정해 주세요 :)"
         nameTextField.font = .systemFont(ofSize: 15, weight: .semibold)
         
-        spacingView.backgroundColor = .customWhite
+        spacingView.backgroundColor = .customDarkGray
         
         descriptionLabel.numberOfLines = 1
         descriptionLabel.textColor = .point
@@ -102,15 +146,7 @@ extension ProfileViewController {
     }
     
     private func configureProfileView() {
-        let userInfo = db.userInfo
-        if let text = nameTextField.text, !userInfo.isEmpty {
-            nameTextField.text = userInfo[0]
-            profileButton.profileImage.image = UIImage(named: userInfo[1])
-            descriptionLabel.text = NickName().checkNickName(text).rawValue
-        } else {
-            guard let image = ProfileData.allCases.randomElement()?.rawValue else { return }
-            profileButton.profileImage.image = UIImage(named: image)
-        }
+        inputTrigger.configureViewTrigger.value = ()
     }
     
 }
@@ -121,47 +157,18 @@ extension ProfileViewController {
     @objc
     private func profilebuttonTapped(_ sender: UIButton) {
         print(#function)
-        let vc = ProfileImageViewController()
-        vc.profileImage = profileButton.profileImage.image
-        vc.returnImage = { [weak self] value in
-            self?.profileButton.profileImage.image = value
-        }
-        self.push(vc)
+        inputTrigger.profileButtonTrigger.value = ()
     }
     
     @objc
     private func successButtonTapped(_ sender: UIButton) {
         print(#function)
-        if let nicknameLabel = nameTextField.text, let descriptionLabel = descriptionLabel.text,
-           descriptionLabel == NickName.NickNameType.success.rawValue {
-            db.isUser = true
-            db.userInfo = [nicknameLabel, .checkProfileImage(profileButton.profileImage.image), "0", .currentDate]
-            let rootVC = TabBarController()
-            self.setRootView(rootVC)
-        } else {
-            self.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
-        }
+        inputTrigger.successButtonTrigger.value = ProfileSuccessButton(profileImage: profileButton.profileImage.image, textFields: [nameTextField.text, descriptionLabel.text])
     }
 }
 
 //MARK: - TextField
 extension ProfileViewController: UITextFieldDelegate {
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.view.endEditing(true)
-        return true
-    }
-    
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        textField.text = ""
-        textField.textColor = .customWhite
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        guard let text = textField.text else { return }
-        textField.textColor = ((text.isEmpty)) ? .customDarkGray : .customWhite
-        textField.text = ((text.isEmpty)) ? "닉네임을 설정해 주세요" : text
-    }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         guard let text = textField.text else { return }

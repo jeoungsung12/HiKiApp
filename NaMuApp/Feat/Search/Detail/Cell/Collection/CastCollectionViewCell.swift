@@ -36,17 +36,17 @@ class CastCollectionViewCell: UICollectionViewCell {
     }
     
     private func configureImage(_ urlString: String?) {
-        if let poster_path = urlString,
-            let url = URL(string: APIEndpoint.trending.imagebaseURL + poster_path) {
-            imageView.kf.setImage(with: url) { result in
-                switch result {
-                case .success:
-                    self.imageView.image = self.imageView.image?.downSampling(scale: 0.1)
-                case .failure:
-                    self.imageView.kf.setImage(with: url)
-                }
-            }
-        }
+//        if let poster_path = urlString,
+//            let url = URL(string: APIEndpoint.topAnime.imagebaseURL + poster_path) {
+//            imageView.kf.setImage(with: url) { result in
+//                switch result {
+//                case .success:
+//                    self.imageView.image = self.imageView.image?.downSampling(scale: 0.1)
+//                case .failure:
+//                    self.imageView.kf.setImage(with: url)
+//                }
+//            }
+//        }
     }
     
 }

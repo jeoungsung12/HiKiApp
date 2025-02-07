@@ -45,7 +45,7 @@ extension ProfileImageViewController {
     
     private func configureView() {
         self.setNavigation("프로필 이미지 설정")
-        self.view.backgroundColor = .customBlack
+        self.view.backgroundColor = .white
         
         profileButton.isUserInteractionEnabled = false
         profileButton.profileImage.image = profileImage

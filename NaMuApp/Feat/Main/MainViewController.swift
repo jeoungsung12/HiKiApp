@@ -9,28 +9,16 @@ import UIKit
 import SnapKit
 
 final class MainViewController: UIViewController {
-    private lazy var searchButton = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(searchButtonTapped))
-    private var profileView = MyProfileView()
-    private let recentSearchView = MainRecentView()
-    private let loadingIndicator = UIActivityIndicatorView()
-    private let titleLabel = UILabel()
+    private let leftLogo = UIBarButtonItem(title: "HiKi", style: .plain, target: nil, action: nil)
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
+    private let category = MainCategoryView()
+    private let loadingIndicator = UIActivityIndicatorView()
+    private var dataSource: UICollectionViewDiffableDataSource<HomeSection,HomeItem>?
     private var db = Database.shared
-    
-    var movieData: [SearchResult] = [] {
-        didSet {
-            collectionView.reloadData()
-        }
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        updateProfileAndRecentSearch()
     }
     
 }
@@ -39,61 +27,40 @@ final class MainViewController: UIViewController {
 extension MainViewController {
     
     private func configureHierarchy() {
-        self.view.addSubview(profileView)
-        self.view.addSubview(recentSearchView)
-        self.view.addSubview(titleLabel)
-        self.view.addSubview(collectionView)
-        self.view.addSubview(loadingIndicator)
+        [category, collectionView, loadingIndicator].forEach({
+            self.view.addSubview($0)
+        })
         configureLayout()
     }
     
     private func configureLayout() {
-        profileView.snp.makeConstraints { make in
-            make.height.equalToSuperview().dividedBy(6)
-            make.horizontalEdges.equalToSuperview().inset(12)
-            make.top.equalTo(self.view.safeAreaLayoutGuide).offset(12)
-        }
-        
-        recentSearchView.snp.makeConstraints { make in
-            make.height.equalTo(100)
+        category.snp.makeConstraints { make in
+            make.height.equalTo(40)
             make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(profileView.snp.bottom).offset(12)
-        }
-        
-        titleLabel.snp.makeConstraints { make in
-            make.height.equalTo(20)
-            make.horizontalEdges.equalToSuperview().inset(12)
-            make.top.equalTo(recentSearchView.snp.bottom).offset(12)
+            make.top.equalTo(self.view.safeAreaLayoutGuide)
         }
         
         collectionView.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-12)
-            make.top.equalTo(titleLabel.snp.bottom).offset(4)
+            make.top.equalTo(category.snp.bottom)
+            make.bottom.horizontalEdges.equalToSuperview()
         }
         
         loadingIndicator.snp.makeConstraints { make in
-            make.size.equalTo(40)
+            make.size.equalTo(30)
             make.center.equalToSuperview()
         }
+        setDataSource()
         fetchData()
-        recentTapped()
     }
     
     private func configureView() {
-        self.setNavigation("NaMu")
-        self.view.backgroundColor = .customBlack
-        self.navigationItem.rightBarButtonItem = searchButton
+        self.setNavigation()
+        self.view.backgroundColor = .white
+        self.navigationItem.leftBarButtonItem = leftLogo
         
         loadingIndicator.style = .medium
-        loadingIndicator.color = .customLightGray
+        loadingIndicator.color = .lightGray
         
-        titleLabel.text = "오늘의 영화"
-        titleLabel.textAlignment = .left
-        titleLabel.textColor = .customWhite
-        titleLabel.font = .boldSystemFont(ofSize: 16)
-        
-        profileTapped()
         configureCollectionView()
         configureHierarchy()
     }
@@ -102,112 +69,122 @@ extension MainViewController {
 //MARK: - Action
 extension MainViewController {
     
-    @objc
-    private func searchButtonTapped(_ sender: UIBarButtonItem) {
-        print(#function)
-        let vc = SearchViewController()
-        self.push(vc)
-    }
-    
-    private func profileTapped() {
-        print(#function)
-        profileView.profileTapped = { [weak self] in
-            let vc = SheetProfileViewController()
-            vc.dismissClosure = { [weak self] in
-                guard let self = self else { return }
-                self.profileView.configure(self.db.getUser())
-            }
-            self?.sheet(vc)
-        }
-    }
-    
-    private func recentTapped() {
-        recentSearchView.removeAll = { [weak self] in
-            guard let self = self else { return }
-            self.db.removeAll("recentSearch")
-            self.recentSearchView.configure(self.db.recentSearch.reversed())
-        }
-        recentSearchView.removeTapped = { [weak self] recent in
-            guard let self = self else { return }
-            self.db.removeRecentSearch(recent)
-            self.recentSearchView.configure(self.db.recentSearch.reversed())
-        }
-        recentSearchView.recentTapped = { [weak self] recent in
-            guard let self = self else { return }
-            let vc = SearchViewController()
-            vc.searchBar.searchTextField.text = recent
-            vc.searchData.searchText = recent
-            vc.fetchData()
-            self.push(vc)
-        }
-    }
-    
-    private func updateProfileAndRecentSearch() {
-        profileView.configure(db.getUser())
-        recentSearchView.configure(db.recentSearch.reversed())
-    }
-    
     private func fetchData() {
         loadingIndicator.startAnimating()
-        TrendingServices().getTrending { [weak self] response in
+        AnimateServices().getTopAnime(type: .airing) { [weak self] response in
             guard let self = self else { return }
             switch response {
             case let .success(data):
-                self.movieData = data
-                self.loadingIndicator.stopAnimating()
+                self.setBinding(data)
             case let .failure(error):
                 self.errorPresent(error)
                 self.loadingIndicator.stopAnimating()
             }
         }
     }
+    //TODO: - Rx
+    private func setBinding(_ data: [AnimateData]) {
+        var snapShot = NSDiffableDataSourceSnapshot<HomeSection,HomeItem>()
+
+        let headerSection = HomeSection.header
+        let headerData = Set(data).map {
+            return HomeItem.poster(ItemModel(id: $0.mal_id, image: $0.images.jpg.image_url)) }
+        snapShot.appendSections([headerSection])
+        snapShot.appendItems(headerData, toSection: headerSection)
+        
+        let semiHeader = HomeSection.semiHeader(title: "")
+        
+        
+        self.dataSource?.apply(snapShot)
+        self.loadingIndicator.stopAnimating()
+    }
     
 }
 
 //MARK: - CollectionView
-extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+extension MainViewController {
     
     private func configureCollectionView() {
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.backgroundColor = .clear
-        collectionView.register(MoviePosterCell.self, forCellWithReuseIdentifier: MoviePosterCell.id)
+        collectionView.backgroundColor = .white
+        collectionView.register(HeaderPosterCell.self, forCellWithReuseIdentifier: HeaderPosterCell.id)
     }
     
-    private func collectionViewLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        let width = ((UIScreen.main.bounds.width) / 2)
-        layout.itemSize = CGSize(width: width, height: ((UIScreen.main.bounds.height / 2)))
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
-        return layout
+    private func collectionViewLayout() -> UICollectionViewCompositionalLayout {
+        let config = UICollectionViewCompositionalLayoutConfiguration()
+        config.interSectionSpacing = 24
+        config.scrollDirection = .vertical
+        return UICollectionViewCompositionalLayout(sectionProvider: { [weak self] sectionIndex, _ in
+            let section = self?.dataSource?.sectionIdentifier(for: sectionIndex)
+            
+            switch section {
+            case .header:
+                return self?.createHeaderLayout()
+            case .semiHeader(let title):
+                return self?.createHeaderLayout()
+            case .middle(let title):
+                return self?.createHeaderLayout()
+            case .semiFooter(let title):
+                return self?.createHeaderLayout()
+            case .footer(let title):
+                return self?.createHeaderLayout()
+            case nil:
+                return self?.createHeaderLayout()
+            }
+        }, configuration: config)
+        
     }
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return movieData.count
+    private func createHeaderLayout() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.85), heightDimension: .fractionalHeight(0.7))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12)
+        section.interGroupSpacing = 12
+        section.orthogonalScrollingBehavior = .groupPagingCentered
+        return section
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MoviePosterCell.id, for: indexPath) as? MoviePosterCell else { return UICollectionViewCell() }
-        cell.configure(movieData[indexPath.row])
-        cell.isButton = { [weak self] value in
-            guard let self = self else { return }
-            self.customAlert((value) ? "보관 성공!" : "삭제 성공!") { }
-            self.profileView.configure(self.db.getUser())
-            collectionView.reloadItems(at: [indexPath])
+    private func setDataSource() {
+        dataSource = UICollectionViewDiffableDataSource<HomeSection,HomeItem>(collectionView: collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
+            switch itemIdentifier {
+            case .poster(let data):
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HeaderPosterCell.id, for: indexPath) as? HeaderPosterCell else { return UICollectionViewCell() }
+                cell.configureImage(data.image)
+                return cell
+            case .list:
+                
+                return UICollectionViewCell()
+            case .recommand:
+                
+                return UICollectionViewCell()
+            case .age:
+                
+                return UICollectionViewCell()
+            }
+        })
+        
+        dataSource?.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath -> UICollectionReusableView in
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "", for: indexPath)
+            let section = self?.dataSource?.sectionIdentifier(for: indexPath.section)
+            
+            switch section {
+            case .header:
+                print("header")
+//                (header as? HeaderView)?.configure(title: title)
+            case .semiHeader(title: ""):
+                print("category")
+            case .middle(title: ""):
+                print("horizontinal")
+            case .semiFooter(title: ""):
+                print("vertical")
+            case .footer(title: ""):
+                print("vertical")
+            default:
+                print("Default")
+            }
+            return header
         }
-        return cell
     }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? MoviePosterCell else { return }
-        let vc = SearchDetailViewController()
-        let movie = movieData[indexPath.row]
-        vc.searchData = movie
-        vc.isButton = {
-            cell.configure(movie)
-        }
-        self.push(vc)
-    }
-    
 }

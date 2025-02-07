@@ -21,21 +21,24 @@ extension TabBarController {
     private func configure() {
         let firstVC = UINavigationController(rootViewController: MainViewController())
         let secondVC = UINavigationController(rootViewController: MainViewController())
-        let thirdVC = UINavigationController(rootViewController: MyPageViewController())
+        let thirdVC = UINavigationController(rootViewController: SearchViewController())
+        let forthVC = UINavigationController(rootViewController: MyPageViewController())
         
-        self.setViewControllers([firstVC, secondVC, thirdVC], animated: true)
+        self.setViewControllers([firstVC, secondVC, thirdVC, forthVC], animated: true)
         guard let items = self.tabBar.items else { return }
         items[0].image = UIImage(systemName: "popcorn")
         items[1].image = UIImage(systemName: "film.stack")
-        items[2].image = UIImage(systemName: "person.circle")
+        items[2].image = UIImage(systemName: "magnifyingglass")
+        items[3].image = UIImage(systemName: "person.circle")
         
-        items[0].title = "CINEMA"
-        items[1].title = "UPCOMING"
-        items[2].title = "PROFILE"
+        items[0].title = "시네마"
+        items[1].title = "와치"
+        items[2].title = "검색"
+        items[3].title = "프로필"
            
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .customBlack
+        appearance.backgroundColor = .customWhite
         self.tabBar.standardAppearance = appearance
         self.tabBar.scrollEdgeAppearance = appearance
         

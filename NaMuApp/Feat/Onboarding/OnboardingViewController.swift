@@ -7,9 +7,10 @@
 
 import UIKit
 import SnapKit
+import Lottie
 
 final class OnboardingViewController: UIViewController {
-    private let imageView = UIImageView()
+    private let imageView = LottieAnimationView(name: "lottie")
     private let titleLabel = UILabel()
     private let descriptionLabel = UILabel()
     private let startButton = UIButton()
@@ -29,11 +30,9 @@ final class OnboardingViewController: UIViewController {
 extension OnboardingViewController {
     
     private func configureHierarchy() {
-        self.view.addSubview(imageView)
-        self.view.addSubview(titleLabel)
-        self.view.addSubview(descriptionLabel)
-        self.view.addSubview(startButton)
-        
+        [imageView, titleLabel, descriptionLabel, startButton].forEach {
+            self.view.addSubview($0)
+        }
         configureLayout()
     }
     
@@ -65,21 +64,22 @@ extension OnboardingViewController {
     
     private func configureView() {
         self.setNavigation()
-        self.view.backgroundColor = .customBlack
+        self.view.backgroundColor = .customWhite
         
-        imageView.contentMode = .scaleToFill
-        imageView.image = UIImage(named: "onboarding")
+        imageView.loopMode = .loop
+        imageView.contentMode = .scaleAspectFit
+        imageView.play()
         
-        titleLabel.text = "Onboarding"
-        titleLabel.textColor = .customWhite
+        titleLabel.text = "HiKi"
         titleLabel.textAlignment = .center
-        titleLabel.font = .boldItalicFont(30)
+        titleLabel.textColor = .systemOrange
+        titleLabel.font = .boldItalicFont(50)
         
         descriptionLabel.numberOfLines = 2
         descriptionLabel.textAlignment = .center
-        descriptionLabel.textColor = .customWhite
-        descriptionLabel.text = "당신만의 영화 세상,\nNaMu를 시작해보세요."
-        descriptionLabel.font = .systemFont(ofSize: 15, weight: .regular)
+        descriptionLabel.textColor = .lightGray
+        descriptionLabel.text = "당신만의 웹툰 세상 📺,\n하이키를 시작해보세요"
+        descriptionLabel.font = .systemFont(ofSize: 16, weight: .semibold)
         
         startButton.setBorder()
         startButton.setTitle("시작하기", for: .normal)

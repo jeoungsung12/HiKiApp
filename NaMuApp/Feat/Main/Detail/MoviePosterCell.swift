@@ -9,7 +9,7 @@ import UIKit
 import Kingfisher
 import SnapKit
 
-final class MoviePosterCell: UICollectionViewCell {
+final class HeaderPosterCell: UICollectionViewCell {
     static let id: String = "MoviePosterCell"
     private let imageResult = UILabel()
     private let imageView = UIImageView()
@@ -39,86 +39,46 @@ final class MoviePosterCell: UICollectionViewCell {
         configureImage(model.poster_path)
         titleLabel.text = model.title
         descriptionLabel.text = model.overview
-        buttonTapped = db.heartList.contains(model.title)
-        heartButton.setImage(UIImage(systemName: (db.heartList.contains(model.title)) ? "heart.fill" : "heart"), for: .normal)
     }
     
-    private func configureImage(_ urlString: String?) {
+    func configureImage(_ urlString: String?) {
         if let poster_path = urlString,
-            let url = URL(string: APIEndpoint.trending.imagebaseURL + poster_path) {
-            imageView.kf.setImage(with: url) { result in
-                switch result {
-                case .success:
-                    self.imageView.image = self.imageView.image?.downSampling(scale: 0.5)
-                case .failure:
-                    self.imageView.kf.setImage(with: url)
-                }
-            }
-        } else {
-            imageResult.text = NetworkError.noImage
+            let url = URL(string: poster_path) {
+            imageView.kf.setImage(with: url)
         }
     }
     
 }
 
-extension MoviePosterCell {
+extension HeaderPosterCell {
     
     private func configureHierarchy() {
-        self.addSubview(imageView)
-        self.addSubview(imageResult)
-        self.addSubview(heartButton)
-        self.addSubview(titleLabel)
-        self.addSubview(descriptionLabel)
+        [imageView, titleLabel, descriptionLabel].forEach({
+            self.addSubview($0)
+        })
         configureLayout()
     }
     
     private func configureLayout() {
         
         imageView.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalToSuperview()
-            make.height.equalToSuperview().dividedBy(1.5)
+            make.edges.equalToSuperview()
         }
-        
-        imageResult.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalToSuperview()
-            make.height.equalToSuperview().dividedBy(1.5)
-        }
-        
-        heartButton.snp.makeConstraints { make in
-            make.size.equalTo(20)
-            make.trailing.equalToSuperview()
-            make.top.equalTo(imageView.snp.bottom).offset(4)
-        }
-        
-        titleLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
-            make.top.equalTo(imageView.snp.bottom).offset(4)
-            make.trailing.equalTo(heartButton.snp.leading).offset(-4)
-        }
-        
-        descriptionLabel.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(heartButton.snp.bottom).offset(4)
-            make.bottom.lessThanOrEqualToSuperview().offset(-4)
-        }
-        
     }
     
     private func configureView() {
-        imageResult.numberOfLines = 0
-        imageResult.textColor = .white
-        imageResult.textAlignment = .center
-        imageResult.backgroundColor = .clear
-        imageResult.font = .boldSystemFont(ofSize: 15)
-        
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 15
         imageView.contentMode = .scaleToFill
         imageView.backgroundColor = .darkGray
         
-        heartButton.tintColor = .point
-        heartButton.addTarget(self, action: #selector(heartButtonTapped), for: .touchUpInside)
         
+        imageView.layer.shadowRadius = 4
+        imageView.layer.shadowOpacity = 0.5
+        imageView.layer.shadowColor = UIColor.lightGray.cgColor
+        imageView.layer.shadowOffset = CGSize(width: 0, height: 2)
+        
+      
         titleLabel.numberOfLines = 1
         titleLabel.textAlignment = .left
         titleLabel.textColor = .customWhite
@@ -132,24 +92,4 @@ extension MoviePosterCell {
         configureHierarchy()
     }
     
-}
-
-extension MoviePosterCell {
-    
-    @objc
-    private func heartButtonTapped(_ sender: UIButton) {
-        print(#function)
-        if let text = titleLabel.text {
-            buttonTapped.toggle()
-            if buttonTapped {
-                var list = db.heartList
-                list.append(text)
-                db.heartList = list
-                isButton?(true)
-            } else {
-                db.removeHeartButton(text)
-                isButton?(false)
-            }
-        }
-    }
 }

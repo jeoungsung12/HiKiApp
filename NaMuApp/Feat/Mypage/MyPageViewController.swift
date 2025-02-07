@@ -36,13 +36,13 @@ extension MyPageViewController {
     private func configureLayout() {
         
         myProfileView.snp.makeConstraints { make in
-            make.height.equalToSuperview().dividedBy(6)
+            make.height.equalTo(150)
             make.horizontalEdges.equalToSuperview().inset(12)
             make.top.equalTo(self.view.safeAreaLayoutGuide).offset(12)
         }
         
         buttonStackView.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview()
+            make.horizontalEdges.equalToSuperview().inset(12)
             make.bottom.lessThanOrEqualToSuperview().offset(-24)
             make.top.equalTo(myProfileView.snp.bottom).offset(24)
         }
@@ -51,11 +51,11 @@ extension MyPageViewController {
     
     private func configureView() {
         self.setNavigation("설정")
-        self.view.backgroundColor = .customBlack
+        self.view.backgroundColor = .customWhite
         
         profileTapped()
         
-        buttonStackView.spacing = 10
+        buttonStackView.spacing = 15
         buttonStackView.axis = .vertical
         buttonStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         for (type) in MyPageType.allCases {

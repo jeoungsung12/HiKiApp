@@ -28,16 +28,16 @@ final class BackDropCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(_ image: String) {
-        if let url = URL(string: APIEndpoint.trending.imagebaseURL + image) {
-            imageView.kf.setImage(with: url) { result in
-                switch result {
-                case .success:
-                    self.imageView.image = self.imageView.image?.downSampling(scale: 0.7)
-                case .failure:
-                    self.imageView.kf.setImage(with: url)
-                }
-            }
-        }
+//        if let url = URL(string: APIEndpoint.topAnime.imagebaseURL + image) {
+//            imageView.kf.setImage(with: url) { result in
+//                switch result {
+//                case .success:
+//                    self.imageView.image = self.imageView.image?.downSampling(scale: 0.7)
+//                case .failure:
+//                    self.imageView.kf.setImage(with: url)
+//                }
+//            }
+//        }
     }
     
 }

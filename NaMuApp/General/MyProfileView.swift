@@ -13,7 +13,7 @@ final class MyProfileView: UIView {
     private let profileImage = CustomProfileButton(60, true)
     private let nameLabel = UILabel()
     private let dateLabel = UILabel()
-    private let arrow = UIImageView()
+    private let levelLabel = UILabel()
     private let saveButton = UIButton()
     
     var profileTapped: (()->Void)?
@@ -30,7 +30,7 @@ final class MyProfileView: UIView {
         dateLabel.text = userInfo.date
         nameLabel.text = userInfo.nickname
         profileImage.profileImage.image = userInfo.profile
-        saveButton.setTitle("\(userInfo.movie) 개의 무비박스 보관중", for: .normal)
+        saveButton.setTitle("\(userInfo.movie)개의 애니 보관중", for: .normal)
     }
     
 }
@@ -38,12 +38,13 @@ final class MyProfileView: UIView {
 extension MyProfileView {
     
     private func configureHierarchy() {
-        totalButton.addSubview(profileImage)
-        totalButton.addSubview(arrow)
-        totalButton.addSubview(nameLabel)
-        totalButton.addSubview(dateLabel)
-        self.addSubview(totalButton)
-        self.addSubview(saveButton)
+        [profileImage, nameLabel, dateLabel, levelLabel].forEach( {
+            totalButton.addSubview($0)
+        })
+        
+        [totalButton, saveButton].forEach({
+            self.addSubview($0)
+        })
         
         configureLayout()
     }
@@ -54,22 +55,24 @@ extension MyProfileView {
             make.top.leading.equalToSuperview().inset(12)
         }
         
-        arrow.snp.makeConstraints { make in
-            make.size.equalTo(20)
-            make.centerY.equalTo(profileImage)
-            make.trailing.equalToSuperview().inset(12)
-        }
-        
         nameLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(24)
-            make.trailing.equalTo(arrow.snp.leading).offset(-4)
+            make.trailing.equalTo(levelLabel.snp.leading).offset(-4)
             make.leading.equalTo(profileImage.snp.trailing).offset(8)
         }
         
         dateLabel.snp.makeConstraints { make in
             make.top.equalTo(nameLabel.snp.bottom).offset(4)
-            make.trailing.equalTo(arrow.snp.leading).offset(-4)
+            make.trailing.equalTo(levelLabel.snp.leading).offset(-4)
             make.leading.equalTo(profileImage.snp.trailing).offset(8)
+        }
+        
+        levelLabel.snp.makeConstraints { make in
+            make.height.equalTo(20)
+            make.width.equalTo(120)
+            make.centerY.equalTo(profileImage)
+            make.trailing.equalToSuperview().inset(24)
+            make.leading.equalTo(dateLabel.snp.trailing).offset(24)
         }
         
         totalButton.snp.makeConstraints { make in
@@ -79,8 +82,8 @@ extension MyProfileView {
         
         saveButton.snp.makeConstraints { make in
             make.height.equalTo(40)
-            make.top.equalTo(totalButton.snp.bottom).offset(16)
             make.bottom.horizontalEdges.equalToSuperview().inset(12)
+            make.top.lessThanOrEqualTo(totalButton.snp.bottom).offset(16)
         }
         
     }
@@ -88,29 +91,34 @@ extension MyProfileView {
     private func configureView() {
         self.clipsToBounds = true
         self.layer.cornerRadius = 15
-        self.backgroundColor = .darkGray
+        self.backgroundColor = .point.withAlphaComponent(0.2)
         
         profileImage.containerView.isHidden = true
         profileImage.isUserInteractionEnabled = false
         
-        nameLabel.textColor = .customWhite
+        nameLabel.textColor = .black
         nameLabel.textAlignment = .left
-        nameLabel.font = .boldSystemFont(ofSize: 16)
+        nameLabel.font = .boldSystemFont(ofSize: 18)
         
-        dateLabel.textColor = .customDarkGray
+        dateLabel.textColor = .black
         dateLabel.textAlignment = .left
-        dateLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        dateLabel.font = .systemFont(ofSize: 11, weight: .regular)
         
         saveButton.isEnabled = false
         saveButton.clipsToBounds = true
         saveButton.layer.cornerRadius = 10
-        saveButton.backgroundColor = .point
-        saveButton.setTitleColor(.customWhite, for: .normal)
+        saveButton.backgroundColor = .white
+        saveButton.setTitleColor(.orange, for: .normal)
         saveButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
         
-        arrow.tintColor = .customLightGray
-        arrow.contentMode = .scaleAspectFit
-        arrow.image = UIImage(named: "carat")
+        //TODO: - 수정
+//        levelLabel.textColor = .white
+//        levelLabel.clipsToBounds = true
+//        levelLabel.text = "👑방구석 오타쿠"
+//        levelLabel.layer.cornerRadius = 5
+//        levelLabel.textAlignment = .center
+//        levelLabel.backgroundColor = .point
+//        levelLabel.font = .systemFont(ofSize: 13, weight: .heavy)
         
         totalButton.backgroundColor = .clear
         totalButton.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)

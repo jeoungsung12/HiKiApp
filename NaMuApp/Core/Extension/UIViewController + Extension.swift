@@ -51,13 +51,11 @@ extension UIViewController {
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .customBlack
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.customWhite]
+        appearance.backgroundColor = .customWhite
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.point]
         
         navigationBar.tintColor = color
-        navigationBar.compactAppearance = appearance
         navigationBar.standardAppearance = appearance
-        navigationBar.scrollEdgeAppearance = appearance
     }
     
     func customAlert(_ title: String = "",_ message: String = "",_ action: [AlertType] = [.ok],_ method: @escaping () -> Void) {

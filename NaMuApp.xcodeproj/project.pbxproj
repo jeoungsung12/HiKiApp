@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E42E35642D53595C00822908 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E42E35632D53595C00822908 /* RxSwift */; };
+		E42E36092D53960B00822908 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = E42E36082D53960B00822908 /* Lottie */; };
 		E46EB9112D43653E00F0E536 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = E46EB9102D43653E00F0E536 /* .gitignore */; };
 		E47889172D474177008D4B3A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E47889162D474177008D4B3A /* Alamofire */; };
 		E478891A2D47417D008D4B3A /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E47889192D47417D008D4B3A /* Kingfisher */; };
@@ -44,8 +46,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E42E36092D53960B00822908 /* Lottie in Frameworks */,
 				E478891D2D474184008D4B3A /* SnapKit in Frameworks */,
 				E478891A2D47417D008D4B3A /* Kingfisher in Frameworks */,
+				E42E35642D53595C00822908 /* RxSwift in Frameworks */,
 				E47889172D474177008D4B3A /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -93,6 +97,8 @@
 				E47889162D474177008D4B3A /* Alamofire */,
 				E47889192D47417D008D4B3A /* Kingfisher */,
 				E478891C2D474184008D4B3A /* SnapKit */,
+				E42E35632D53595C00822908 /* RxSwift */,
+				E42E36082D53960B00822908 /* Lottie */,
 			);
 			productName = NaMuApp;
 			productReference = E46EB8F22D43631200F0E536 /* NaMuApp.app */;
@@ -126,6 +132,8 @@
 				E47889152D474177008D4B3A /* XCRemoteSwiftPackageReference "Alamofire" */,
 				E47889182D47417D008D4B3A /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				E478891B2D474184008D4B3A /* XCRemoteSwiftPackageReference "SnapKit" */,
+				E42E35622D53595C00822908 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				E42E36072D53960B00822908 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E46EB8F32D43631200F0E536 /* Products */;
@@ -166,7 +174,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q653PU93R6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NaMuApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "정성윤";
@@ -201,7 +209,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q653PU93R6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NaMuApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "정성윤";
@@ -372,6 +380,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		E42E35622D53595C00822908 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.8.0;
+			};
+		};
+		E42E36072D53960B00822908 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.1;
+			};
+		};
 		E47889152D474177008D4B3A /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
@@ -399,6 +423,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E42E35632D53595C00822908 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E42E35622D53595C00822908 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		E42E36082D53960B00822908 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E42E36072D53960B00822908 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
 		E47889162D474177008D4B3A /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E47889152D474177008D4B3A /* XCRemoteSwiftPackageReference "Alamofire" */;

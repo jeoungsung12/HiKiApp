@@ -46,18 +46,18 @@ class SearchTableViewCell: UITableViewCell {
     }
     
     private func configureImage(_ urlString: String?) {
-        if let poster_path = urlString,
-            let url = URL(string: APIEndpoint.trending.imagebaseURL + poster_path) {
-            imageResult.text = nil
-            posterImageView.kf.setImage(with: url) { result in
-                switch result {
-                case .success:
-                    self.posterImageView.image = self.posterImageView.image?.downSampling(scale: 0.2)
-                case .failure:
-                    self.posterImageView.kf.setImage(with: url)
-                }
-            }
-        }
+//        if let poster_path = urlString,
+//            let url = URL(string: APIEndpoint.topAnime.imagebaseURL + poster_path) {
+//            imageResult.text = nil
+//            posterImageView.kf.setImage(with: url) { result in
+//                switch result {
+//                case .success:
+//                    self.posterImageView.image = self.posterImageView.image?.downSampling(scale: 0.2)
+//                case .failure:
+//                    self.posterImageView.kf.setImage(with: url)
+//                }
+//            }
+//        }
     }
 
 }
