@@ -16,7 +16,7 @@ struct AnimateData: Decodable, Hashable {
     let url: String
     let images: AnimateImages
     let title: String
-    let type: String
+    let type: String?
     let synopsis: String?
 }
 

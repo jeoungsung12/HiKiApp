@@ -49,12 +49,12 @@ extension PosterCell {
     private func configureLayout() {
         
         imageView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.bottom.equalToSuperview().offset(-12)
+            make.top.horizontalEdges.equalToSuperview()
         }
         
         titleLabel.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-12)
-            make.horizontalEdges.equalToSuperview().inset(12)
+            make.bottom.horizontalEdges.equalToSuperview().inset(24)
         }
         
     }

@@ -9,8 +9,8 @@ import UIKit
 import SnapKit
 
 class MainCategoryView: UIView {
-    private let categories = MainCategoryType.allCases
-    private var selectedCategory: MainCategoryType = .airing {
+    private let categories = AnimateType.allCases
+    private var selectedCategory: AnimateType = .airing {
         didSet {
             updateSelection()
         }
@@ -25,7 +25,7 @@ class MainCategoryView: UIView {
     }()
     
     private var categoryButtons: [UIButton] = []
-    
+    var selectedItem: ((AnimateType)->Void)?
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -55,7 +55,7 @@ class MainCategoryView: UIView {
             button.backgroundColor = .white
             button.setTitleColor(.point, for: .selected)
             button.setTitleColor(.lightGray, for: .normal)
-            button.setTitle(category.rawValue, for: .normal)
+            button.setTitle(category.title, for: .normal)
             button.titleLabel?.font = .boldSystemFont(ofSize: 15)
             button.tag = categories.firstIndex(of: category) ?? 0
             button.titleLabel?.font = .systemFont(ofSize: 16, weight: .heavy)
@@ -71,6 +71,7 @@ class MainCategoryView: UIView {
     @objc private func categoryTapped(_ sender: UIButton) {
         let index = sender.tag
         selectedCategory = categories[index]
+        selectedItem?(selectedCategory)
     }
     
     private func updateSelection() {

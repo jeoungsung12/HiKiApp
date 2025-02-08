@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 final class MainViewController: UIViewController {
-    private let leftLogo = UIBarButtonItem(title: "HiKi", style: .plain, target: nil, action: nil)
+    private let leftLogo = UIBarButtonItem(customView: MainNavigationView())
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
     private let category = MainCategoryView()
     private let loadingIndicator = UIActivityIndicatorView()
@@ -17,10 +17,10 @@ final class MainViewController: UIViewController {
     
     private let viewModel = MainViewModel()
     private let inputTrigger = MainViewModel.Input(
-        dataLoadTrigger: Observable((AnimeType.airing))
+        dataLoadTrigger: Observable((AnimateType.airing))
     )
     
-    private var lastContentOffset: CGFloat = 0
+    private var lastContentOffset: CGFloat = 0.0
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -34,13 +34,20 @@ final class MainViewController: UIViewController {
         output.dataLoadResult.lazyBind { [weak self] animateData in
             DispatchQueue.main.async {
                 if let animateData = animateData {
-                    self?.setSnapShot(animateData)
+                    if self?.inputTrigger.dataLoadTrigger.value == .upcoming {
+                        self?.setUpcomming(animateData)
+                    } else {
+                        self?.setSnapShot(animateData)
+                    }
                 } else {
                     self?.errorPresent(.notFount)
                 }
             }
         }
-        
+    }
+    
+    deinit {
+        print(#function, self)
     }
     
 }
@@ -65,7 +72,7 @@ extension MainViewController {
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(category.snp.bottom)
             make.horizontalEdges.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-24)
+            make.bottom.equalToSuperview().offset(-(self.tabBarController?.tabBar.bounds.height ?? 0))
         }
         
         loadingIndicator.snp.makeConstraints { make in
@@ -79,10 +86,14 @@ extension MainViewController {
         self.setNavigation()
         self.view.backgroundColor = .white
         self.navigationItem.leftBarButtonItem = leftLogo
-        self.navigationController?.hidesBarsOnSwipe = true
         
         loadingIndicator.style = .medium
         loadingIndicator.color = .lightGray
+        
+        category.selectedItem = { [weak self] type  in
+            self?.inputTrigger.dataLoadTrigger.value = type
+            self?.loadingIndicator.startAnimating()
+        }
 
         configureCollectionView()
         configureHierarchy()
@@ -90,6 +101,19 @@ extension MainViewController {
 }
 
 extension MainViewController {
+    
+    private func setUpcomming(_ data: [[AnimateData]]) {
+        var snapShot = NSDiffableDataSourceSnapshot<HomeSection,HomeItem>()
+        
+        let headerSection = HomeSection.header
+        let headerData = Set(data[0]).compactMap {
+            return HomeItem.poster(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url)) }
+        snapShot.appendSections([headerSection])
+        snapShot.appendItems(headerData, toSection: headerSection)
+        
+        self.dataSource?.apply(snapShot)
+        self.loadingIndicator.stopAnimating()
+    }
     
     //TODO: - Rx
     private func setSnapShot(_ data: [[AnimateData]]) {
@@ -108,13 +132,13 @@ extension MainViewController {
         let semiHeaderData = Set(data[1]).compactMap {
             return HomeItem.recommand(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url)) }
         
-        let middleData = Set(totalData.filter({$0.type.uppercased() == "TV"})).compactMap {
+        let middleData = Set(totalData.filter({$0.type?.uppercased() == "TV"})).compactMap {
             return HomeItem.tvList(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url)) }
         
-        let semiFooterData = Set(totalData.filter({$0.type.uppercased() == "ONA"})).compactMap {
+        let semiFooterData = Set(totalData.filter({$0.type?.uppercased() == "ONA"})).compactMap {
             return HomeItem.onaList(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url)) }
         
-        let footerData = Set(totalData.filter({$0.type.uppercased() == "TV SPECIAL"})).compactMap {
+        let footerData = Set(totalData.filter({$0.type?.uppercased() == "TV SPECIAL"})).compactMap {
             return HomeItem.special(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url)) }
         
         [headerSection, semiHeaderSection, middleSection, semiFooterSection, footerSection].forEach({
@@ -134,9 +158,10 @@ extension MainViewController {
 }
 
 //MARK: - CollectionView
-extension MainViewController {
+extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
     
     private func configureCollectionView() {
+        collectionView.delegate = self
         collectionView.backgroundColor = .white
         collectionView.register(PosterCell.self, forCellWithReuseIdentifier: PosterCell.id)
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
@@ -192,13 +217,10 @@ extension MainViewController {
             switch itemIdentifier {
             case .poster(let data):
                 return self.setCell(data, false, indexPath: indexPath)
-            case .recommand(let data):
-                return self.setCell(data, true, indexPath: indexPath)
-            case .tvList(let data):
-                return self.setCell(data, true, indexPath: indexPath)
-            case .onaList(let data):
-                return self.setCell(data, true, indexPath: indexPath)
-            case .special(let data):
+            case .recommand(let data),
+                    .tvList(let data),
+                    .onaList(let data),
+                    .special(let data):
                 return self.setCell(data, true, indexPath: indexPath)
             }
         })
@@ -207,21 +229,34 @@ extension MainViewController {
             let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderView.id, for: indexPath)
             let section = self?.dataSource?.sectionIdentifier(for: indexPath.section)
             switch section {
-            case .header:
-                print("header")
-            case .semiHeader(let title):
-                (header as? HeaderView)?.configure(title: title)
-            case .middle(let title):
-                (header as? HeaderView)?.configure(title: title)
-            case .semiFooter(let title):
-                (header as? HeaderView)?.configure(title: title)
-            case .footer(let title):
+            case .semiHeader(let title),
+                    .middle(let title),
+                    .semiFooter(let title),
+                    .footer(let title):
                 (header as? HeaderView)?.configure(title: title)
             default:
-                print("default")
+                return UICollectionReusableView()
             }
             return header
         }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let currentOffset = scrollView.contentOffset.y
+        let maxOffset = scrollView.contentSize.height - scrollView.bounds.height
+        
+        if currentOffset >= maxOffset {
+            return
+        }
+        
+        if (lastContentOffset <= 0) || (lastContentOffset > currentOffset) {
+            self.navigationController?.navigationBar.isHidden = false
+            self.additionalSafeAreaInsets.top = 0
+        } else if (lastContentOffset < currentOffset) {
+            self.navigationController?.navigationBar.isHidden = true
+            self.additionalSafeAreaInsets.top = -44
+        }
+        lastContentOffset = currentOffset
     }
     
 }

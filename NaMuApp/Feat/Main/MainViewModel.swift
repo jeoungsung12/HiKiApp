@@ -10,7 +10,7 @@ import Foundation
 final class MainViewModel: ViewModelType {
     
     struct Input {
-        let dataLoadTrigger: Observable<AnimeType>
+        let dataLoadTrigger: Observable<AnimateType>
     }
     
     struct Output {
@@ -35,22 +35,24 @@ extension MainViewModel {
                     resultData = nil
                 }
             }
-            group.enter()
-            self?.fetchData(type: type, page: 2, rating: "g", group: group) { result in
-                switch result {
-                case .success(let success):
-                    resultData?.append(success)
-                case .failure:
-                    resultData = nil
+            if !(type == .upcoming) {
+                group.enter()
+                self?.fetchData(type: type, page: 2, rating: "g", group: group) { result in
+                    switch result {
+                    case .success(let success):
+                        resultData?.append(success)
+                    case .failure:
+                        resultData = nil
+                    }
                 }
-            }
-            group.enter()
-            self?.fetchData(type: type, page: 3, rating: "g", group: group) { result in
-                switch result {
-                case .success(let success):
-                    resultData?.append(success)
-                case .failure:
-                    resultData = nil
+                group.enter()
+                self?.fetchData(type: type, page: 3, rating: "g", group: group) { result in
+                    switch result {
+                    case .success(let success):
+                        resultData?.append(success)
+                    case .failure:
+                        resultData = nil
+                    }
                 }
             }
             group.notify(queue: .global()) {
@@ -61,7 +63,7 @@ extension MainViewModel {
         return output
     }
  
-    private func fetchData(type: AnimeType, page: Int, rating: String, group: DispatchGroup, completion: @escaping (Result<[AnimateData],NetworkError.CustomError>) -> Void) {
+    private func fetchData(type: AnimateType, page: Int, rating: String, group: DispatchGroup, completion: @escaping (Result<[AnimateData],NetworkError.CustomError>) -> Void) {
         AnimateServices().getTopAnime(request: AnimateRequest(page: page, rating: "g", filter: type.filter)) { response in
             completion(response)
             group.leave()
