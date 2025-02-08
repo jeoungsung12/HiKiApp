@@ -8,16 +8,16 @@
 import Foundation
 
 final class CastServices {
-    
-    func getCredit(_ id: Int, completion: @escaping (Result<CreditModel,NetworkError.CustomError>) -> Void) {
-        NetworkManager.shared.getData(.credit(id: id)) { (response: Result<CreditModel,NetworkError.CustomError>) in
-            switch response {
-            case let .success(data):
-                completion(.success(data))
-            case  let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
+//    
+//    func getCredit(_ id: Int, completion: @escaping (Result<CreditModel,NetworkError.CustomError>) -> Void) {
+//        NetworkManager.shared.getData(.credit(id: id)) { (response: Result<CreditModel,NetworkError.CustomError>) in
+//            switch response {
+//            case let .success(data):
+//                completion(.success(data))
+//            case  let .failure(error):
+//                completion(.failure(error))
+//            }
+//        }
+//    }
     
 }

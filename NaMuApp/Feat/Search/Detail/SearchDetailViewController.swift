@@ -78,29 +78,29 @@ extension SearchDetailViewController {
         loadingIndicator.startAnimating()
         let group = DispatchGroup()
         group.enter()
-        ImageServices().getImage(searchData.id) { [weak self] response in
-            guard let self = self else { return }
-            switch response {
-            case let .success(data):
-                self.imageData = data
-                group.leave()
-            case  let .failure(error):
-                self.errorPresent(error)
-                group.leave()
-            }
-        }
+//        ImageServices().getImage(searchData.id) { [weak self] response in
+//            guard let self = self else { return }
+//            switch response {
+//            case let .success(data):
+//                self.imageData = data
+//                group.leave()
+//            case  let .failure(error):
+//                self.errorPresent(error)
+//                group.leave()
+//            }
+//        }
         group.enter()
-        CastServices().getCredit(searchData.id) { [weak self] response in
-            guard let self = self else { return }
-            switch response {
-            case let .success(data):
-                self.creditData = data
-                group.leave()
-            case  let .failure(error):
-                self.errorPresent(error)
-                group.leave()
-            }
-        }
+//        CastServices().getCredit(searchData.id) { [weak self] response in
+//            guard let self = self else { return }
+//            switch response {
+//            case let .success(data):
+//                self.creditData = data
+//                group.leave()
+//            case  let .failure(error):
+//                self.errorPresent(error)
+//                group.leave()
+//            }
+//        }
         group.notify(queue: .main) {
             self.tableView.reloadData()
             self.loadingIndicator.stopAnimating()

@@ -10,11 +10,12 @@ import SnapKit
 
 class MainCategoryView: UIView {
     private let categories = MainCategoryType.allCases
-    private var selectedCategory: MainCategoryType = .recommand {
+    private var selectedCategory: MainCategoryType = .airing {
         didSet {
             updateSelection()
         }
     }
+    
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.spacing = 20

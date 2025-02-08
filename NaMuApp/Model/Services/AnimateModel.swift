@@ -15,6 +15,9 @@ struct AnimateData: Decodable, Hashable {
     let mal_id: Int
     let url: String
     let images: AnimateImages
+    let title: String
+    let type: String
+    let synopsis: String?
 }
 
 struct AnimateImages: Decodable, Hashable {

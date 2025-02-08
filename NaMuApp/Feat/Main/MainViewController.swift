@@ -14,11 +14,33 @@ final class MainViewController: UIViewController {
     private let category = MainCategoryView()
     private let loadingIndicator = UIActivityIndicatorView()
     private var dataSource: UICollectionViewDiffableDataSource<HomeSection,HomeItem>?
-    private var db = Database.shared
     
+    private let viewModel = MainViewModel()
+    private let inputTrigger = MainViewModel.Input(
+        dataLoadTrigger: Observable((AnimeType.airing))
+    )
+    
+    private var lastContentOffset: CGFloat = 0
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        setBinding()
+    }
+    
+    private func setBinding() {
+        let output = viewModel.transform(input: inputTrigger)
+        
+        loadingIndicator.startAnimating()
+        output.dataLoadResult.lazyBind { [weak self] animateData in
+            DispatchQueue.main.async {
+                if let animateData = animateData {
+                    self?.setSnapShot(animateData)
+                } else {
+                    self?.errorPresent(.notFount)
+                }
+            }
+        }
+        
     }
     
 }
@@ -37,12 +59,13 @@ extension MainViewController {
         category.snp.makeConstraints { make in
             make.height.equalTo(40)
             make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(self.view.safeAreaLayoutGuide)
+            make.top.equalTo(self.view.safeAreaLayoutGuide).offset(4)
         }
         
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(category.snp.bottom)
-            make.bottom.horizontalEdges.equalToSuperview()
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalToSuperview().offset(-24)
         }
         
         loadingIndicator.snp.makeConstraints { make in
@@ -50,50 +73,59 @@ extension MainViewController {
             make.center.equalToSuperview()
         }
         setDataSource()
-        fetchData()
     }
     
     private func configureView() {
         self.setNavigation()
         self.view.backgroundColor = .white
         self.navigationItem.leftBarButtonItem = leftLogo
+        self.navigationController?.hidesBarsOnSwipe = true
         
         loadingIndicator.style = .medium
         loadingIndicator.color = .lightGray
-        
+
         configureCollectionView()
         configureHierarchy()
     }
 }
 
-//MARK: - Action
 extension MainViewController {
     
-    private func fetchData() {
-        loadingIndicator.startAnimating()
-        AnimateServices().getTopAnime(type: .airing) { [weak self] response in
-            guard let self = self else { return }
-            switch response {
-            case let .success(data):
-                self.setBinding(data)
-            case let .failure(error):
-                self.errorPresent(error)
-                self.loadingIndicator.stopAnimating()
-            }
-        }
-    }
     //TODO: - Rx
-    private func setBinding(_ data: [AnimateData]) {
+    private func setSnapShot(_ data: [[AnimateData]]) {
         var snapShot = NSDiffableDataSourceSnapshot<HomeSection,HomeItem>()
-
+        let totalData = data.flatMap({$0})
+        
         let headerSection = HomeSection.header
-        let headerData = Set(data).map {
-            return HomeItem.poster(ItemModel(id: $0.mal_id, image: $0.images.jpg.image_url)) }
-        snapShot.appendSections([headerSection])
+        let semiHeaderSection = HomeSection.semiHeader(title: HomeSection.semiHeader(title: "").title)
+        let middleSection = HomeSection.middle(title: HomeSection.middle(title: "").title)
+        let semiFooterSection = HomeSection.middle(title: HomeSection.semiFooter(title: "").title)
+        let footerSection = HomeSection.middle(title: HomeSection.footer(title: "").title)
+        
+        let headerData = Set(data[0]).compactMap {
+            return HomeItem.poster(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url)) }
+        
+        let semiHeaderData = Set(data[1]).compactMap {
+            return HomeItem.recommand(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url)) }
+        
+        let middleData = Set(totalData.filter({$0.type.uppercased() == "TV"})).compactMap {
+            return HomeItem.tvList(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url)) }
+        
+        let semiFooterData = Set(totalData.filter({$0.type.uppercased() == "ONA"})).compactMap {
+            return HomeItem.onaList(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url)) }
+        
+        let footerData = Set(totalData.filter({$0.type.uppercased() == "TV SPECIAL"})).compactMap {
+            return HomeItem.special(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url)) }
+        
+        [headerSection, semiHeaderSection, middleSection, semiFooterSection, footerSection].forEach({
+            snapShot.appendSections([$0])
+        })
+        
         snapShot.appendItems(headerData, toSection: headerSection)
-        
-        let semiHeader = HomeSection.semiHeader(title: "")
-        
+        snapShot.appendItems(semiHeaderData, toSection: semiHeaderSection)
+        snapShot.appendItems(middleData, toSection: middleSection)
+        snapShot.appendItems(semiFooterData, toSection: semiFooterSection)
+        snapShot.appendItems(footerData, toSection: footerSection)
         
         self.dataSource?.apply(snapShot)
         self.loadingIndicator.stopAnimating()
@@ -106,7 +138,8 @@ extension MainViewController {
     
     private func configureCollectionView() {
         collectionView.backgroundColor = .white
-        collectionView.register(HeaderPosterCell.self, forCellWithReuseIdentifier: HeaderPosterCell.id)
+        collectionView.register(PosterCell.self, forCellWithReuseIdentifier: PosterCell.id)
+        collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
     }
     
     private func collectionViewLayout() -> UICollectionViewCompositionalLayout {
@@ -115,76 +148,80 @@ extension MainViewController {
         config.scrollDirection = .vertical
         return UICollectionViewCompositionalLayout(sectionProvider: { [weak self] sectionIndex, _ in
             let section = self?.dataSource?.sectionIdentifier(for: sectionIndex)
-            
-            switch section {
-            case .header:
-                return self?.createHeaderLayout()
-            case .semiHeader(let title):
-                return self?.createHeaderLayout()
-            case .middle(let title):
-                return self?.createHeaderLayout()
-            case .semiFooter(let title):
-                return self?.createHeaderLayout()
-            case .footer(let title):
-                return self?.createHeaderLayout()
-            case nil:
-                return self?.createHeaderLayout()
+            if section == .header {
+                return (self?.createLayout(width: 0.85, height: UIScreen.main.bounds.height / 2.0, .groupPagingCentered))
+            } else if section == .semiHeader(title: HomeSection.semiHeader(title: "").title) {
+                return (self?.createLayout(width: 0.45, height: 250, .continuous))
+            } else {
+                return (self?.createLayout(width: 0.3, height: 180, .continuous))
             }
         }, configuration: config)
-        
     }
     
-    private func createHeaderLayout() -> NSCollectionLayoutSection {
+    func createLayout(width: Double, height: CGFloat,_ alignment: UICollectionLayoutSectionOrthogonalScrollingBehavior) -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.85), heightDimension: .fractionalHeight(0.7))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(width), heightDimension: .absolute(height))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 24, bottom: 0, trailing: 24)
         section.interGroupSpacing = 12
-        section.orthogonalScrollingBehavior = .groupPagingCentered
+        section.orthogonalScrollingBehavior = alignment
+        
+        if alignment == .continuous {
+            let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50))
+            let header = NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: headerSize,
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .topLeading
+            )
+            section.boundarySupplementaryItems = [header]
+        }
+        
         return section
+    }
+    
+    private func setCell(_ data: ItemModel,_ valid: Bool, indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PosterCell.id, for: indexPath) as? PosterCell else { return UICollectionViewCell() }
+        cell.configure(data, valid)
+        return cell
     }
     
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<HomeSection,HomeItem>(collectionView: collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
             case .poster(let data):
-                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HeaderPosterCell.id, for: indexPath) as? HeaderPosterCell else { return UICollectionViewCell() }
-                cell.configureImage(data.image)
-                return cell
-            case .list:
-                
-                return UICollectionViewCell()
-            case .recommand:
-                
-                return UICollectionViewCell()
-            case .age:
-                
-                return UICollectionViewCell()
+                return self.setCell(data, false, indexPath: indexPath)
+            case .recommand(let data):
+                return self.setCell(data, true, indexPath: indexPath)
+            case .tvList(let data):
+                return self.setCell(data, true, indexPath: indexPath)
+            case .onaList(let data):
+                return self.setCell(data, true, indexPath: indexPath)
+            case .special(let data):
+                return self.setCell(data, true, indexPath: indexPath)
             }
         })
         
         dataSource?.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath -> UICollectionReusableView in
-            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "", for: indexPath)
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderView.id, for: indexPath)
             let section = self?.dataSource?.sectionIdentifier(for: indexPath.section)
-            
             switch section {
             case .header:
                 print("header")
-//                (header as? HeaderView)?.configure(title: title)
-            case .semiHeader(title: ""):
-                print("category")
-            case .middle(title: ""):
-                print("horizontinal")
-            case .semiFooter(title: ""):
-                print("vertical")
-            case .footer(title: ""):
-                print("vertical")
+            case .semiHeader(let title):
+                (header as? HeaderView)?.configure(title: title)
+            case .middle(let title):
+                (header as? HeaderView)?.configure(title: title)
+            case .semiFooter(let title):
+                (header as? HeaderView)?.configure(title: title)
+            case .footer(let title):
+                (header as? HeaderView)?.configure(title: title)
             default:
-                print("Default")
+                print("default")
             }
             return header
         }
     }
+    
 }

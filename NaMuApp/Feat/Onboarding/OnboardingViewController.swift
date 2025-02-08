@@ -29,7 +29,7 @@ final class OnboardingViewController: UIViewController {
 //MARK: - Configure UI
 extension OnboardingViewController {
     
-    private func configureHierarchy() {
+     private func configureHierarchy() {
         [imageView, titleLabel, descriptionLabel, startButton].forEach {
             self.view.addSubview($0)
         }
@@ -78,7 +78,7 @@ extension OnboardingViewController {
         descriptionLabel.numberOfLines = 2
         descriptionLabel.textAlignment = .center
         descriptionLabel.textColor = .lightGray
-        descriptionLabel.text = "당신만의 웹툰 세상 📺,\n하이키를 시작해보세요"
+        descriptionLabel.text = "당신만의 애니 세상 📺,\n하이키를 시작해보세요"
         descriptionLabel.font = .systemFont(ofSize: 16, weight: .semibold)
         
         startButton.setBorder()

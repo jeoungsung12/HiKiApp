@@ -135,24 +135,24 @@ extension SearchViewController {
         guard let text = searchBar.text else { return }
         searchData.searchText = text
         loadingIndicator.startAnimating()
-        SearchServices().getSearch(searchData) { [weak self] response in
-            guard let self = self else { return }
-            switch response {
-            case let .success(data):
-                self.checkPhase(data)
-                self.searchData.searchResult += data
-                self.loadingIndicator.stopAnimating()
-                
-            case let .failure(error):
-                if error == .network {
-                    self.errorPresent(error)
-                } else {
-                    self.searchData.searchPhase = .notFound
-                    self.resultLabel.text = self.searchData.searchPhase.message
-                    self.loadingIndicator.stopAnimating()
-                }
-            }
-        }
+//        SearchServices().getSearch(searchData) { [weak self] response in
+//            guard let self = self else { return }
+//            switch response {
+//            case let .success(data):
+//                self.checkPhase(data)
+//                self.searchData.searchResult += data
+//                self.loadingIndicator.stopAnimating()
+//                
+//            case let .failure(error):
+//                if error == .network {
+//                    self.errorPresent(error)
+//                } else {
+//                    self.searchData.searchPhase = .notFound
+//                    self.resultLabel.text = self.searchData.searchPhase.message
+//                    self.loadingIndicator.stopAnimating()
+//                }
+//            }
+//        }
     }
     
     private func checkPhase(_ data: [SearchResult]) {
