@@ -175,17 +175,17 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
     
     private func collectionViewLayout() -> UICollectionViewCompositionalLayout {
         let config = UICollectionViewCompositionalLayoutConfiguration()
-        config.interSectionSpacing = 12
+        config.interSectionSpacing = 4
         config.scrollDirection = .vertical
         return UICollectionViewCompositionalLayout(sectionProvider: { [weak self] sectionIndex, _ in
             let section = self?.dataSource?.sectionIdentifier(for: sectionIndex)
             let width = (UIScreen.main.bounds.width)
             if section == .header {
-                return (self?.createLayout(width: 0.85, height: (width * 0.85) * 1.2, .groupPagingCentered))
+                return (self?.createLayout(width: 0.85, height: (width * 0.85) * 1.3, .groupPagingCentered))
             } else if section == .semiHeader(title: HomeSection.semiHeader(title: "").title) {
-                return (self?.createLayout(width: 0.45, height: (width * 0.45) * 1.2, .continuous))
+                return (self?.createLayout(width: 0.45, height: (width * 0.45) * 1.4, .continuous))
             } else {
-                return (self?.createLayout(width: 0.3, height: (width * 0.3) * 1.2, .continuous))
+                return (self?.createLayout(width: 0.3, height: (width * 0.3) * 1.4, .continuous))
             }
         }, configuration: config)
     }
