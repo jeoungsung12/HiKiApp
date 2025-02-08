@@ -42,9 +42,9 @@ extension HeaderView {
     }
     
     private func configureView() {
-        titleLabel.textColor = .black.withAlphaComponent(0.7)
+        titleLabel.textColor = .black
         titleLabel.textAlignment = .left
-        titleLabel.font = .boldSystemFont(ofSize: 20)
+        titleLabel.font = .systemFont(ofSize: 20, weight: .heavy)
         configureHierarchy()
     }
 }

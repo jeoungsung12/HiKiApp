@@ -21,11 +21,11 @@ enum HomeSection: Hashable {
         case .semiHeader:
             "이런 애니 어때요?"
         case .middle:
-            "TV방영 애니"
+            "평점 8점 이상 🌟"
         case .semiFooter:
-            "OTT방영 애니"
+            "TV 방영"
         case .footer:
-            "TV특별방영 애니"
+            "OTT 방영"
         }
     }
 }

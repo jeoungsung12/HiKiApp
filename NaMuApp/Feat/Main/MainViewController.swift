@@ -103,6 +103,7 @@ extension MainViewController {
 extension MainViewController {
     
     private func setUpcomming(_ data: [[AnimateData]]) {
+        //TODO: Optimize
         var snapShot = NSDiffableDataSourceSnapshot<HomeSection,HomeItem>()
         
         let headerSection = HomeSection.header
@@ -132,13 +133,13 @@ extension MainViewController {
         let semiHeaderData = Set(data[1]).compactMap {
             return HomeItem.recommand(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url)) }
         
-        let middleData = Set(totalData.filter({$0.type?.uppercased() == "TV"})).compactMap {
+        let middleData = Set(totalData.filter({$0.score ?? 0 > 8.0})).compactMap {
             return HomeItem.tvList(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url)) }
         
-        let semiFooterData = Set(totalData.filter({$0.type?.uppercased() == "ONA"})).compactMap {
+        let semiFooterData = Set(totalData.filter({$0.type?.uppercased() == "TV"})).compactMap {
             return HomeItem.onaList(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url)) }
         
-        let footerData = Set(totalData.filter({$0.type?.uppercased() == "TV SPECIAL"})).compactMap {
+        let footerData = Set(totalData.filter({$0.type?.uppercased() == "ONA"})).compactMap {
             return HomeItem.special(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url)) }
         
         [headerSection, semiHeaderSection, middleSection, semiFooterSection, footerSection].forEach({
@@ -151,7 +152,12 @@ extension MainViewController {
         snapShot.appendItems(semiFooterData, toSection: semiFooterSection)
         snapShot.appendItems(footerData, toSection: footerSection)
         
-        self.dataSource?.apply(snapShot)
+        self.dataSource?.apply(snapShot) {
+            DispatchQueue.main.async {
+                self.collectionView.setContentOffset(.zero, animated: true)
+            }
+        }
+        
         self.loadingIndicator.stopAnimating()
     }
     
@@ -169,16 +175,17 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
     
     private func collectionViewLayout() -> UICollectionViewCompositionalLayout {
         let config = UICollectionViewCompositionalLayoutConfiguration()
-        config.interSectionSpacing = 24
+        config.interSectionSpacing = 4
         config.scrollDirection = .vertical
         return UICollectionViewCompositionalLayout(sectionProvider: { [weak self] sectionIndex, _ in
             let section = self?.dataSource?.sectionIdentifier(for: sectionIndex)
+            let width = (UIScreen.main.bounds.width)
             if section == .header {
-                return (self?.createLayout(width: 0.85, height: UIScreen.main.bounds.height / 2.0, .groupPagingCentered))
+                return (self?.createLayout(width: 0.85, height: (width * 0.85) * 1.3, .groupPagingCentered))
             } else if section == .semiHeader(title: HomeSection.semiHeader(title: "").title) {
-                return (self?.createLayout(width: 0.45, height: 250, .continuous))
+                return (self?.createLayout(width: 0.45, height: (width * 0.45) * 1.4, .continuous))
             } else {
-                return (self?.createLayout(width: 0.3, height: 180, .continuous))
+                return (self?.createLayout(width: 0.3, height: (width * 0.3) * 1.4, .continuous))
             }
         }, configuration: config)
     }
@@ -206,9 +213,9 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
         return section
     }
     
-    private func setCell(_ data: ItemModel,_ valid: Bool, indexPath: IndexPath) -> UICollectionViewCell {
+    private func setCell(_ data: ItemModel,_ title: Bool,_ subTitle: Bool, indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PosterCell.id, for: indexPath) as? PosterCell else { return UICollectionViewCell() }
-        cell.configure(data, valid)
+        cell.configure(data, title, subTitle)
         return cell
     }
     
@@ -216,12 +223,12 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
         dataSource = UICollectionViewDiffableDataSource<HomeSection,HomeItem>(collectionView: collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
             case .poster(let data):
-                return self.setCell(data, false, indexPath: indexPath)
+                return self.setCell(data, false, true, indexPath: indexPath)
             case .recommand(let data),
                     .tvList(let data),
                     .onaList(let data),
                     .special(let data):
-                return self.setCell(data, true, indexPath: indexPath)
+                return self.setCell(data, true, false, indexPath: indexPath)
             }
         })
         
@@ -239,6 +246,11 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
             }
             return header
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? PosterCell else { return }
+        //TODO: - 이동
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
