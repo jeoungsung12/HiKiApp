@@ -55,12 +55,12 @@ extension ErrorViewController {
         titleLabel.numberOfLines = 0
         titleLabel.textAlignment = .center
         titleLabel.textColor = .customWhite
-        titleLabel.font = .boldSystemFont(ofSize: 16)
+        titleLabel.font = .boldSystemFont(ofSize: 20)
         
         descriptionLabel.numberOfLines = 0
         descriptionLabel.textAlignment = .center
         descriptionLabel.textColor = .customDarkGray
-        descriptionLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        descriptionLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         descriptionLabel.text = "서비스 이용에 불편을 드려 죄송합니다.\n잠시 후 다시 시도해 주세요.😢"
         
         configureHierarchy()

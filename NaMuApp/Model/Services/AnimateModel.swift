@@ -18,6 +18,7 @@ struct AnimateData: Decodable, Hashable {
     let title: String
     let type: String?
     let synopsis: String?
+    let score: Double?
 }
 
 struct AnimateImages: Decodable, Hashable {

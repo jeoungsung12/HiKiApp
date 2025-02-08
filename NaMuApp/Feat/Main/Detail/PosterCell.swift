@@ -13,6 +13,8 @@ final class PosterCell: UICollectionViewCell {
     static let id: String = "MoviePosterCell"
     private let imageView = UIImageView()
     private let titleLabel = UILabel()
+    private let subtitleLabel = UILabel()
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -28,8 +30,9 @@ final class PosterCell: UICollectionViewCell {
         imageView.image = nil
     }
     
-    func configure(_ data: ItemModel,_ titleHide: Bool) {
+    func configure(_ data: ItemModel,_ titleHide: Bool,_ subTitleHide: Bool) {
         titleLabel.text = !titleHide ? data.title : ""
+        subtitleLabel.text = !subTitleHide ? data.title : ""
         if let url = URL(string: data.image) {
             imageView.kf.setImage(with: url)
         }
@@ -40,7 +43,7 @@ final class PosterCell: UICollectionViewCell {
 extension PosterCell {
     
     private func configureHierarchy() {
-        [imageView, titleLabel].forEach({
+        [imageView, titleLabel, subtitleLabel].forEach({
             self.addSubview($0)
         })
         configureLayout()
@@ -57,6 +60,11 @@ extension PosterCell {
             make.bottom.horizontalEdges.equalToSuperview().inset(24)
         }
         
+        subtitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(imageView.snp.bottom).offset(8)
+            make.horizontalEdges.equalToSuperview().inset(24)
+        }
+        
     }
     
     private func configureView() {
@@ -65,10 +73,16 @@ extension PosterCell {
         imageView.contentMode = .scaleToFill
         imageView.backgroundColor = .darkGray
         
-        titleLabel.numberOfLines = 2
-        titleLabel.textAlignment = .left
         titleLabel.textColor = .customWhite
         titleLabel.font = .systemFont(ofSize: 40, weight: .heavy)
+        
+        subtitleLabel.textColor = .gray
+        subtitleLabel.font = .systemFont(ofSize: 13, weight: .semibold)
+        
+        [titleLabel, subtitleLabel].forEach({
+            $0.numberOfLines = 2
+            $0.textAlignment = .left
+        })
         
         [imageView, titleLabel].forEach({
             $0.layer.shadowRadius = 4
