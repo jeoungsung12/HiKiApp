@@ -18,12 +18,12 @@ final class ProfileViewController: UIViewController {
     private let mbtiView = ProfileMBTIView()
     
     private let viewModel = ProfileViewModel()
-    private let inputTrigger = ProfileViewModel.Input(
+    private lazy var inputTrigger = ProfileViewModel.Input(
         configureViewTrigger: Observable(()),
         profileButtonTrigger: Observable(()),
         nameTextFieldTrigger: Observable(nil),
-        successButtonTrigger: Observable(ProfileViewModel.ProfileSuccessButton(textFields: [], mbtiBools: [])),
-        buttonEnabledTrigger: Observable(ProfileViewModel.ProfileSuccessButton(textFields: [], mbtiBools: []))
+        successButtonTrigger: Observable(ProfileViewModel.ProfileSuccessButtonRequest(collectionView: self.mbtiView.collectionView)),
+        buttonEnabledTrigger: Observable(ProfileViewModel.ProfileSuccessButtonRequest(collectionView: self.mbtiView.collectionView))
     )
     
     override func viewDidLoad() {
@@ -37,6 +37,7 @@ final class ProfileViewController: UIViewController {
         
         output.configureViewResult.bind { [weak self] userInfo in
             if !userInfo.isEmpty {
+                //TODO: Object
                 self?.nameTextField.text = userInfo[0]
                 self?.profileButton.profileImage.image = UIImage(named: userInfo[1])
             } else {
@@ -160,6 +161,10 @@ extension ProfileViewController {
         successButton.addTarget(self, action: #selector(successButtonTapped), for: .touchUpInside)
         profileButton.addTarget(self, action: #selector(profilebuttonTapped), for: .touchUpInside)
         
+        mbtiView.tapped = { [weak self] in
+            self?.checkTapped()
+        }
+        
         configureProfileView()
         configureHierarchy()
     }
@@ -182,17 +187,7 @@ extension ProfileViewController {
     @objc
     private func successButtonTapped(_ sender: UIButton) {
         print(#function)
-        //TODO: ViewModel
-        let indexPaths = Array(0...3).map({ return IndexPath(row: $0, section: 0) })
-        let bools = indexPaths
-            .map {
-                if let cell = mbtiView.collectionView.cellForItem(at: $0) as? ProfileMBTICell {
-                    cell.tapped = checkTapped
-                    return cell.isClicked
-                }
-                return nil
-            }
-        inputTrigger.successButtonTrigger.value = ProfileViewModel.ProfileSuccessButton(profileImage: profileButton.profileImage.image, textFields: [nameTextField.text, descriptionLabel.text], mbtiBools: bools)
+        enableTrigger(false)
     }
 }
 
@@ -201,29 +196,15 @@ extension ProfileViewController: UITextFieldDelegate {
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         inputTrigger.nameTextFieldTrigger.value = textField.text
-        let indexPaths = Array(0...3).map({ return IndexPath(row: $0, section: 0) })
-        let bools = indexPaths
-            .map {
-                if let cell = mbtiView.collectionView.cellForItem(at: $0) as? ProfileMBTICell {
-                    cell.tapped = checkTapped
-                    return cell.isClicked
-                }
-                return nil
-            }
-        inputTrigger.buttonEnabledTrigger.value = ProfileViewModel.ProfileSuccessButton(profileImage: profileButton.profileImage.image, textFields: [nameTextField.text, descriptionLabel.text], mbtiBools: bools)
+        enableTrigger(true)
     }
     
     private func checkTapped() {
-        let indexPaths = Array(0...3).map({ return IndexPath(row: $0, section: 0) })
-        let bools = indexPaths
-            .map {
-                if let cell = mbtiView.collectionView.cellForItem(at: $0) as? ProfileMBTICell {
-                    cell.tapped = checkTapped
-                    return cell.isClicked
-                }
-                return nil
-            }
-        inputTrigger.buttonEnabledTrigger.value = ProfileViewModel.ProfileSuccessButton(profileImage: profileButton.profileImage.image, textFields: [nameTextField.text, descriptionLabel.text], mbtiBools: bools)
+        enableTrigger(true)
     }
     
+    private func enableTrigger(_ enable: Bool) {
+        let trigger = (enable) ? inputTrigger.buttonEnabledTrigger : inputTrigger.successButtonTrigger
+        trigger.value = ProfileViewModel.ProfileSuccessButtonRequest(profileImage: profileButton.profileImage.image, name: nameTextField.text, description:  descriptionLabel.text, collectionView: mbtiView.collectionView)
+    }
 }

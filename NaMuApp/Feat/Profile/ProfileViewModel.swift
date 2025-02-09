@@ -15,8 +15,8 @@ final class ProfileViewModel: ViewModelType {
         let configureViewTrigger: Observable<Void>
         let profileButtonTrigger: Observable<Void>
         let nameTextFieldTrigger: Observable<String?>
-        let successButtonTrigger: Observable<ProfileSuccessButton>
-        let buttonEnabledTrigger: Observable<ProfileSuccessButton>
+        let successButtonTrigger: Observable<ProfileSuccessButtonRequest>
+        let buttonEnabledTrigger: Observable<ProfileSuccessButtonRequest>
     }
     
     struct Output {
@@ -49,7 +49,11 @@ extension ProfileViewModel {
         }
         
         input.successButtonTrigger.lazyBind { [weak self] success in
-            output.successButtonResult.value = self?.validateText(success, true)
+            print("이게 눌렸다고?")
+            if let value = self?.handleSuccessButtonTap(profileImage: success.profileImage, name: success.name, description: success.description, collectionView: success.collectionView)
+            {
+                output.successButtonResult.value = self?.validateText(value, true)
+            }
         }
         
         input.profileButtonTrigger.lazyBind { _ in
@@ -62,19 +66,26 @@ extension ProfileViewModel {
         }
         
         input.buttonEnabledTrigger.lazyBind { [weak self] enable in
-            output.buttonEnabledResult.value = self?.validateText(enable, false)
+            if let value = self?.handleSuccessButtonTap(profileImage: enable.profileImage, name: enable.name, description: enable.description, collectionView: enable.collectionView)
+            {
+                output.buttonEnabledResult.value = self?.validateText(value, false)
+            }
         }
         
         return output
     }
     
-    private func validateText(_ success: ProfileSuccessButton,_ complete: Bool) -> Bool? {
-        //TODO: - 인덱스 접근하지 말기
-        if let nicknameLabel = success.textFields[0], let descriptionLabel = success.textFields[1],
+}
+
+extension ProfileViewModel {
+    
+    private func validateText(_ success: ProfileSuccessButtonResult,_ complete: Bool) -> Bool? {
+        if let nicknameLabel = success.name, let descriptionLabel = success.description,
            descriptionLabel == NickName.NickNameType.success.rawValue, let mbti = checkMBTI(success.mbtiBools) {
             
             if complete {
                 db.isUser = true
+                //TODO: Object
                 db.userInfo = [nicknameLabel, .checkProfileImage(success.profileImage), "0", .currentDate, mbti]
             }
             return true
@@ -83,6 +94,7 @@ extension ProfileViewModel {
         }
     }
     
+    //TODO: - 모델로
     private func checkMBTI(_ bools: [Bool?]) -> String? {
         var returnString = ""
         for (index, bool) in bools.enumerated() {
@@ -101,14 +113,39 @@ extension ProfileViewModel {
         return returnString
     }
     
+    private func collectMBTISelections(from collectionView: UICollectionView) -> [Bool?] {
+        let indexPaths = (0...3).map { IndexPath(row: $0, section: 0) }
+        return indexPaths.map { indexPath in
+            (collectionView.cellForItem(at: indexPath) as? ProfileMBTICell)?.isClicked
+        }
+    }
+    
+    private func handleSuccessButtonTap(profileImage: UIImage?, name: String?, description: String?, collectionView: UICollectionView) -> ProfileSuccessButtonResult? {
+        let mbtiBools = collectMBTISelections(from: collectionView)
+        let profileData = ProfileSuccessButtonResult(
+            profileImage: profileImage,
+            name: name,
+            description: description,
+            mbtiBools: mbtiBools
+        )
+        return profileData
+    }
 }
 
 
 extension ProfileViewModel {
     
-    struct ProfileSuccessButton {
+    struct ProfileSuccessButtonRequest {
         var profileImage: UIImage?
-        var textFields: [String?]
+        var name: String?
+        var description: String?
+        var collectionView: UICollectionView
+    }
+    
+    struct ProfileSuccessButtonResult {
+        var profileImage: UIImage?
+        var name: String?
+        var description: String?
         var mbtiBools: [Bool?]
     }
     

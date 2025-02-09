@@ -13,7 +13,7 @@ final class ProfileMBTIView: UIView {
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createCollectionViewLayout())
     
     private let viewModel = ProfileMBTIViewModel()
-    
+    var tapped: (()->Void)?
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureView()
@@ -88,6 +88,9 @@ extension ProfileMBTIView: UICollectionViewDelegate, UICollectionViewDataSource 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProfileMBTICell.id, for: indexPath) as? ProfileMBTICell else { return UICollectionViewCell() }
         cell.configure(viewModel.mbti[indexPath.row])
+        cell.tapped = { [weak self] in
+            self?.tapped?()
+        }
         return cell
     }
 }
