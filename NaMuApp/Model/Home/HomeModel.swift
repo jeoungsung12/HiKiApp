@@ -33,9 +33,9 @@ enum HomeSection: Hashable {
 enum HomeItem: Hashable {
     case poster(ItemModel)
     case recommand(ItemModel)
+    case rank(ItemModel)
     case tvList(ItemModel)
     case onaList(ItemModel)
-    case special(ItemModel)
 }
 
 struct ItemModel: Hashable {
@@ -43,4 +43,5 @@ struct ItemModel: Hashable {
     let title: String
     let synopsis: String?
     let image: String
+    let star: Double
 }
