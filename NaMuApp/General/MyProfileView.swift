@@ -91,7 +91,7 @@ extension MyProfileView {
     private func configureView() {
         self.clipsToBounds = true
         self.layer.cornerRadius = 15
-        self.backgroundColor = .point.withAlphaComponent(0.2)
+        self.backgroundColor = .white
         
         profileImage.containerView.isHidden = true
         profileImage.isUserInteractionEnabled = false

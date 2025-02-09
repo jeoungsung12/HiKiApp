@@ -69,7 +69,7 @@ extension SearchViewController {
     
     private func configureView() {
         self.setNavigation("영화검색")
-        self.view.backgroundColor = .customBlack
+        self.view.backgroundColor = .white
         
         searchBar.delegate = self
         searchBar.searchBarStyle = .minimal
@@ -175,9 +175,9 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
     private func setTableView() {
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.backgroundColor = .white
         tableView.prefetchDataSource = self
         tableView.keyboardDismissMode = .onDrag
-        tableView.backgroundColor = .customBlack
         tableView.showsVerticalScrollIndicator = true
         tableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.id)
     }

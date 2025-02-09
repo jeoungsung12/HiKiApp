@@ -63,7 +63,6 @@ final class PosterCell: UICollectionViewCell {
     }
     
     private func configureRank(_ rank: Int) {
-        print(#function)
         rankLabel.text = rank.formatted()
     }
     
@@ -132,8 +131,8 @@ extension PosterCell {
         starLabel.font = .systemFont(ofSize: 12, weight: .bold)
         starLabel.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner]
         
-        subtitleLabel.textColor = .gray
         subtitleLabel.numberOfLines = 2
+        subtitleLabel.textColor = .darkGray
         subtitleLabel.textAlignment = .center
         subtitleLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         

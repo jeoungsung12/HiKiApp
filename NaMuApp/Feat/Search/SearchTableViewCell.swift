@@ -116,7 +116,7 @@ extension SearchTableViewCell {
     }
     
     private func configureView() {
-        self.contentView.backgroundColor = .customBlack
+        self.contentView.backgroundColor = .white
         imageResult.numberOfLines = 0
         imageResult.textColor = .white
         imageResult.textAlignment = .center
