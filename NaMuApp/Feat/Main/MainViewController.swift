@@ -181,11 +181,11 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
             let section = self?.dataSource?.sectionIdentifier(for: sectionIndex)
             let width = (UIScreen.main.bounds.width)
             if section == .header {
-                return (self?.createLayout(width: 0.85, height: (width * 0.85) * 1.3, .groupPagingCentered))
+                return (self?.createLayout(width: 0.85, height: (width * 0.85) * 1.5, .groupPagingCentered))
             } else if section == .semiHeader(title: HomeSection.semiHeader(title: "").title) {
-                return (self?.createLayout(width: 0.45, height: (width * 0.45) * 1.4, .continuous))
+                return (self?.createLayout(width: 0.45, height: (width * 0.45) * 1.5, .continuous))
             } else {
-                return (self?.createLayout(width: 0.3, height: (width * 0.3) * 1.4, .continuous))
+                return (self?.createLayout(width: 0.3, height: (width * 0.3) * 1.5, .continuous))
             }
         }, configuration: config)
     }

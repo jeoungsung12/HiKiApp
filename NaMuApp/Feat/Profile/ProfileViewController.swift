@@ -9,7 +9,6 @@ import UIKit
 import SnapKit
 
 final class ProfileViewController: UIViewController {
-    //MARK: - Components
     private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapGesture))
     private let profileButton = CustomProfileButton(120, true)
     private let nameTextField = UITextField()
@@ -21,9 +20,9 @@ final class ProfileViewController: UIViewController {
     private let viewModel = ProfileViewModel()
     private let inputTrigger = ProfileViewModel.Input(
         configureViewTrigger: Observable(()),
-        successButtonTrigger: Observable(ProfileViewModel.ProfileSuccessButton(textFields: [], mbtiBools: [])),
         profileButtonTrigger: Observable(()),
         nameTextFieldTrigger: Observable(nil),
+        successButtonTrigger: Observable(ProfileViewModel.ProfileSuccessButton(textFields: [], mbtiBools: [])),
         buttonEnabledTrigger: Observable(ProfileViewModel.ProfileSuccessButton(textFields: [], mbtiBools: []))
     )
     
@@ -65,15 +64,18 @@ final class ProfileViewController: UIViewController {
         }
         
         output.nameTextFieldResult.lazyBind { [weak self] text in
-            self?.descriptionLabel.text = text
+            self?.descriptionLabel.text = ((text == "")) ? nil : text
+            self?.descriptionLabel.textColor = (text == ProfileViewModel.NickName.NickNameType.success.rawValue) ? .success : .descriptionFail
         }
         
         output.buttonEnabledResult.lazyBind { [weak self] valid in
             guard let valid = valid else {
                 self?.successButton.isEnabled = false
+                self?.successButton.backgroundColor = .fail
                 return
             }
             self?.successButton.isEnabled = (valid) ? true : false
+            self?.successButton.backgroundColor = (valid) ? .success : .fail
         }
     }
     
@@ -147,12 +149,15 @@ extension ProfileViewController {
         descriptionLabel.textAlignment = .left
         descriptionLabel.font = .systemFont(ofSize: 12, weight: .regular)
         
-        successButton.setBorder()
+//        successButton.setBorder()
         successButton.isEnabled = false
+        successButton.clipsToBounds = true
+        successButton.layer.cornerRadius = 20
+        successButton.backgroundColor = .fail
         successButton.setTitle("완료", for: .normal)
-        successButton.setTitleColor(.point, for: .normal)
-        successButton.addTarget(self, action: #selector(successButtonTapped), for: .touchUpInside)
+        successButton.setTitleColor(.white, for: .normal)
         
+        successButton.addTarget(self, action: #selector(successButtonTapped), for: .touchUpInside)
         profileButton.addTarget(self, action: #selector(profilebuttonTapped), for: .touchUpInside)
         
         configureProfileView()

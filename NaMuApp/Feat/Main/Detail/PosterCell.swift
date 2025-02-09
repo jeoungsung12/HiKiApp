@@ -52,7 +52,7 @@ extension PosterCell {
     private func configureLayout() {
         
         imageView.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-36)
+            make.bottom.equalToSuperview().offset(-52)
             make.top.horizontalEdges.equalToSuperview()
         }
         
@@ -66,12 +66,6 @@ extension PosterCell {
             make.bottom.equalToSuperview().offset(-12)
             make.top.equalTo(imageView.snp.bottom).offset(4)
         }
-        
-        subtitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(imageView.snp.bottom).offset(8)
-            make.horizontalEdges.equalToSuperview().inset(24)
-        }
-        
     }
     
     private func configureView() {
@@ -84,7 +78,7 @@ extension PosterCell {
         titleLabel.font = .systemFont(ofSize: 40, weight: .heavy)
         
         subtitleLabel.textColor = .gray
-        subtitleLabel.numberOfLines = 1
+        subtitleLabel.numberOfLines = 2
         subtitleLabel.textAlignment = .center
         subtitleLabel.font = .systemFont(ofSize: 14, weight: .semibold)
         

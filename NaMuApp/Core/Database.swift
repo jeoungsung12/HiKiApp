@@ -73,10 +73,12 @@ final class Database {
 extension Database {
     
     func removeAll(_ model: String) {
+        print(#function)
         UserDefaults.standard.removeObject(forKey: model)
     }
     
     func removeUserInfo() {
+        print(#function)
         self.isUser = false
         removeAll(Key.userInfo.rawValue)
         removeAll(Key.heartList.rawValue)
@@ -84,14 +86,17 @@ extension Database {
     }
     
     func removeHeartButton(_ remove: String) {
+        print(#function)
         self.heartList = heartList.filter { $0 != remove }
     }
     
     func removeRecentSearch(_ remove: String) {
+        print(#function)
         self.recentSearch = recentSearch.filter { $0 != remove }
     }
     
     func getUser() -> UserInfo {
+        print(#function)
         return UserInfo(nickname: self.userInfo[0], profile: UIImage(named: self.userInfo[1]), movie: self.userInfo[2], date: self.userInfo[3])
     }
     
