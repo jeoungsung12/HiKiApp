@@ -161,7 +161,7 @@ extension ProfileViewController {
         successButton.addTarget(self, action: #selector(successButtonTapped), for: .touchUpInside)
         profileButton.addTarget(self, action: #selector(profilebuttonTapped), for: .touchUpInside)
         
-        mbtiView.tapped = { [weak self] in
+        mbtiView.viewModel.tapped = { [weak self] in
             self?.checkTapped()
         }
         

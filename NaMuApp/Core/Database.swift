@@ -7,7 +7,7 @@
 
 import UIKit
 
-//TODO: - 제네릭으로 바꿀수있지 않을까?
+//TODO: - Property Wrapper 구현하기
 final class Database {
     static let shared = Database()
     
@@ -38,6 +38,7 @@ final class Database {
         }
     }
     
+    //TODO: - 시간 복잡도 개선
     var userInfo: [String] {
         get {
             guard var userInfo = self.get(.userInfo, binding: []) as? [String] else { return [] }
@@ -94,7 +95,7 @@ extension Database {
         print(#function)
         self.recentSearch = recentSearch.filter { $0 != remove }
     }
-    
+    //TODO: - 인덱스 접근이 아닌 JSON 형태로 저장
     func getUser() -> UserInfo {
         print(#function)
         return UserInfo(nickname: self.userInfo[0], profile: UIImage(named: self.userInfo[1]), movie: self.userInfo[2], date: self.userInfo[3])

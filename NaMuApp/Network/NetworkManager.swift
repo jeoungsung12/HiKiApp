@@ -11,6 +11,7 @@ import Alamofire
 final class NetworkManager {
     static let shared = NetworkManager()
     
+    //TODO: - RouterPattern
     private init() { }
     
     func getData<T: Decodable>(_ api: APIEndpoint, completion: @escaping (Result<T, NetworkError.CustomError>) -> Void) {

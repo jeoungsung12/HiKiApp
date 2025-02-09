@@ -29,7 +29,7 @@ final class ProfileMBTICell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(_ type: ProfileViewModel.MbtiType) {
+    func configure(_ type: ProfileMBTIViewModel.MbtiType) {
         switch type {
         case .IE:
             topButton.setTitle("E", for: .normal)
@@ -112,7 +112,6 @@ extension ProfileMBTICell {
     @objc
     private func buttonTapped(_ sender: UIButton) {
         print(#function)
-        //TODO: - viewModel
         if let isClicked {
             if ((!isClicked && sender.isEqual(topButton)) || (isClicked && sender.isEqual(bottomButton))) {
                 self.isClicked?.toggle()

@@ -49,7 +49,6 @@ extension ProfileViewModel {
         }
         
         input.successButtonTrigger.lazyBind { [weak self] success in
-            print("이게 눌렸다고?")
             if let value = self?.handleSuccessButtonTap(profileImage: success.profileImage, name: success.name, description: success.description, collectionView: success.collectionView)
             {
                 output.successButtonResult.value = self?.validateText(value, true)
@@ -81,7 +80,7 @@ extension ProfileViewModel {
     
     private func validateText(_ success: ProfileSuccessButtonResult,_ complete: Bool) -> Bool? {
         if let nicknameLabel = success.name, let descriptionLabel = success.description,
-           descriptionLabel == NickName.NickNameType.success.rawValue, let mbti = checkMBTI(success.mbtiBools) {
+           descriptionLabel == NickName.NickNameType.success.rawValue, let mbti = ProfileMBTIViewModel().checkMBTI(success.mbtiBools) {
             
             if complete {
                 db.isUser = true
@@ -92,25 +91,6 @@ extension ProfileViewModel {
         } else {
             return false
         }
-    }
-    
-    //TODO: - 모델로
-    private func checkMBTI(_ bools: [Bool?]) -> String? {
-        var returnString = ""
-        for (index, bool) in bools.enumerated() {
-            guard let valid = bool else { return nil }
-            switch MbtiType.allCases[index] {
-            case .IE:
-                returnString += (valid ? "E" : "I")
-            case .NS:
-                returnString += (valid ? "S" : "N")
-            case .FT:
-                returnString += (valid ? "T" : "F")
-            case .PJ:
-                returnString += (valid ? "J" : "P")
-            }
-        }
-        return returnString
     }
     
     private func collectMBTISelections(from collectionView: UICollectionView) -> [Bool?] {
@@ -176,12 +156,4 @@ extension ProfileViewModel {
             return NickNameType.success
         }
     }
-    
-    enum MbtiType: CaseIterable {
-        case IE
-        case NS
-        case FT
-        case PJ
-    }
-    
 }
