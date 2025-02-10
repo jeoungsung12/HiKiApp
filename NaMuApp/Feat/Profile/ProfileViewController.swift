@@ -60,7 +60,7 @@ final class ProfileViewController: UIViewController {
                 let rootVC = TabBarController()
                 self?.setRootView(rootVC)
             } else {
-                self?.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
+//                self?.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
             }
         }
         
@@ -149,7 +149,6 @@ extension ProfileViewController {
         descriptionLabel.textColor = .point
         descriptionLabel.textAlignment = .left
         descriptionLabel.font = .systemFont(ofSize: 12, weight: .regular)
-        
 //        successButton.setBorder()
         successButton.isEnabled = false
         successButton.clipsToBounds = true

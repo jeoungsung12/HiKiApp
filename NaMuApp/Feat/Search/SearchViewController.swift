@@ -32,6 +32,10 @@ class SearchViewController: UIViewController {
         showKeyboard()
     }
     
+    private func setBinding() {
+        
+    }
+    
 }
 
 extension SearchViewController {
@@ -135,24 +139,7 @@ extension SearchViewController {
         guard let text = searchBar.text else { return }
         searchData.searchText = text
         loadingIndicator.startAnimating()
-//        SearchServices().getSearch(searchData) { [weak self] response in
-//            guard let self = self else { return }
-//            switch response {
-//            case let .success(data):
-//                self.checkPhase(data)
-//                self.searchData.searchResult += data
-//                self.loadingIndicator.stopAnimating()
-//                
-//            case let .failure(error):
-//                if error == .network {
-//                    self.errorPresent(error)
-//                } else {
-//                    self.searchData.searchPhase = .notFound
-//                    self.resultLabel.text = self.searchData.searchPhase.message
-//                    self.loadingIndicator.stopAnimating()
-//                }
-//            }
-//        }
+        
     }
     
     private func checkPhase(_ data: [SearchResult]) {
@@ -191,7 +178,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
               let text = searchBar.text else { return UITableViewCell() }
         cell.configure(text, searchData.searchResult[indexPath.row])
         cell.isButton = { [weak self] value in
-            self?.customAlert((value) ? "보관 성공!" : "삭제 성공!") { }
+//            self?.customAlert((value) ? "보관 성공!" : "삭제 성공!") { }
             tableView.reloadRows(at: [indexPath], with: .automatic)
         }
         return cell
@@ -224,7 +211,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
             case .notFound:
                 return
             case .endPage:
-                self.customAlert("", searchData.searchPhase.message, [.ok]) {}
+//                self.customAlert("", searchData.searchPhase.message, [.ok]) {}
                 self.searchData.searchPhase = .notRequest
             }
         }

@@ -139,7 +139,7 @@ extension SheetProfileViewController {
             self.dismissClosure?()
             self.dismiss(animated: true)
         } else {
-            self.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
+//            self.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
         }
     }
 }

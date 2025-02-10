@@ -12,7 +12,7 @@ final class MainViewController: UIViewController {
     private let leftLogo = UIBarButtonItem(customView: MainNavigationView())
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
     private let category = MainCategoryView()
-    private let loadingIndicator = UIActivityIndicatorView()
+    private let loadingIndicator = LoadingView()
     private var dataSource: UICollectionViewDiffableDataSource<HomeSection,HomeItem>?
     
     private let viewModel = MainViewModel()
@@ -30,7 +30,7 @@ final class MainViewController: UIViewController {
     private func setBinding() {
         let output = viewModel.transform(input: inputTrigger)
         
-        loadingIndicator.startAnimating()
+        loadingIndicator.isStart()
         output.dataLoadResult.lazyBind { [weak self] animateData in
             DispatchQueue.main.async {
                 if let animateData = animateData {
@@ -87,12 +87,9 @@ extension MainViewController {
         self.view.backgroundColor = .white
         self.navigationItem.leftBarButtonItem = leftLogo
         
-        loadingIndicator.style = .medium
-        loadingIndicator.color = .lightGray
-        
         category.selectedItem = { [weak self] type  in
             self?.inputTrigger.dataLoadTrigger.value = type
-            self?.loadingIndicator.startAnimating()
+            self?.loadingIndicator.isStart()
         }
 
         configureCollectionView()
@@ -113,13 +110,15 @@ extension MainViewController {
         snapShot.appendItems(headerData, toSection: headerSection)
         
         self.dataSource?.apply(snapShot)
-        self.loadingIndicator.stopAnimating()
+        loadingIndicator.isStop()
     }
     
     //TODO: - Rx
     private func setSnapShot(_ data: [[AnimateData]]) {
         var snapShot = NSDiffableDataSourceSnapshot<HomeSection,HomeItem>()
         let totalData = data.flatMap({$0})
+            .filter { $0.title_english != nil }
+        
         let sortedData = totalData
             .filter { $0.rank != nil }
             .sorted { $0.rank! < $1.rank! }
@@ -131,19 +130,19 @@ extension MainViewController {
         let footerSection = HomeSection.middle(title: HomeSection.footer(title: "").title)
         
         let headerData = Set(sortedData.prefix(10)).compactMap {
-            return HomeItem.poster(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
+            return HomeItem.poster(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
         
-        let semiHeaderData = Set(data[1]).compactMap {
-            return HomeItem.recommand(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
+        let semiHeaderData = Set(totalData.shuffled().prefix(10)).compactMap {
+            return HomeItem.recommand(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
         
         let middleData = Set(totalData.filter({$0.score ?? 0 > 8.0})).compactMap {
-            return HomeItem.rank(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
+            return HomeItem.rank(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
         
         let semiFooterData = Set(totalData.filter({$0.type?.uppercased() == "TV"})).compactMap {
-            return HomeItem.tvList(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
+            return HomeItem.tvList(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
         
         let footerData = Set(totalData.filter({$0.type?.uppercased() == "ONA"})).compactMap {
-            return HomeItem.onaList(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
+            return HomeItem.onaList(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
         
         [headerSection, semiHeaderSection, middleSection, semiFooterSection, footerSection].forEach({
             snapShot.appendSections([$0])
@@ -161,7 +160,7 @@ extension MainViewController {
             }
         }
         
-        self.loadingIndicator.stopAnimating()
+        loadingIndicator.isStop()
     }
     
 }

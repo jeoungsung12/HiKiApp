@@ -20,6 +20,7 @@ struct AnimateData: Decodable, Hashable {
     let synopsis: String?
     let score: Double?
     let rank: Int?
+    let title_english: String?
 }
 
 struct AnimateImages: Decodable, Hashable {
@@ -30,4 +31,8 @@ struct AnimateJpg: Decodable, Hashable {
     let image_url: String
     let small_image_url: String
     let large_image_url: String
+}
+
+struct RandomModel: Decodable {
+    let data: AnimateData
 }

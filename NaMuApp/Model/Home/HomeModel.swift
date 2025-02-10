@@ -40,7 +40,7 @@ enum HomeItem: Hashable {
 
 struct ItemModel: Hashable {
     let id: Int
-    let title: String
+    let title: String?
     let synopsis: String?
     let image: String
     let star: Double

@@ -10,11 +10,11 @@ import SnapKit
 
 final class WatchViewController: UIViewController {
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout())
-    private let loadingIndicator = UIActivityIndicatorView()
+    private let loadingIndicator = LoadingView()
     
     private let viewModel = WatchViewModel()
-    private let inputtrigger = WatchViewModel.Input(dataTrigger: Observable(1))
-    private lazy var outputResult = viewModel.transform(input: inputtrigger)
+    private let inputTrigger = WatchViewModel.Input(dataTrigger: Observable(1))
+    private lazy var outputResult = viewModel.transform(input: inputTrigger)
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -23,15 +23,21 @@ final class WatchViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.inputTrigger.dataTrigger.value = Int.random(in: 1...3)
         self.navigationController?.navigationBar.isHidden = true
     }
     
     private func setBinding() {
-        outputResult.dataResult.bind { [weak self] data in
-            self?.collectionView.reloadData()
+        outputResult.dataResult.lazyBind { [weak self] data in
+            DispatchQueue.main.async {
+                if data != nil {
+                    self?.collectionView.reloadData()
+                } else {
+//                    self?.inputTrigger.dataTrigger.value += 1
+                }
+                self?.loadingIndicator.isStop()
+            }
         }
-        
-        
     }
 }
 
@@ -53,12 +59,12 @@ extension WatchViewController {
             make.size.equalTo(40)
             make.center.equalToSuperview()
         }
+        loadingIndicator.isStart()
     }
     
     private func configureView() {
-        self.setNavigation()
-        self.view.backgroundColor = .white
-        
+        self.view.backgroundColor = .black
+       
         configureCollectionView()
         configureHierarchy()
     }
@@ -70,8 +76,10 @@ extension WatchViewController: UICollectionViewDelegate, UICollectionViewDataSou
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.isPagingEnabled = true
+        collectionView.backgroundColor = .black
         collectionView.prefetchDataSource = self
-        collectionView.contentInsetAdjustmentBehavior = .never
+        collectionView.showsVerticalScrollIndicator = false
+//        collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.register(WatchCollectionViewCell.self, forCellWithReuseIdentifier: WatchCollectionViewCell.id)
     }
     
@@ -86,17 +94,41 @@ extension WatchViewController: UICollectionViewDelegate, UICollectionViewDataSou
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return outputResult.dataResult.value.count
+        if let data = outputResult.dataResult.value {
+            return data.count
+        } else {
+            return 0
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WatchCollectionViewCell.id, for: indexPath) as? WatchCollectionViewCell else { return UICollectionViewCell() }
-        cell.configure()
+        if let data = outputResult.dataResult.value {
+            let videoData = data.filter({ ($0.url != nil) })
+            cell.configure(videoData[indexPath.row])
+        }
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(#function)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        (cell as? WatchCollectionViewCell)?.playVideoIfNeeded()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        (cell as? WatchCollectionViewCell)?.stopVideo()
+    }
+    
+    
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        
+        //TODO: - 페이징 처리
+        if let data = outputResult.dataResult.value, let last = indexPaths.last, last.row <= data.count - 2 {
+            print(#function, indexPaths)
+//            inputTrigger.dataTrigger.value += 1
+        }
     }
     
 }
