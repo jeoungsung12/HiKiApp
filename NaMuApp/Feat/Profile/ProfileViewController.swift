@@ -66,17 +66,17 @@ final class ProfileViewController: UIViewController {
         
         output.nameTextFieldResult.lazyBind { [weak self] text in
             self?.descriptionLabel.text = ((text == "")) ? nil : text
-            self?.descriptionLabel.textColor = (text == ProfileViewModel.NickName.NickNameType.success.rawValue) ? .success : .descriptionFail
+            self?.descriptionLabel.textColor = (text == ProfileViewModel.NickName.NickNameType.success.rawValue) ? .systemOrange : .systemRed
         }
         
         output.buttonEnabledResult.lazyBind { [weak self] valid in
             guard let valid = valid else {
                 self?.successButton.isEnabled = false
-                self?.successButton.backgroundColor = .fail
+                self?.successButton.backgroundColor = .customDarkGray
                 return
             }
             self?.successButton.isEnabled = (valid) ? true : false
-            self?.successButton.backgroundColor = (valid) ? .success : .fail
+            self?.successButton.backgroundColor = (valid) ? .point : .customDarkGray
         }
     }
     
@@ -153,7 +153,7 @@ extension ProfileViewController {
         successButton.isEnabled = false
         successButton.clipsToBounds = true
         successButton.layer.cornerRadius = 20
-        successButton.backgroundColor = .fail
+        successButton.backgroundColor = .customDarkGray
         successButton.setTitle("완료", for: .normal)
         successButton.setTitleColor(.white, for: .normal)
         

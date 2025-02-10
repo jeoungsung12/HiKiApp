@@ -10,7 +10,7 @@ import SnapKit
 import Lottie
 
 final class MainNavigationView: UIView {
-    private let titleLabel = UILabel()
+    private let logoImageView = UIImageView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -26,21 +26,21 @@ final class MainNavigationView: UIView {
 extension MainNavigationView {
     
     private func configureHierarchy() {
-        self.addSubview(titleLabel)
+        self.addSubview(logoImageView)
         configureLayout()
     }
     
     private func configureLayout() {
-        titleLabel.snp.makeConstraints { make in
+        logoImageView.snp.makeConstraints { make in
+            make.height.equalTo(40)
+            make.width.equalTo(80)
             make.leading.verticalEdges.equalToSuperview()
         }
     }
     
     private func configureView() {
-        titleLabel.text = "HiKi"
-        titleLabel.textAlignment = .left
-        titleLabel.textColor = .point
-        titleLabel.font = .boldItalicFont(30)
+        logoImageView.image = UIImage(named: "logo")
+        logoImageView.contentMode = .scaleAspectFit
         configureHierarchy()
     }
     

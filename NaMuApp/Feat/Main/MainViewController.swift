@@ -105,7 +105,7 @@ extension MainViewController {
         
         let headerSection = HomeSection.header
         let headerData = Set(data[0]).compactMap {
-            return HomeItem.poster(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
+            return HomeItem.poster(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0, genre: nil)) }
         snapShot.appendSections([headerSection])
         snapShot.appendItems(headerData, toSection: headerSection)
         
@@ -129,20 +129,20 @@ extension MainViewController {
         let semiFooterSection = HomeSection.middle(title: HomeSection.semiFooter(title: "").title)
         let footerSection = HomeSection.middle(title: HomeSection.footer(title: "").title)
         
-        let headerData = Set(sortedData.prefix(10)).compactMap {
-            return HomeItem.poster(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
+        let headerData = Set(sortedData.prefix(9)).compactMap {
+            return HomeItem.poster(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0, genre: $0.genres?.compactMap({$0}))) }
         
         let semiHeaderData = Set(totalData.shuffled().prefix(10)).compactMap {
-            return HomeItem.recommand(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
+            return HomeItem.recommand(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0, genre: nil)) }
         
         let middleData = Set(totalData.filter({$0.score ?? 0 > 8.0})).compactMap {
-            return HomeItem.rank(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
+            return HomeItem.rank(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0, genre: nil)) }
         
         let semiFooterData = Set(totalData.filter({$0.type?.uppercased() == "TV"})).compactMap {
-            return HomeItem.tvList(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
+            return HomeItem.tvList(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0, genre: nil)) }
         
         let footerData = Set(totalData.filter({$0.type?.uppercased() == "ONA"})).compactMap {
-            return HomeItem.onaList(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0)) }
+            return HomeItem.onaList(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0, genre: nil)) }
         
         [headerSection, semiHeaderSection, middleSection, semiFooterSection, footerSection].forEach({
             snapShot.appendSections([$0])
@@ -171,7 +171,8 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
     private func configureCollectionView() {
         collectionView.delegate = self
         collectionView.backgroundColor = .white
-        collectionView.register(PosterCell.self, forCellWithReuseIdentifier: PosterCell.id)
+        collectionView.register(MainHeaderCell.self, forCellWithReuseIdentifier: MainHeaderCell.id)
+        collectionView.register(MainPosterCell.self, forCellWithReuseIdentifier: MainPosterCell.id)
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
     }
     
@@ -183,9 +184,9 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
             let section = self?.dataSource?.sectionIdentifier(for: sectionIndex)
             let width = (UIScreen.main.bounds.width)
             if section == .header {
-                return (self?.createLayout(width: 0.85, height: (width * 0.85) * 1.5, .groupPagingCentered))
+                return (self?.createLayout(width: 0.85, height: (width * 0.85), .groupPagingCentered))
             } else if section == .semiHeader(title: HomeSection.semiHeader(title: "").title) {
-                return (self?.createLayout(width: 0.45, height: (width * 0.45) * 1.5, .continuous))
+                return (self?.createLayout(width: 0.4, height: (width * 0.4) * 1.5, .continuous))
             } else {
                 return (self?.createLayout(width: 0.3, height: (width * 0.3) * 1.7, .continuous))
             }
@@ -216,16 +217,24 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
     }
     
     private func setCell(_ data: ItemModel,_ type: PosterType,_ indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PosterCell.id, for: indexPath) as? PosterCell else { return UICollectionViewCell() }
-        cell.configure(data, indexPath.row + 1, type)
-        return cell
+        switch type {
+        case .rank:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainHeaderCell.id, for: indexPath) as? MainHeaderCell else { return UICollectionViewCell() }
+            cell.configure(data, indexPath.row + 1)
+            return cell
+            
+        default:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainPosterCell.id, for: indexPath) as? MainPosterCell else { return UICollectionViewCell() }
+            cell.configure(data, type)
+            return cell
+        }
     }
     
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<HomeSection,HomeItem>(collectionView: collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
             case .poster(let data):
-                return self.setCell(data, .rank,indexPath)
+                return self.setCell(data, .rank, indexPath)
             case .rank(let data):
                 return self.setCell(data, .star, indexPath)
             case .recommand(let data),
@@ -252,7 +261,7 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? PosterCell else { return }
+        guard let cell = collectionView.cellForItem(at: indexPath) as? MainPosterCell else { return }
         //TODO: - 이동
     }
     
@@ -263,14 +272,15 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
         if currentOffset >= maxOffset {
             return
         }
-        
-        if (lastContentOffset <= 0) || (lastContentOffset > currentOffset) {
-            self.navigationController?.navigationBar.isHidden = false
-            self.additionalSafeAreaInsets.top = 0
-        } else if (lastContentOffset < currentOffset) {
-            self.navigationController?.navigationBar.isHidden = true
-            self.additionalSafeAreaInsets.top = -44
-        }
+        UIView.animate(withDuration: 1.0, delay: 0, options: [.curveEaseInOut], animations: {
+            if (self.lastContentOffset <= 0) || (self.lastContentOffset > currentOffset) {
+                self.navigationController?.navigationBar.alpha = 1.0
+                self.additionalSafeAreaInsets.top = 0
+            } else if (self.lastContentOffset < currentOffset) {
+                self.navigationController?.navigationBar.alpha = 0.0
+                self.additionalSafeAreaInsets.top = -44
+            }
+        })
         lastContentOffset = currentOffset
     }
     

@@ -16,12 +16,10 @@ enum PosterType {
     case gnere
 }
 
-final class PosterCell: UICollectionViewCell {
+final class MainPosterCell: UICollectionViewCell {
     static let id: String = "MoviePosterCell"
     private let imageView = UIImageView()
-    private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
-    private let rankLabel = UILabel()
     private let starLabel = UILabel()
     
     override init(frame: CGRect) {
@@ -37,16 +35,15 @@ final class PosterCell: UICollectionViewCell {
         super.prepareForReuse()
         imageView.image = nil
         starLabel.isHidden = true
-        [rankLabel, titleLabel, subtitleLabel, starLabel].forEach({
+        [subtitleLabel, starLabel].forEach({
             $0.text = nil
         })
     }
     
-    func configure(_ data: ItemModel,_ rank: Int,_ type : PosterType) {
+    func configure(_ data: ItemModel,_ type : PosterType) {
         switch type {
         case .rank:
-            configureRank(rank)
-            titleLabel.text = data.title
+            print("")
         case .star:
             starLabel.isHidden = false
             subtitleLabel.text = data.title
@@ -62,16 +59,12 @@ final class PosterCell: UICollectionViewCell {
         }
     }
     
-    private func configureRank(_ rank: Int) {
-        rankLabel.text = rank.formatted()
-    }
-    
 }
 
-extension PosterCell {
+extension MainPosterCell {
     
     private func configureHierarchy() {
-        [imageView, rankLabel, starLabel, titleLabel, subtitleLabel].forEach({
+        [imageView, starLabel, subtitleLabel].forEach({
             self.addSubview($0)
         })
         configureLayout()
@@ -82,16 +75,6 @@ extension PosterCell {
         imageView.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-52)
             make.top.horizontalEdges.equalToSuperview()
-        }
-        
-        rankLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.horizontalEdges.equalToSuperview().offset(24)
-        }
-        
-        titleLabel.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview().inset(24)
-            make.bottom.equalTo(imageView.snp.bottom).offset(-24)
         }
         
         subtitleLabel.snp.makeConstraints { make in
@@ -114,14 +97,6 @@ extension PosterCell {
         imageView.contentMode = .scaleToFill
         imageView.backgroundColor = .darkGray
         
-        rankLabel.textColor = .point
-        rankLabel.textAlignment = .left
-        rankLabel.font = .boldItalicFont(100)
-        
-        titleLabel.numberOfLines = 2
-        titleLabel.textColor = .customWhite
-        titleLabel.font = .systemFont(ofSize: 40, weight: .heavy)
-        
         starLabel.isHidden = true
         starLabel.clipsToBounds = true
         starLabel.layer.cornerRadius = 15
@@ -136,7 +111,7 @@ extension PosterCell {
         subtitleLabel.textAlignment = .center
         subtitleLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         
-        [rankLabel, imageView, titleLabel, starLabel].forEach({
+        [imageView, starLabel].forEach({
             $0.layer.shadowRadius = 4
             $0.layer.shadowOpacity = 0.5
             $0.layer.shadowColor = UIColor.darkGray.cgColor

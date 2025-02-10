@@ -21,6 +21,18 @@ struct AnimateData: Decodable, Hashable {
     let score: Double?
     let rank: Int?
     let title_english: String?
+    let trailer: AnimateTrailer
+    let genres: [AnimateGenre]?
+}
+
+struct AnimateGenre: Decodable, Hashable {
+    let name: String
+}
+
+struct AnimateTrailer: Decodable, Hashable {
+    let embed_url: String?
+    let youtube_id: String?
+    let url: String?
 }
 
 struct AnimateImages: Decodable, Hashable {

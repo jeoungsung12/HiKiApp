@@ -44,4 +44,5 @@ struct ItemModel: Hashable {
     let synopsis: String?
     let image: String
     let star: Double
+    let genre: [AnimateGenre]?
 }

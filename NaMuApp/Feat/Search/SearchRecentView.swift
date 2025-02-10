@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class MainRecentView: UIView {
+final class SearchRecentView: UIView {
     private let titleLabel = UILabel()
     private let resultLabel = UILabel()
     private let removeButton = UIButton()
@@ -36,7 +36,7 @@ final class MainRecentView: UIView {
 }
 
 //MARK: - Configure UI
-extension MainRecentView {
+extension SearchRecentView {
     
     private func configureHierarchy() {
         self.addSubview(removeButton)
@@ -111,7 +111,7 @@ extension MainRecentView {
 }
 
 //MARK: - Action
-extension MainRecentView {
+extension SearchRecentView {
     
     @objc
     private func removeButtonTapped(_ sender: UIButton) {

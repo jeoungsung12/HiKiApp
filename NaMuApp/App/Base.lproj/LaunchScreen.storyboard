@@ -26,16 +26,16 @@
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="HiKi" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6eQ-Cs-zEH">
-                                <rect key="frame" x="24" y="232.33333333333337" width="345" height="147.66666666666663"/>
-                                <fontDescription key="fontDescription" name="Impact" family="Impact" pointSize="120"/>
+                                <rect key="frame" x="24" y="244.66666666666663" width="345" height="123"/>
+                                <fontDescription key="fontDescription" name="Impact" family="Impact" pointSize="100"/>
                                 <color key="textColor" red="1" green="0.59414612993295868" blue="0.1891854715199166" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                                 <color key="shadowColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <size key="shadowOffset" width="-1" height="-1"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="나만의 애니 저장소" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iBI-N7-FmP">
-                                <rect key="frame" x="24" y="404" width="345" height="33.333333333333314"/>
-                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="27"/>
+                                <rect key="frame" x="24" y="391.66666666666669" width="345" height="25"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-BoldItalic" family="Helvetica Neue" pointSize="20"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                                 <color key="shadowColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

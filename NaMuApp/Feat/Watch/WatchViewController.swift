@@ -23,12 +23,14 @@ final class WatchViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.inputTrigger.dataTrigger.value = Int.random(in: 1...3)
         self.navigationController?.navigationBar.isHidden = true
+        self.tabBarController?.tabBar.backgroundColor = .black
+        
+//        self.inputTrigger.dataTrigger.value = Int.random(in: 1...3)
     }
     
     private func setBinding() {
-        outputResult.dataResult.lazyBind { [weak self] data in
+        outputResult.dataResult.bind { [weak self] data in
             DispatchQueue.main.async {
                 if data != nil {
                     self?.collectionView.reloadData()
@@ -79,7 +81,6 @@ extension WatchViewController: UICollectionViewDelegate, UICollectionViewDataSou
         collectionView.backgroundColor = .black
         collectionView.prefetchDataSource = self
         collectionView.showsVerticalScrollIndicator = false
-//        collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.register(WatchCollectionViewCell.self, forCellWithReuseIdentifier: WatchCollectionViewCell.id)
     }
     
@@ -104,14 +105,10 @@ extension WatchViewController: UICollectionViewDelegate, UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WatchCollectionViewCell.id, for: indexPath) as? WatchCollectionViewCell else { return UICollectionViewCell() }
         if let data = outputResult.dataResult.value {
-            let videoData = data.filter({ ($0.url != nil) })
+            let videoData = data.filter({ ($0.trailer.embed_url != nil) })
             cell.configure(videoData[indexPath.row])
         }
         return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(#function)
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {

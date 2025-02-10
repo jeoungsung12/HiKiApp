@@ -53,6 +53,7 @@ extension CustomProfileButton {
     private func configureView(_ size: CGFloat) {
         self.alpha = (isItemSelected ? 1 : 0.5)
         
+        profileImage.backgroundColor = .darkGray
         profileImage.contentMode = .scaleAspectFit
         profileImage.setBorder(isItemSelected, size / 2)
         

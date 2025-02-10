@@ -78,13 +78,12 @@ extension SearchViewController {
         searchBar.delegate = self
         searchBar.searchBarStyle = .minimal
         searchBar.searchTextField.textColor = .customDarkGray
-        if (searchData.searchText == "") {
-            searchBar.searchTextField.text =  "영화를 검색해보세요."
-        }
+        searchBar.searchTextField.placeholder =  "영화를 검색해보세요."
         
+        resultLabel.textColor = .black
         resultLabel.textAlignment = .center
-        resultLabel.textColor = .customDarkGray
         resultLabel.font = .systemFont(ofSize: 13, weight: .semibold)
+        //TODO: - 최근 검색어
         
         tapGesture.cancelsTouchesInView = false
         
@@ -96,22 +95,9 @@ extension SearchViewController {
 
 extension SearchViewController: UISearchBarDelegate {
     
-    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
-        guard let text = searchBar.text else { return true }
-        searchBar.searchTextField.textColor = .customWhite
-        searchBar.text = ((text == "영화를 검색해보세요.")) ? "" : text
-        return true
-    }
-    
-    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
-        guard let text = searchBar.text else { return true }
-        searchBar.text = ((text.isEmpty)) ? "영화를 검색해보세요." : text
-        searchBar.searchTextField.textColor = ((text.isEmpty)) ? .customDarkGray : .customWhite
-        return true
-    }
-    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         view.endEditing(true)
+        //TODO: - ViewModel
         guard let text = searchBar.text else { return }
         searchBar.text = ((text.isEmpty)) ? "영화를 검색해보세요." : text
         searchBar.searchTextField.textColor = ((text.isEmpty)) ? .customDarkGray : .customWhite
@@ -199,6 +185,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
         self.push(vc)
     }
     
+    //TODO: - 안되는 예외처리
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         if let indexPath = indexPaths.last,
            searchData.searchResult.count - 2 < indexPath.row {

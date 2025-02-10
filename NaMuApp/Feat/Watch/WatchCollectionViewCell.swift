@@ -30,8 +30,8 @@ final class WatchCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(_ video: WatchVideo) {
-        guard var url = video.url else { return }
+    func configure(_ video: AnimateData) {
+        guard var url = video.trailer.embed_url else { return }
         url += "&cc_load_policy=1"
         videoURL = url
         player = YouTubePlayer(urlString: url)

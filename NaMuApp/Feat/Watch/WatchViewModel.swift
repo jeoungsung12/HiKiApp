@@ -8,13 +8,13 @@
 import Foundation
 
 final class WatchViewModel: ViewModelType {
-    private var videosData: [WatchVideo] = []
+    private var videosData: [AnimateData] = []
     struct Input {
         let dataTrigger: Observable<Int>
     }
     
     struct Output {
-        let dataResult: Observable<[WatchVideo]?> = Observable(nil)
+        let dataResult: Observable<[AnimateData]?> = Observable(nil)
     }
     
 }
@@ -39,7 +39,7 @@ extension WatchViewModel {
         return output
     }
     
-    private func fetchData(_ page: Int, completion: @escaping (Result<[WatchVideo],NetworkError.CustomError>) -> Void) {
+    private func fetchData(_ page: Int, completion: @escaping (Result<[AnimateData],NetworkError.CustomError>) -> Void) {
         AnimateServices().getRandomAnime(page: page) { result in
             completion(result)
         }
