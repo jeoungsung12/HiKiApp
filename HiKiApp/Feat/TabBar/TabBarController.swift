@@ -20,23 +20,23 @@ extension TabBarController {
     
     private func configure() {
         let firstVC = UINavigationController(rootViewController: MainViewController())
-        let secondVC = UINavigationController(rootViewController: WatchViewController())
+        let secondVC = UINavigationController(rootViewController: SearchViewController())
         let thirdVC = UINavigationController(rootViewController: MusicViewController())
-        let forthVC = UINavigationController(rootViewController: SearchViewController())
+        let forthVC = UINavigationController(rootViewController: WatchViewController())
         let fifthVC = UINavigationController(rootViewController: MyPageViewController())
         
         self.setViewControllers([firstVC, secondVC, thirdVC, forthVC, fifthVC], animated: true)
         guard let items = self.tabBar.items else { return }
         items[0].image = UIImage(systemName: "popcorn")
-        items[1].image = UIImage(systemName: "film.stack")
-        items[2].image = UIImage(systemName: "music.quarternote.3")
-        items[3].image = UIImage(systemName: "magnifyingglass")
+        items[1].image = UIImage(systemName: "magnifyingglass")
+        items[2].image = UIImage(systemName: "airpods.max")
+        items[3].image = UIImage(systemName: "film.stack")
         items[4].image = UIImage(systemName: "person.circle")
         
         items[0].title = "시네마"
-        items[1].title = "쇼츠"
+        items[1].title = "검색"
         items[2].title = "뮤직"
-        items[3].title = "검색"
+        items[3].title = "하이라이트"
         items[4].title = "프로필"
            
         let appearance = UITabBarAppearance()

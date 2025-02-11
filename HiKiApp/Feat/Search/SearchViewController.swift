@@ -45,6 +45,7 @@ class SearchViewController: UIViewController {
         
         outputResult.phaseResult.lazyBind { [weak self] phase in
             self?.resultLabel.text = phase.message
+            self?.recentView.isHidden = (phase == .notRequest) ? false : true
         }
         
         outputResult.searchResult.lazyBind { [weak self] data in
@@ -77,9 +78,8 @@ extension SearchViewController {
             make.horizontalEdges.equalToSuperview().inset(12)
         }
         
-        tableView.snp.makeConstraints { make in
+        tableView.snp.makeConstraints { make in            make.top.equalTo(searchBar.snp.bottom).offset(4)
             make.horizontalEdges.bottom.equalToSuperview()
-            make.top.equalTo(recentView.snp.bottom).offset(12)
         }
         
         resultLabel.snp.makeConstraints { make in
@@ -151,7 +151,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.id, for: indexPath) as? SearchTableViewCell,
               let text = searchBar.text else { return UITableViewCell() }
         cell.configure(text, outputResult.searchResult.value[indexPath.row])
-        cell.isButton = { [weak self] value in
+        cell.isButton = { value in
             tableView.reloadRows(at: [indexPath], with: .automatic)
         }
         return cell

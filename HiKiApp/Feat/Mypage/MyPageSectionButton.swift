@@ -11,6 +11,7 @@ import SnapKit
 final class MyPageSectionButton: UIButton {
     private let buttonLabel = UILabel()
     private let spacingLayer = UIView()
+    private let arrowButton = UIButton()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -30,31 +31,42 @@ final class MyPageSectionButton: UIButton {
 extension MyPageSectionButton {
     
     private func configureHierarchy() {
-        self.addSubview(buttonLabel)
-        self.addSubview(spacingLayer)
+        [buttonLabel, spacingLayer, arrowButton].forEach({
+            self.addSubview($0)
+        })
         configureLayout()
     }
     
     private func configureLayout() {
         
         buttonLabel.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview().inset(12)
+            make.leading.equalToSuperview().inset(12)
         }
         
         spacingLayer.snp.makeConstraints { make in
             make.height.equalTo(1)
             make.horizontalEdges.equalToSuperview().inset(12)
-            make.top.equalTo(buttonLabel.snp.bottom).offset(12)
+            make.top.equalTo(buttonLabel.snp.bottom).offset(24)
+        }
+        
+        arrowButton.snp.makeConstraints { make in
+            make.size.equalTo(15)
+            make.trailing.equalToSuperview().inset(12)
+            make.centerY.equalTo(buttonLabel.snp.centerY)
         }
         
     }
     
     private func configureView() {
+        buttonLabel.textColor = .black
         buttonLabel.textAlignment = .left
-        buttonLabel.textColor = .black.withAlphaComponent(0.7)
-        buttonLabel.font = .systemFont(ofSize: 15, weight: .semibold)
+        buttonLabel.font = .systemFont(ofSize: 15, weight: .regular)
         
-        spacingLayer.backgroundColor = .customDarkGray
+        arrowButton.isEnabled = false
+        arrowButton.imageView?.contentMode = .scaleAspectFit
+        arrowButton.setImage(UIImage(named: "rightArrow"), for: .normal)
+        
+        spacingLayer.backgroundColor = .systemGray5
         configureHierarchy()
     }
     

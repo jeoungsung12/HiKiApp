@@ -38,6 +38,7 @@ extension CustomProfileButton {
     private func configureLayout(_ size: CGFloat) {
         profileImage.snp.makeConstraints { make in
             make.size.equalTo(size)
+            make.centerX.equalToSuperview()
         }
         
         containerView.snp.makeConstraints { make in
