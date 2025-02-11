@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import YouTubePlayerKit
 
-final class WatchCollectionViewCell: UICollectionViewCell {
+final class TeaserCollectionViewCell: UICollectionViewCell {
     static let id: String = "WatchCollectionViewCell"
 
     private var player: YouTubePlayer?
@@ -73,7 +73,7 @@ final class WatchCollectionViewCell: UICollectionViewCell {
     }
 }
 
-extension WatchCollectionViewCell {
+extension TeaserCollectionViewCell {
     private func configureView() {
         contentView.backgroundColor = .black
         

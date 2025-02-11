@@ -1,5 +1,5 @@
 //
-//  MusicViewModel.swift
+//  ReviewViewModel.swift
 //  NaMuApp
 //
 //  Created by 정성윤 on 2/9/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class MusicViewModel: ViewModelType {
+final class ReviewViewModel: ViewModelType {
     
     struct Input {
         
@@ -27,7 +27,7 @@ final class MusicViewModel: ViewModelType {
     }
 }
 
-extension MusicViewModel {
+extension ReviewViewModel {
     
     func transform(input: Input) -> Output {
         return Output()

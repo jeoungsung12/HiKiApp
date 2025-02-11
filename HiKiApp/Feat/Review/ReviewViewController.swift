@@ -1,5 +1,5 @@
 //
-//  MusicViewController.swift
+//  ReviewViewController.swift
 //  NaMuApp
 //
 //  Created by 정성윤 on 2/9/25.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class MusicViewController: UIViewController {
+final class ReviewViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,7 +16,7 @@ final class MusicViewController: UIViewController {
 
 }
 
-extension MusicViewController {
+extension ReviewViewController {
     
     private func configureHierarchy() {
         

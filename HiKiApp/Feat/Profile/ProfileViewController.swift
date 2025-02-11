@@ -149,7 +149,7 @@ extension ProfileViewController {
         descriptionLabel.textColor = .point
         descriptionLabel.textAlignment = .left
         descriptionLabel.font = .systemFont(ofSize: 12, weight: .regular)
-//        successButton.setBorder()
+
         successButton.isEnabled = false
         successButton.clipsToBounds = true
         successButton.layer.cornerRadius = 20

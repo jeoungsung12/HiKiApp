@@ -12,7 +12,7 @@ final class MyPageViewModel: ViewModelType {
     
     enum MyPageCategoryType: String, CaseIterable {
         case aniBox = "애니 보관함"
-        case watchBox = "하이라이트"
+        case watchBox = "티저 보관함"
         case profile = "프로필 수정"
         
         var image: String {

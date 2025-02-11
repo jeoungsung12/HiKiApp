@@ -10,9 +10,7 @@ import SnapKit
 
 final class SheetProfileViewController: UIViewController {
     private lazy var successButton = UIBarButtonItem(title: "저장", style: .plain, target: self, action: #selector(successButtonTapped))
-    private lazy var cancelButton = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(cancelButtonTapped))
     private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapGesture))
-    
     private let profileButton = CustomProfileButton(120, true)
     private let nameTextField = UITextField()
     private let spacingView = UIView()
@@ -35,12 +33,10 @@ final class SheetProfileViewController: UIViewController {
 extension SheetProfileViewController {
     
     private func configureHierarchy() {
-        self.view.addSubview(profileButton)
-        self.view.addSubview(nameTextField)
-        self.view.addSubview(spacingView)
-        self.view.addSubview(descriptionLabel)
+        [profileButton, nameTextField, spacingView, descriptionLabel].forEach({
+            self.view.addSubview($0)
+        })
         self.view.addGestureRecognizer(tapGesture)
-        
         configureLayout()
     }
     
@@ -72,19 +68,18 @@ extension SheetProfileViewController {
     
     private func configureView() {
         self.setNavigation("프로필 설정")
-        self.view.backgroundColor = .customBlack
-        self.navigationItem.leftBarButtonItem = cancelButton
+        self.view.backgroundColor = .white
         self.navigationItem.rightBarButtonItem = successButton
         
         profileButton.addTarget(self, action: #selector(profilebuttonTapped), for: .touchUpInside)
         
         nameTextField.delegate = self
-        nameTextField.textColor = .customDarkGray
+        nameTextField.textColor = .black
         nameTextField.textAlignment = .left
-        nameTextField.text = "닉네임을 설정해 주세요"
+        nameTextField.placeholder = "닉네임을 설정해 주세요"
         nameTextField.font = .systemFont(ofSize: 15, weight: .semibold)
         
-        spacingView.backgroundColor = .customWhite
+        spacingView.backgroundColor = .customDarkGray
         
         descriptionLabel.numberOfLines = 1
         descriptionLabel.textColor = .point

@@ -8,12 +8,12 @@
 import UIKit
 import SnapKit
 
-final class WatchViewController: UIViewController {
+final class TeaserViewController: UIViewController {
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout())
     private let loadingIndicator = LoadingView()
     
-    private let viewModel = WatchViewModel()
-    private let inputTrigger = WatchViewModel.Input(dataTrigger: Observable(1))
+    private let viewModel = TeaserViewModel()
+    private let inputTrigger = TeaserViewModel.Input(dataTrigger: Observable(1))
     private lazy var outputResult = viewModel.transform(input: inputTrigger)
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,7 +43,7 @@ final class WatchViewController: UIViewController {
     }
 }
 
-extension WatchViewController {
+extension TeaserViewController {
     
     private func configureHierarchy() {
         [collectionView, loadingIndicator].forEach({
@@ -72,7 +72,7 @@ extension WatchViewController {
     }
 }
 
-extension WatchViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDataSourcePrefetching {
+extension TeaserViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDataSourcePrefetching {
     
     private func configureCollectionView() {
         collectionView.delegate = self
@@ -81,7 +81,7 @@ extension WatchViewController: UICollectionViewDelegate, UICollectionViewDataSou
         collectionView.backgroundColor = .black
         collectionView.prefetchDataSource = self
         collectionView.showsVerticalScrollIndicator = false
-        collectionView.register(WatchCollectionViewCell.self, forCellWithReuseIdentifier: WatchCollectionViewCell.id)
+        collectionView.register(TeaserCollectionViewCell.self, forCellWithReuseIdentifier: TeaserCollectionViewCell.id)
     }
     
     private func createLayout() -> UICollectionViewLayout {
@@ -103,7 +103,7 @@ extension WatchViewController: UICollectionViewDelegate, UICollectionViewDataSou
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WatchCollectionViewCell.id, for: indexPath) as? WatchCollectionViewCell else { return UICollectionViewCell() }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TeaserCollectionViewCell.id, for: indexPath) as? TeaserCollectionViewCell else { return UICollectionViewCell() }
         if let data = outputResult.dataResult.value {
             let videoData = data.filter({ ($0.trailer.embed_url != nil) })
             cell.configure(videoData[indexPath.row])
@@ -112,11 +112,11 @@ extension WatchViewController: UICollectionViewDelegate, UICollectionViewDataSou
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        (cell as? WatchCollectionViewCell)?.playVideoIfNeeded()
+        (cell as? TeaserCollectionViewCell)?.playVideoIfNeeded()
     }
     
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        (cell as? WatchCollectionViewCell)?.stopVideo()
+        (cell as? TeaserCollectionViewCell)?.stopVideo()
     }
     
     

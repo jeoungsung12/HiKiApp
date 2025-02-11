@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class WatchViewModel: ViewModelType {
+final class TeaserViewModel: ViewModelType {
     private var videosData: [AnimateData] = []
     struct Input {
         let dataTrigger: Observable<Int>
@@ -19,7 +19,7 @@ final class WatchViewModel: ViewModelType {
     
 }
 
-extension WatchViewModel {
+extension TeaserViewModel {
     
     func transform(input: Input) -> Output {
         let output = Output()

@@ -14,7 +14,7 @@ final class MyPageViewController: UIViewController {
     private let categoryStackView = UIStackView()
     private let countLabel = UILabel()
     private let aniBoxButton = UIButton()
-    private let watchBoxButton = UIButton()
+    private let teaserBoxButton = UIButton()
     private let changeProfileButton = UIButton()
     
     private let viewModel = MyPageViewModel()
@@ -44,6 +44,7 @@ final class MyPageViewController: UIViewController {
         
         output.categoryBtnResult.lazyBind { [weak self] type in
             guard let type = type else { return }
+            //TODO: 추가
             switch type {
             case .aniBox:
                 self?.push(SheetProfileViewController())
@@ -60,7 +61,7 @@ final class MyPageViewController: UIViewController {
 extension MyPageViewController {
     
     private func configureHierarchy() {
-        [aniBoxButton, watchBoxButton, changeProfileButton].forEach({
+        [aniBoxButton, teaserBoxButton, changeProfileButton].forEach({
             self.categoryStackView.addArrangedSubview($0)
         })
         [myProfileView, categoryStackView, buttonStackView, countLabel].forEach({
@@ -106,12 +107,12 @@ extension MyPageViewController {
         aniBoxButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.aniBox.rawValue, MyPageViewModel.MyPageCategoryType.aniBox.image)
         
         aniBoxButton.tag = 1
-        watchBoxButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.watchBox.rawValue, MyPageViewModel.MyPageCategoryType.watchBox.image)
+        teaserBoxButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.watchBox.rawValue, MyPageViewModel.MyPageCategoryType.watchBox.image)
         
         aniBoxButton.tag = 2
         changeProfileButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.profile.rawValue, MyPageViewModel.MyPageCategoryType.profile.image)
         
-        [aniBoxButton, watchBoxButton, changeProfileButton].forEach({
+        [aniBoxButton, teaserBoxButton, changeProfileButton].forEach({
             $0.tintColor = .black
             $0.addTarget(self, action: #selector(categoryButtonTapped), for: .touchUpInside)
         })
