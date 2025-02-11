@@ -21,10 +21,10 @@ final class GenreView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(_ model: SearchResult,_ type: GenreLocation) {
+    func configure(_ type: GenreLocation) {
         genreType = type
         configureView()
-        configureStackView(model)
+//        configureStackView(model)
     }
     
 }
@@ -65,29 +65,28 @@ extension GenreView {
         configureHierarchy()
     }
     
-    private func configureStackView(_ result: SearchResult) {
-        let models = result.summaryInfo
-        let genreString = result.genreString
-        genreStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        for (model) in models {
-            switch genreType {
-            case .search:
-                break
-            case .detail:
-                let genreItem = DetailGenreItem()
-                genreItem.configure(model.image, model.text)
-                genreStackView.addArrangedSubview(genreItem)
-            }
-        }
-        for genre in genreString {
-            switch genreType {
-            case .search:
-                let genreItem = SearchGenreItem()
-                genreItem.configure(" \(genre) ")
-                genreStackView.addArrangedSubview(genreItem)
-            case .detail:
-                break
-            }
-        }
+    private func configureStackView() {
+//        
+//        genreStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+//        for (model) in models {
+//            switch genreType {
+//            case .search:
+//                break
+//            case .detail:
+//                let genreItem = DetailGenreItem()
+//                genreItem.configure(model.image, model.text)
+//                genreStackView.addArrangedSubview(genreItem)
+//            }
+//        }
+//        for genre in genreString {
+//            switch genreType {
+//            case .search:
+//                let genreItem = SearchGenreItem()
+//                genreItem.configure(" \(genre) ")
+//                genreStackView.addArrangedSubview(genreItem)
+//            case .detail:
+//                break
+//            }
+//        }
     }
 }

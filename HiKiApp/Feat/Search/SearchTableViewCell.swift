@@ -17,7 +17,7 @@ class SearchTableViewCell: UITableViewCell {
     private let dateLabel = UILabel()
     private let heartButton = UIButton()
     private let genreView = GenreView()
-    private let db = Database.shared
+    private let db = DataBase.shared
     private var buttonTapped: Bool = false
     
     var isButton: ((Bool)->Void)?
@@ -36,30 +36,18 @@ class SearchTableViewCell: UITableViewCell {
         imageResult.text = NetworkError.noImage
     }
     
-    func configure(_ search: String,_ model: SearchResult) {
-        configureImage(model.poster_path)
+    func configure(_ search: String,_ model: AnimateData) {
         highlightLabel(search, model.title)
-        dateLabel.text = model.release_date
-        genreView.configure(model, .search)
+        dateLabel.text = model.title_english
+//        genreView.configure(model, .search)
         buttonTapped = db.heartList.contains(model.title)
         heartButton.setImage(UIImage(systemName: (db.heartList.contains(model.title)) ? "heart.fill" : "heart"), for: .normal)
+        if   let url = URL(string: model.images.jpg.image_url) {
+            imageResult.text = nil
+            posterImageView.kf.setImage(with: url)
+        }
     }
     
-    private func configureImage(_ urlString: String?) {
-//        if let poster_path = urlString,
-//            let url = URL(string: APIEndpoint.topAnime.imagebaseURL + poster_path) {
-//            imageResult.text = nil
-//            posterImageView.kf.setImage(with: url) { result in
-//                switch result {
-//                case .success:
-//                    self.posterImageView.image = self.posterImageView.image?.downSampling(scale: 0.2)
-//                case .failure:
-//                    self.posterImageView.kf.setImage(with: url)
-//                }
-//            }
-//        }
-    }
-
 }
 
 extension SearchTableViewCell {
@@ -118,7 +106,7 @@ extension SearchTableViewCell {
     private func configureView() {
         self.contentView.backgroundColor = .white
         imageResult.numberOfLines = 0
-        imageResult.textColor = .white
+        imageResult.textColor = .black
         imageResult.textAlignment = .center
         imageResult.backgroundColor = .clear
         imageResult.font = .boldSystemFont(ofSize: 15)
@@ -129,8 +117,8 @@ extension SearchTableViewCell {
         posterImageView.backgroundColor = .darkGray
         
         titleLabel.numberOfLines = 2
+        titleLabel.textColor = .black
         titleLabel.textAlignment = .left
-        titleLabel.textColor = .customWhite
         titleLabel.font = .boldSystemFont(ofSize: 15)
         
         dateLabel.textAlignment = .left

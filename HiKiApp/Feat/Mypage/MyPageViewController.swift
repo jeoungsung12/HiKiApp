@@ -11,7 +11,7 @@ import SnapKit
 final class MyPageViewController: UIViewController {
     private var myProfileView = MyProfileView()
     private let buttonStackView = UIStackView()
-    private let db = Database.shared
+    private let db = DataBase.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()

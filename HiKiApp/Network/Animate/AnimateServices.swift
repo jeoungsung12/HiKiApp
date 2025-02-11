@@ -21,8 +21,17 @@ final class AnimateServices {
         }
     }
     
-    func searchAnime(_ searchData: SearchResponse, completion: @escaping (Result<[AnimateData],NetworkError.CustomError>) -> Void) {
-//        NetworkManager.shared.getData(<#T##api: APIEndpoint##APIEndpoint#>, completion: <#T##(Result<Decodable, NetworkError.CustomError>) -> Void#>)
+    func searchAnime(_ searchData: SearchViewModel.SearchRequest, completion: @escaping (Result<[AnimateData],NetworkError.CustomError>) -> Void) {
+        NetworkManager.shared.getData(.search(request: searchData)) { (response: Result<AnimateModel,NetworkError.CustomError>) in
+            switch response {
+            case let .success(data):
+//                dump(data)
+                completion(.success(data.data))
+            case let .failure(error):
+//                print(error)
+                completion(.failure(error))
+            }
+        }
     }
     
     func getRandomAnime(page: Int, completion: @escaping (Result<[AnimateData],NetworkError.CustomError>) -> Void) {

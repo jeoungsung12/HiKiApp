@@ -80,11 +80,11 @@ extension SearchRecentView {
         removeButton.addTarget(self, action: #selector(removeButtonTapped), for: .touchUpInside)
         
         titleLabel.text = "최근검색어"
-        titleLabel.textColor = .customWhite
+        titleLabel.textColor = .black
         titleLabel.textAlignment = .left
         titleLabel.font = .boldSystemFont(ofSize: 16)
         
-        resultLabel.textColor = .customDarkGray
+        resultLabel.textColor = .darkGray
         resultLabel.textAlignment = .center
         resultLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         

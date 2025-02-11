@@ -17,7 +17,7 @@ final class SheetProfileViewController: UIViewController {
     private let nameTextField = UITextField()
     private let spacingView = UIView()
     private let descriptionLabel = UILabel()
-    private let db = Database.shared
+    private let db = DataBase.shared
     
     var dismissClosure: (()->Void)?
     override func viewDidLoad() {

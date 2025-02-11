@@ -8,8 +8,8 @@
 import UIKit
 
 //TODO: - Property Wrapper 구현하기
-final class Database {
-    static let shared = Database()
+final class DataBase {
+    static let shared = DataBase()
     
     private init() { }
     
@@ -71,7 +71,7 @@ final class Database {
     
 }
 
-extension Database {
+extension DataBase {
     
     func removeAll(_ model: String) {
         print(#function)

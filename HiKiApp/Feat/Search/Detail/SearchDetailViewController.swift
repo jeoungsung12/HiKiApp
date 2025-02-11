@@ -14,11 +14,11 @@ final class SearchDetailViewController: UIViewController {
     private let loadingIndicator = UIActivityIndicatorView()
     private var imageData: ImageModel?
     private var creditData: CreditModel?
-    private let db = Database.shared
+    private let db = DataBase.shared
     private var buttonTapped: Bool = false
     
     var isButton: (()->Void)?
-    var searchData: SearchResult?
+    var searchData: AnimateData?
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -158,7 +158,7 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
 
         case .synopsis:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: SynopsisTableViewCell.id, for: indexPath) as? SynopsisTableViewCell else { return UITableViewCell() }
-            cell.configure(searchData.overview)
+//            cell.configure(searchData.overview)
             cell.reloadCell = {
                 tableView.beginUpdates()
                 tableView.endUpdates()

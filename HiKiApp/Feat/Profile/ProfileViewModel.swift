@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 final class ProfileViewModel: ViewModelType {
-    private let db = Database.shared
+    private let db = DataBase.shared
     
     struct Input {
         let configureViewTrigger: Observable<Void>

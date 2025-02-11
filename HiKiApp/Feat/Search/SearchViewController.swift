@@ -10,30 +10,47 @@ import Kingfisher
 import SnapKit
 
 class SearchViewController: UIViewController {
-    private let tableView = UITableView()
-    private let resultLabel = UILabel()
     private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapGesture))
     private let loadingIndicator = UIActivityIndicatorView()
-    private let db = Database.shared
-    var searchBar = UISearchBar()
-    var searchData: SearchResponse = SearchResponse(searchPage: 1, searchText: "", searchPhase: .notRequest, searchResult: []) {
-        didSet {
-            tableView.reloadData()
-        }
-    }
+    private let recentView = SearchRecentView()
+    private let tableView = UITableView()
+    private let resultLabel = UILabel()
+    private let searchBar = UISearchBar()
+    
+    private let viewModel = SearchViewModel()
+    private let inputTirgger = SearchViewModel.Input(
+        phaseTrigger: Observable(.notRequest),
+        searchTrigger: Observable((1))
+    )
+    private lazy var outputResult = viewModel.transform(input: inputTirgger)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        setBinding()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        showKeyboard()
+        searchBar.becomeFirstResponder()
     }
     
     private func setBinding() {
+        outputResult.searchPage.lazyBind { [weak self] page in
+            if let text = self?.searchBar.text {
+                self?.viewModel.setSearchText(text)
+                self?.inputTirgger.searchTrigger.value = page
+            }
+        }
         
+        outputResult.phaseResult.lazyBind { [weak self] phase in
+            self?.resultLabel.text = phase.message
+        }
+        
+        outputResult.searchResult.lazyBind { [weak self] data in
+            self?.tableView.reloadData()
+            self?.loadingIndicator.stopAnimating()
+        }
     }
     
 }
@@ -41,10 +58,9 @@ class SearchViewController: UIViewController {
 extension SearchViewController {
     
     private func configureHierarchy() {
-        self.view.addSubview(searchBar)
-        self.view.addSubview(tableView)
-        self.view.addSubview(resultLabel)
-        self.view.addSubview(loadingIndicator)
+        [searchBar, tableView, recentView, resultLabel, loadingIndicator].forEach({
+            self.view.addSubview($0)
+        })
         self.view.addGestureRecognizer(tapGesture)
         configureLayout()
     }
@@ -55,9 +71,15 @@ extension SearchViewController {
             make.horizontalEdges.equalToSuperview().inset(12)
         }
         
+        recentView.snp.makeConstraints { make in
+            make.height.equalTo(70)
+            make.top.equalTo(searchBar.snp.bottom)
+            make.horizontalEdges.equalToSuperview().inset(12)
+        }
+        
         tableView.snp.makeConstraints { make in
             make.horizontalEdges.bottom.equalToSuperview()
-            make.top.equalTo(searchBar.snp.bottom).offset(12)
+            make.top.equalTo(recentView.snp.bottom).offset(12)
         }
         
         resultLabel.snp.makeConstraints { make in
@@ -67,24 +89,25 @@ extension SearchViewController {
         
         loadingIndicator.snp.makeConstraints { make in
             make.size.equalTo(40)
-            make.center.equalToSuperview().offset(20)
+            make.center.equalToSuperview()
         }
     }
     
     private func configureView() {
-        self.setNavigation("영화검색")
+        self.setNavigation("애니검색")
         self.view.backgroundColor = .white
         
         searchBar.delegate = self
         searchBar.searchBarStyle = .minimal
-        searchBar.searchTextField.textColor = .customDarkGray
-        searchBar.searchTextField.placeholder =  "영화를 검색해보세요."
+        searchBar.searchTextField.textColor = .black
+        searchBar.searchTextField.placeholder =  "애니를 검색해보세요."
         
         resultLabel.textColor = .black
         resultLabel.textAlignment = .center
-        resultLabel.font = .systemFont(ofSize: 13, weight: .semibold)
-        //TODO: - 최근 검색어
+        resultLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         
+        //TODO: 최근검색어 - 전체 삭제 버튼 설정
+//        recentView.configure(viewModel.)
         tapGesture.cancelsTouchesInView = false
         
         setTableView()
@@ -95,53 +118,18 @@ extension SearchViewController {
 
 extension SearchViewController: UISearchBarDelegate {
     
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        guard let text = searchBar.text else { return }
+        viewModel.setSearchText(text)
+    }
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         view.endEditing(true)
-        //TODO: - ViewModel
         guard let text = searchBar.text else { return }
-        searchBar.text = ((text.isEmpty)) ? "영화를 검색해보세요." : text
-        searchBar.searchTextField.textColor = ((text.isEmpty)) ? .customDarkGray : .customWhite
-        db.removeRecentSearch(text)
-        db.recentSearch.append(text)
-        
-        initData(text)
-        fetchData()
-    }
-    
-    private func showKeyboard() {
-        if let text = searchBar.text, text == "영화를 검색해보세요." {
-            searchBar.becomeFirstResponder()
-        }
-    }
-    
-    private func initData(_ text: String) {
-        searchData = SearchResponse(searchPage: 1, searchText: text, searchPhase: .notFound, searchResult: [])
-    }
-}
-
-extension SearchViewController {
-    
-    func fetchData() {
-        guard let text = searchBar.text else { return }
-        searchData.searchText = text
+        viewModel.initData(text, self.outputResult)
         loadingIndicator.startAnimating()
-        
     }
-    
-    private func checkPhase(_ data: [SearchResult]) {
-        if (data.isEmpty) && (searchData.searchPage == 1) {
-            searchData.searchPhase = .notFound
-            resultLabel.text = searchData.searchPhase.message
-        } else if (data.isEmpty) {
-            searchData.searchPhase = .endPage
-        } else {
-            searchData.searchPhase = .success
-            resultLabel.text = searchData.searchPhase.message
-        }
-    }
-    
 }
-
 
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITableViewDataSourcePrefetching {
     
@@ -156,15 +144,14 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchData.searchResult.count
+        return outputResult.searchResult.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.id, for: indexPath) as? SearchTableViewCell,
               let text = searchBar.text else { return UITableViewCell() }
-        cell.configure(text, searchData.searchResult[indexPath.row])
+        cell.configure(text, outputResult.searchResult.value[indexPath.row])
         cell.isButton = { [weak self] value in
-//            self?.customAlert((value) ? "보관 성공!" : "삭제 성공!") { }
             tableView.reloadRows(at: [indexPath], with: .automatic)
         }
         return cell
@@ -177,8 +164,9 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? SearchTableViewCell,  let text = searchBar.text else { return }
         let vc = SearchDetailViewController()
-        let movie = searchData.searchResult[indexPath.row]
-        vc.searchData = movie
+        let movie = outputResult.searchResult.value[indexPath.row]
+        vc.searchData = outputResult.searchResult.value[indexPath.row]
+        //TODO: - Delegate 패턴으로 바꿔보자!
         vc.isButton = {
             cell.configure(text, movie)
         }
@@ -188,19 +176,8 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
     //TODO: - 안되는 예외처리
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         if let indexPath = indexPaths.last,
-           searchData.searchResult.count - 2 < indexPath.row {
-            switch searchData.searchPhase {
-            case .success:
-                searchData.searchPage += 1
-                fetchData()
-            case .notRequest:
-                return
-            case .notFound:
-                return
-            case .endPage:
-//                self.customAlert("", searchData.searchPhase.message, [.ok]) {}
-                self.searchData.searchPhase = .notRequest
-            }
+           outputResult.searchResult.value.count - 2 < indexPath.row {
+            viewModel.checkPaging(inputTirgger, outputResult)
         }
     }
     

@@ -33,8 +33,8 @@ final class BackDropTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(_ model: SearchResult) {
-        genreView.configure(model, .detail)
+    func configure(_ model: AnimateData) {
+//        genreView.configure(model, .detail)
         pageControl.numberOfPages = (backdrops.count > 5) ? 5 : backdrops.count
     }
 }
