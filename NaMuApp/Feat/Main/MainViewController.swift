@@ -193,7 +193,7 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
         }, configuration: config)
     }
     
-    func createLayout(width: Double, height: CGFloat,_ alignment: UICollectionLayoutSectionOrthogonalScrollingBehavior) -> NSCollectionLayoutSection {
+    private func createLayout(width: Double, height: CGFloat,_ alignment: UICollectionLayoutSectionOrthogonalScrollingBehavior) -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(width), heightDimension: .absolute(height))

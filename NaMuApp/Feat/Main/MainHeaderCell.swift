@@ -15,6 +15,7 @@ final class MainHeaderCell: UICollectionViewCell {
     private let titleLabel = UILabel()
     private let genreLabel = UILabel()
     private let rankLabel = UILabel()
+    private let ratingLabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -38,7 +39,7 @@ final class MainHeaderCell: UICollectionViewCell {
         
         if let genres = data.genre {
             var text: String = ""
-            for (index, genre) in genres.enumerated() {
+            for genre in genres {
                 text += "#\(genre.name) "
             }
             genreLabel.text = text
@@ -67,14 +68,16 @@ extension MainHeaderCell {
     
     private func configureLayout() {
         rankLabel.snp.makeConstraints { make in
-            make.centerY.leading.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.leading.equalToSuperview().offset(-12)
         }
         
         imageView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.bottom.equalToSuperview().offset(-52)
-            make.trailing.equalToSuperview().inset(12)
-            make.leading.equalTo(rankLabel.snp.trailing).offset(-20)
+            make.trailing.lessThanOrEqualToSuperview().inset(12)
+            make.width.equalToSuperview().dividedBy(1.5)
+            make.leading.equalTo(rankLabel.snp.trailing).offset(-12)
         }
         
         genreLabel.snp.makeConstraints { make in
