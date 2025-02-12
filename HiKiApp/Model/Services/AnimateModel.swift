@@ -48,26 +48,3 @@ struct AnimateJpg: Decodable, Hashable {
     let small_image_url: String
     let large_image_url: String
 }
-
-struct AnimateReviewModel: Decodable {
-    let data: [ReviewData]
-}
-
-struct ReviewData: Decodable {
-    let score: Int
-    let date: String
-    let review: String
-    let is_spoiler: Bool
-    let user: ReviewUser
-    let entry: ReviewEntry
-}
-
-struct ReviewUser: Decodable {
-    let username: String
-}
-
-struct ReviewEntry: Decodable {
-    let mal_id: Int
-    let title: String
-    let images: AnimateImages
-}

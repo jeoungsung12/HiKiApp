@@ -31,8 +31,9 @@ class ErrorViewController: UIViewController {
 extension ErrorViewController {
     
     private func configureHierarchy() {
-        self.view.addSubview(titleLabel)
-        self.view.addSubview(descriptionLabel)
+        [titleLabel, descriptionLabel].forEach({
+            self.view.addSubview($0)
+        })
         configureLayout()
     }
     
@@ -50,16 +51,16 @@ extension ErrorViewController {
     }
     
     private func configureView() {
-        self.view.backgroundColor = .customBlack
+        self.view.backgroundColor = .white
         
         titleLabel.numberOfLines = 0
         titleLabel.textAlignment = .center
-        titleLabel.textColor = .customWhite
+        titleLabel.textColor = .black
         titleLabel.font = .boldSystemFont(ofSize: 20)
         
         descriptionLabel.numberOfLines = 0
         descriptionLabel.textAlignment = .center
-        descriptionLabel.textColor = .customDarkGray
+        descriptionLabel.textColor = .lightGray
         descriptionLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         descriptionLabel.text = "서비스 이용에 불편을 드려 죄송합니다.\n잠시 후 다시 시도해 주세요.😢"
         

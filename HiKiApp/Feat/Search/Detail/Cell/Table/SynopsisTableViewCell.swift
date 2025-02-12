@@ -31,8 +31,10 @@ class SynopsisTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(_ synopsis: String) {
-        synopsisLabel.text = synopsis
+    func configure(_ synopsis: String?) {
+        if let synopsis = synopsis {
+            synopsisLabel.text = synopsis
+        }
     }
     
 }
@@ -40,24 +42,26 @@ class SynopsisTableViewCell: UITableViewCell {
 extension SynopsisTableViewCell {
     
     private func configureHierarchy() {
-        self.addSubview(moreButton)
-        self.addSubview(titleLabel)
-        self.addSubview(synopsisLabel)
+        [moreButton, titleLabel, synopsisLabel].forEach({
+            self.addSubview($0)
+        })
         configureLayout()
     }
     
     private func configureLayout() {
         
         moreButton.snp.makeConstraints { make in
-            make.top.trailing.equalToSuperview().inset(12)
+            make.top.equalToSuperview().offset(24)
+            make.trailing.equalToSuperview().inset(12)
         }
         
         titleLabel.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview().inset(12)
+            make.top.equalToSuperview().offset(24)
+            make.leading.equalToSuperview().inset(12)
         }
         
         synopsisLabel.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-4)
+            make.bottom.equalToSuperview().inset(12)
             make.horizontalEdges.equalToSuperview().inset(12)
             make.top.equalTo(moreButton.snp.bottom).offset(8)
         }
@@ -65,23 +69,23 @@ extension SynopsisTableViewCell {
     }
     
     private func configureView() {
-        self.backgroundColor = .customBlack
+        self.backgroundColor = .white
         
         titleLabel.text = "Synopsis"
         titleLabel.numberOfLines = 1
-        titleLabel.textColor = .customWhite
+        titleLabel.textColor = .black
         titleLabel.textAlignment = .left
-        titleLabel.font = .boldSystemFont(ofSize: 16)
+        titleLabel.font = .boldSystemFont(ofSize: 20)
         
-        moreButton.setTitle(isSelected ? "Hide" : "More", for: .normal)
+        moreButton.setTitle(isSelected ? "숨김" : "더보기", for: .normal)
         moreButton.setTitleColor(.point, for: .normal)
         moreButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
         moreButton.addTarget(self, action: #selector(moreButtonTapped), for: .touchUpInside)
         
-        synopsisLabel.textColor = .customWhite
+        synopsisLabel.textColor = .darkGray
         synopsisLabel.textAlignment = .left
         synopsisLabel.numberOfLines = (isSelected ? 0 : 3)
-        synopsisLabel.font = .systemFont(ofSize: 15, weight: .regular)
+        synopsisLabel.font = .systemFont(ofSize: 17, weight: .regular)
         
         configureHierarchy()
     }

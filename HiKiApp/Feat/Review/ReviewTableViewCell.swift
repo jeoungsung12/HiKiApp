@@ -87,40 +87,40 @@ extension ReviewTableViewCell {
         }
         
         titleLabel.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(12)
+            make.trailing.equalToSuperview().inset(24)
             make.top.equalTo(profileImageView.snp.bottom).offset(12)
-            make.leading.equalTo(posterImageView.snp.trailing).offset(8)
+            make.leading.equalTo(posterImageView.snp.trailing).offset(12)
         }
         
         cosmosView.snp.makeConstraints { make in
             make.width.equalTo(150)
             make.height.equalTo(30)
             make.top.equalTo(titleLabel.snp.bottom).offset(4)
-            make.leading.equalTo(posterImageView.snp.trailing).offset(8)
+            make.leading.equalTo(posterImageView.snp.trailing).offset(12)
         }
         
         spoilerLabel.snp.makeConstraints { make in
             make.top.equalTo(cosmosView.snp.bottom)
-            make.trailing.equalToSuperview().inset(12)
-            make.leading.equalTo(posterImageView.snp.trailing).offset(8)
+            make.trailing.equalToSuperview().inset(24)
+            make.leading.equalTo(posterImageView.snp.trailing).offset(12)
         }
         
         posterImageView.snp.makeConstraints { make in
             make.width.equalTo(130)
             make.height.equalTo(170)
-            make.leading.equalToSuperview().inset(12)
+            make.leading.equalToSuperview().inset(24)
             make.top.equalTo(profileImageView.snp.bottom).offset(12)
         }
         
         reviewLabel.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview().inset(12)
+            make.horizontalEdges.equalToSuperview().inset(24)
             make.top.equalTo(posterImageView.snp.bottom).offset(8)
         }
         
         moreButton.snp.makeConstraints { make in
             make.width.equalTo(80)
             make.bottom.equalToSuperview().inset(12)
-            make.trailing.equalToSuperview().inset(12)
+            make.trailing.equalToSuperview().inset(24)
             make.top.equalTo(reviewLabel.snp.bottom).offset(8)
         }
         
@@ -155,7 +155,7 @@ extension ReviewTableViewCell {
         [profileImageView, posterImageView].forEach({
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 20
-            $0.contentMode = .scaleAspectFill
+            $0.contentMode = .scaleToFill
         })
         
         profileImageView.tintColor = .lightGray

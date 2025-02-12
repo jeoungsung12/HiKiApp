@@ -12,24 +12,11 @@ class BaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-    }
-    
-}
-
-extension BaseViewController {
-    
-    func configureHierarchy() {
-        
+        configureHierarchy()
         configureLayout()
     }
     
-    func configureLayout() {
-        
-    }
-    
-    func configureView() {
-        
-        configureHierarchy()
-    }
-    
+    func configureView() {}
+    func configureHierarchy() {}
+    func configureLayout() {}
 }

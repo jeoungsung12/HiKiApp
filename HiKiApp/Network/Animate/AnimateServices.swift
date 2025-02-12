@@ -56,4 +56,37 @@ final class AnimateServices {
         }
     }
     
+    func getDetailAnime(id: Int, completion: @escaping (Result<AnimateData,NetworkError.CustomError>) -> Void) {
+        NetworkManager.shared.getData(AnimeRouter.detailAnime(id: id)) { (response: Result<AnimateDetailModel,NetworkError.CustomError>) in
+            switch response {
+            case let .success(data):
+                completion(.success(data.data))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func getVideo(id: Int, completion: @escaping (Result<[VideoPromo],NetworkError.CustomError>) -> Void) {
+        NetworkManager.shared.getData(AnimeRouter.getAnimeVideos(id: id)) { (response: Result<AnimateVideoModel,NetworkError.CustomError>) in
+            switch response {
+            case let .success(data):
+                completion(.success(data.data.promo))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func getCharacters(id: Int, completion: @escaping (Result<[CharacterData],NetworkError.CustomError>) -> Void) {
+        NetworkManager.shared.getData(AnimeRouter.characters(id: id)) { (response: Result<AnimateCharacterModel,NetworkError.CustomError>) in
+            switch response {
+            case let .success(data):
+                completion(.success(data.data))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
 }

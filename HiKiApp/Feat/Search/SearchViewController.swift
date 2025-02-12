@@ -165,7 +165,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
         guard let cell = tableView.cellForRow(at: indexPath) as? SearchTableViewCell,  let text = searchBar.text else { return }
         let vc = SearchDetailViewController()
         let movie = outputResult.searchResult.value[indexPath.row]
-        vc.searchData = outputResult.searchResult.value[indexPath.row]
+//        vc.searchData = outputResult.searchResult.value[indexPath.row]
         //TODO: - Delegate 패턴으로 바꿔보자!
         vc.isButton = {
             cell.configure(text, movie)

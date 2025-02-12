@@ -6,20 +6,14 @@
 //
 
 import UIKit
+import Kingfisher
 import SnapKit
 
 class PosterTableViewCell: UITableViewCell {
     static let id: String = "PosterTableViewCell"
+    private let posterImageView = UIImageView()
+    private let imageShadowView = UIImageView()
     private let titleLabel = UILabel()
-    private let imageResult = UILabel()
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.setcollectionViewLayout())
-
-    var posterData: [ImageDetailModel] = [] {
-        didSet {
-            updateResultLabel()
-            collectionView.reloadData()
-        }
-    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -32,87 +26,55 @@ class PosterTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configure(title: String?, image: String?) {
+        titleLabel.text = title
+        if let image = image, let url = URL(string: image) {
+            posterImageView.kf.setImage(with: url)
+        }
+    }
 
 }
 
 extension PosterTableViewCell {
     
     private func configureHierarchy() {
-        self.addSubview(titleLabel)
-        self.addSubview(collectionView)
-        self.addSubview(imageResult)
+        [posterImageView, imageShadowView, titleLabel].forEach({
+            self.addSubview($0)
+        })
         configureLayout()
     }
     
     private func configureLayout() {
+        posterImageView.snp.makeConstraints { make in
+            make.height.equalTo(UIScreen.main.bounds.width * 1.2)
+            make.edges.equalToSuperview()
+        }
+        
+        imageShadowView.snp.makeConstraints { make in
+            make.edges.equalTo(posterImageView.snp.edges)
+        }
+        
         titleLabel.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalToSuperview().inset(12)
-        }
-        
-        collectionView.snp.makeConstraints { make in
-            make.height.equalTo(200)
-            make.horizontalEdges.bottom.equalToSuperview()
-            make.top.equalTo(titleLabel.snp.bottom).offset(8)
-        }
-        
-        imageResult.snp.makeConstraints { make in
-            make.height.equalTo(200)
-            make.horizontalEdges.bottom.equalToSuperview()
-            make.top.equalTo(titleLabel.snp.bottom).offset(8)
+            make.bottom.equalToSuperview().offset(-24)
+            make.horizontalEdges.equalToSuperview().inset(24)
+            make.top.greaterThanOrEqualToSuperview().offset(12)
         }
     }
     
     private func configureView() {
         self.backgroundColor = .customBlack
-        updateResultLabel()
-        imageResult.numberOfLines = 0
-        imageResult.textColor = .white
-        imageResult.textAlignment = .center
-        imageResult.backgroundColor = .clear
-        imageResult.font = .boldSystemFont(ofSize: 15)
-        imageResult.text = (!posterData.isEmpty) ? nil : NetworkError.noImage
+        titleLabel.numberOfLines = 0
+        titleLabel.textColor = .white
+        titleLabel.textAlignment = .center
+        titleLabel.font = .systemFont(ofSize: 30, weight: .heavy)
         
-        titleLabel.text = "Poster"
-        titleLabel.numberOfLines = 1
-        titleLabel.textColor = .customWhite
-        titleLabel.textAlignment = .left
-        titleLabel.font = .boldSystemFont(ofSize: 16)
+        posterImageView.backgroundColor = .customLightGray
+        imageShadowView.image = UIImage(named: "backgroundImage")
+        [posterImageView, imageShadowView].forEach({
+            $0.contentMode = .scaleToFill
+        })
         
-        configureCollectionView()
         configureHierarchy()
     }
     
-    private func updateResultLabel() {
-        imageResult.text = (!posterData.isEmpty) ? nil : NetworkError.noImage
-    }
-    
-}
-
-extension PosterTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
-    
-    private func configureCollectionView() {
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.backgroundColor = .customBlack
-        collectionView.register(PosterCollectionViewCell.self, forCellWithReuseIdentifier: PosterCollectionViewCell.id)
-    }
-    
-    private func setcollectionViewLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewFlowLayout()
-        let width = UIScreen.main.bounds.width / 3.5
-        layout.scrollDirection = .horizontal
-        layout.itemSize = CGSize(width: width, height: width * 1.5)
-        layout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-        return layout
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return posterData.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PosterCollectionViewCell.id, for: indexPath) as? PosterCollectionViewCell else { return UICollectionViewCell() }
-        cell.configure(posterData[indexPath.row])
-        return cell
-    }
 }

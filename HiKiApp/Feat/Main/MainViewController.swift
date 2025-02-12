@@ -19,6 +19,7 @@ final class MainViewController: UIViewController {
     private let inputTrigger = MainViewModel.Input(
         dataLoadTrigger: Observable((AnimateType.airing))
     )
+    private lazy var outputResult = viewModel.transform(input: inputTrigger)
     
     private var lastContentOffset: CGFloat = 0.0
     override func viewDidLoad() {
@@ -29,15 +30,13 @@ final class MainViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isHidden = true
     }
     
     private func setBinding() {
-        let output = viewModel.transform(input: inputTrigger)
-        
         loadingIndicator.isStart()
-        output.dataLoadResult.lazyBind { [weak self] animateData in
+        outputResult.dataLoadResult.lazyBind { [weak self] animateData in
             DispatchQueue.main.async {
+                //TODO: - 수정
                 if let animateData = animateData {
                     if self?.inputTrigger.dataLoadTrigger.value == .upcoming {
                         self?.setUpcomming(animateData)
@@ -273,8 +272,18 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? MainPosterCell else { return }
-        //TODO: - 이동
+        guard let selectedItem = dataSource?.itemIdentifier(for: indexPath) else { return }
+        
+        switch selectedItem {
+        case .poster(let itemModel),
+                .recommand(let itemModel),
+                .rank(let itemModel),
+                .tvList(let itemModel),
+                .onaList(let itemModel):
+            let vc = SearchDetailViewController()
+            vc.id = itemModel.id
+            self.push(vc)
+        }
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {

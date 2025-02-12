@@ -53,7 +53,7 @@ extension UIViewController {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .white
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.point]
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
         
         navigationBar.tintColor = color
         navigationBar.standardAppearance = appearance
