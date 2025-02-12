@@ -36,7 +36,8 @@ extension Router {
             do {
                 return try encoding.encode(
                     request,
-                    with: params)
+                    with: params
+                )
             } catch {
                 throw RouterError.encodingError
             }

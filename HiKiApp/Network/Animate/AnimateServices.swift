@@ -11,7 +11,7 @@ import Alamofire
 final class AnimateServices {
     //TODO: - Swift Concurrency
     func getTopAnime(request: AnimateRequest, completion: @escaping (Result<[AnimateData],NetworkError.CustomError>) -> Void) {
-        NetworkManager.shared.getData(.topAnime(request: AnimateRequest(page: request.page, rating: request.rating, filter: request.filter))) { (response: Result<AnimateModel,NetworkError.CustomError>) in
+        NetworkManager.shared.getData((AnimeRouter.topAnime(request: AnimateRequest(page: request.page, rating: request.rating, filter: request.filter)))) { (response: Result<AnimateModel,NetworkError.CustomError>) in
             switch response {
             case let .success(data):
                 completion(.success(data.data))
@@ -22,7 +22,7 @@ final class AnimateServices {
     }
     
     func searchAnime(_ searchData: SearchViewModel.SearchRequest, completion: @escaping (Result<[AnimateData],NetworkError.CustomError>) -> Void) {
-        NetworkManager.shared.getData(.search(request: searchData)) { (response: Result<AnimateModel,NetworkError.CustomError>) in
+        NetworkManager.shared.getData(AnimeRouter.search(request: searchData)) { (response: Result<AnimateModel,NetworkError.CustomError>) in
             switch response {
             case let .success(data):
 //                dump(data)
@@ -35,7 +35,7 @@ final class AnimateServices {
     }
     
     func getRandomAnime(page: Int, completion: @escaping (Result<[AnimateData],NetworkError.CustomError>) -> Void) {
-        NetworkManager.shared.getData(.ranomAnime(page: page)) { (response: Result<AnimateModel,NetworkError.CustomError>) in
+        NetworkManager.shared.getData(AnimeRouter.ranomAnime(page: page)) { (response: Result<AnimateModel,NetworkError.CustomError>) in
             switch response {
             case let .success(data):
                 let items = data.data
