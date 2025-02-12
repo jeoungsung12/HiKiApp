@@ -23,6 +23,8 @@ struct AnimateData: Decodable, Hashable {
     let title_english: String?
     let trailer: AnimateTrailer
     let genres: [AnimateGenre]?
+    
+    //TODO: 디코딩 전략
 }
 
 struct AnimateGenre: Decodable, Hashable {
@@ -33,6 +35,8 @@ struct AnimateTrailer: Decodable, Hashable {
     let embed_url: String?
     let youtube_id: String?
     let url: String?
+    
+    //TODO: 디코딩 전략
 }
 
 struct AnimateImages: Decodable, Hashable {
@@ -45,6 +49,25 @@ struct AnimateJpg: Decodable, Hashable {
     let large_image_url: String
 }
 
-struct RandomModel: Decodable {
-    let data: AnimateData
+struct AnimateReviewModel: Decodable {
+    let data: [ReviewData]
+}
+
+struct ReviewData: Decodable {
+    let score: Int
+    let date: String
+    let review: String
+    let is_spoiler: Bool
+    let user: ReviewUser
+    let entry: ReviewEntry
+}
+
+struct ReviewUser: Decodable {
+    let username: String
+}
+
+struct ReviewEntry: Decodable {
+    let mal_id: Int
+    let title: String
+    let images: AnimateImages
 }

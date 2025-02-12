@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 final class MainViewController: UIViewController {
-    private let leftLogo = UIBarButtonItem(customView: MainNavigationView())
+    private let leftLogo = MainNavigationView()
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
     private let category = MainCategoryView()
     private let loadingIndicator = LoadingView()
@@ -27,6 +27,11 @@ final class MainViewController: UIViewController {
         setBinding()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.isHidden = true
+    }
+    
     private func setBinding() {
         let output = viewModel.transform(input: inputTrigger)
         
@@ -39,6 +44,7 @@ final class MainViewController: UIViewController {
                     } else {
                         self?.setSnapShot(animateData)
                     }
+                    self?.category.isUserInteractionEnabled = true
                 } else {
                     self?.errorPresent(.notFount)
                 }
@@ -56,17 +62,23 @@ final class MainViewController: UIViewController {
 extension MainViewController {
     
     private func configureHierarchy() {
-        [category, collectionView, loadingIndicator].forEach({
+        [leftLogo, category, collectionView, loadingIndicator].forEach({
             self.view.addSubview($0)
         })
         configureLayout()
     }
     
     private func configureLayout() {
+        leftLogo.snp.makeConstraints { make in
+            make.height.equalTo(40)
+            make.horizontalEdges.equalToSuperview()
+            make.top.equalTo(self.view.safeAreaLayoutGuide)
+        }
+        
         category.snp.makeConstraints { make in
             make.height.equalTo(40)
             make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(self.view.safeAreaLayoutGuide).offset(4)
+            make.top.equalTo(leftLogo.snp.bottom).offset(4)
         }
         
         collectionView.snp.makeConstraints { make in
@@ -85,10 +97,10 @@ extension MainViewController {
     private func configureView() {
         self.setNavigation()
         self.view.backgroundColor = .white
-        self.navigationItem.leftBarButtonItem = leftLogo
         
         category.selectedItem = { [weak self] type  in
             self?.inputTrigger.dataLoadTrigger.value = type
+            self?.category.isUserInteractionEnabled = false
             self?.loadingIndicator.isStart()
         }
 
@@ -266,21 +278,21 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        //TODO: - 자연스럽게 수정
         let currentOffset = scrollView.contentOffset.y
         let maxOffset = scrollView.contentSize.height - scrollView.bounds.height
         
         if currentOffset >= maxOffset {
             return
         }
-        UIView.animate(withDuration: 1.0, delay: 0, options: [.curveEaseInOut], animations: {
-            if (self.lastContentOffset <= 0) || (self.lastContentOffset > currentOffset) {
-                self.navigationController?.navigationBar.alpha = 1.0
-                self.additionalSafeAreaInsets.top = 0
-            } else if (self.lastContentOffset < currentOffset) {
-                self.navigationController?.navigationBar.alpha = 0.0
-                self.additionalSafeAreaInsets.top = -44
-            }
-        })
+        
+        if (self.lastContentOffset <= 0) || (self.lastContentOffset > currentOffset) {
+//                self.navigationController?.navigationBar.alpha = 1.0
+            self.additionalSafeAreaInsets.top = 0
+        } else if (self.lastContentOffset < currentOffset) {
+//                self.navigationController?.navigationBar.alpha = 0.0
+            self.additionalSafeAreaInsets.top = -(44)
+        }
         lastContentOffset = currentOffset
     }
     

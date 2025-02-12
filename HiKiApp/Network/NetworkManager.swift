@@ -19,6 +19,7 @@ final class NetworkManager {
             .validate(statusCode: 200...500)
             .responseDecodable(of: T.self) { response in
 //                dump(response.debugDescription)
+//                print(response.debugDescription)
                 let statucCode = NetworkError().checkErrorType(response.response?.statusCode)
                 switch response.result {
                 case let .success(data):

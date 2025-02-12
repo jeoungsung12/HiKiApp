@@ -173,7 +173,6 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource, UITa
         self.push(vc)
     }
     
-    //TODO: - 안되는 예외처리
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         if let indexPath = indexPaths.last,
            outputResult.searchResult.value.count - 2 < indexPath.row {

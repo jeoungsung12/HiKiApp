@@ -14,6 +14,7 @@
 		E472DAC42D57CD350054E7EA /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = E472DAC32D57CD350054E7EA /* Lottie */; };
 		E472DAC72D57CD3D0054E7EA /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E472DAC62D57CD3D0054E7EA /* Kingfisher */; };
 		E472E5722D59762E0054E7EA /* YouTubePlayerKit in Frameworks */ = {isa = PBXBuildFile; productRef = E472E5712D59762E0054E7EA /* YouTubePlayerKit */; };
+		E474B0E32D5C3ADE0086FD5B /* Cosmos in Frameworks */ = {isa = PBXBuildFile; productRef = E474B0E22D5C3ADE0086FD5B /* Cosmos */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 			files = (
 				E472DAC12D57CD270054E7EA /* SnapKit in Frameworks */,
 				E472DABE2D57CD1B0054E7EA /* RxSwift in Frameworks */,
+				E474B0E32D5C3ADE0086FD5B /* Cosmos in Frameworks */,
 				E472E5722D59762E0054E7EA /* YouTubePlayerKit in Frameworks */,
 				E472DABB2D57CD0E0054E7EA /* Alamofire in Frameworks */,
 				E472DAC42D57CD350054E7EA /* Lottie in Frameworks */,
@@ -102,6 +104,7 @@
 				E472DAC32D57CD350054E7EA /* Lottie */,
 				E472DAC62D57CD3D0054E7EA /* Kingfisher */,
 				E472E5712D59762E0054E7EA /* YouTubePlayerKit */,
+				E474B0E22D5C3ADE0086FD5B /* Cosmos */,
 			);
 			productName = NaMuApp;
 			productReference = E46EB8F22D43631200F0E536 /* HiKiApp.app */;
@@ -138,6 +141,7 @@
 				E472DAC22D57CD350054E7EA /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				E472DAC52D57CD3D0054E7EA /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				E472E5702D59762E0054E7EA /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
+				E474B0E12D5C3ADE0086FD5B /* XCRemoteSwiftPackageReference "Cosmos" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E46EB8F32D43631200F0E536 /* Products */;
@@ -432,6 +436,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		E474B0E12D5C3ADE0086FD5B /* XCRemoteSwiftPackageReference "Cosmos" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/evgenyneu/Cosmos.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 25.0.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -464,6 +476,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E472E5702D59762E0054E7EA /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */;
 			productName = YouTubePlayerKit;
+		};
+		E474B0E22D5C3ADE0086FD5B /* Cosmos */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E474B0E12D5C3ADE0086FD5B /* XCRemoteSwiftPackageReference "Cosmos" */;
+			productName = Cosmos;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
