@@ -74,6 +74,7 @@ extension SearchDetailViewController {
         self.setNavigation()
         self.view.backgroundColor = .white
         self.navigationItem.rightBarButtonItem = heartButton
+        self.navigationController?.navigationBar.backgroundColor = .clear
         
         loadingIndicator.style = .medium
         loadingIndicator.color = .customLightGray
@@ -103,6 +104,7 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
         tableView.dataSource = self
         tableView.separatorStyle = .none
         tableView.backgroundColor = .white
+        tableView.contentInsetAdjustmentBehavior = .never
         tableView.register(PosterTableViewCell.self, forCellReuseIdentifier: PosterTableViewCell.id)
         tableView.register(SynopsisTableViewCell.self, forCellReuseIdentifier: SynopsisTableViewCell.id)
         tableView.register(CharactersTableViewCell.self, forCellReuseIdentifier: CharactersTableViewCell.id)
@@ -122,16 +124,6 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
             cell.configure(title: value?.synopsis?.title, image: value?.synopsis?.images.jpg.image_url)
             return cell
             
-        case .characters:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: CharactersTableViewCell.id, for: indexPath) as? CharactersTableViewCell else { return UITableViewCell() }
-            cell.charactersData = outputResult.animeData.value?.characters ?? []
-            return cell
-            
-        case .teaser:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: TeaserTableViewCell.id, for: indexPath) as? TeaserTableViewCell else { return UITableViewCell() }
-            cell.teaserData = outputResult.animeData.value?.teaser ?? []
-            return cell
-            
         case .synopsis:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: SynopsisTableViewCell.id, for: indexPath) as? SynopsisTableViewCell else { return UITableViewCell() }
             cell.configure(outputResult.animeData.value?.synopsis?.synopsis)
@@ -141,8 +133,20 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
             }
             return cell
             
+        case .teaser:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: TeaserTableViewCell.id, for: indexPath) as? TeaserTableViewCell else { return UITableViewCell() }
+            cell.teaserData = outputResult.animeData.value?.teaser ?? []
+            return cell
+            
+        case .characters:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: CharactersTableViewCell.id, for: indexPath) as? CharactersTableViewCell else { return UITableViewCell() }
+            cell.charactersData = outputResult.animeData.value?.characters ?? []
+            return cell
+            
         case .reviews:
-            return UITableViewCell()
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: DetailReviewTableViewCell.id, for: indexPath) as? DetailReviewTableViewCell else { return UITableViewCell() }
+            cell.reviewData = outputResult.animeData.value?.reviews ?? []
+            return cell
             
         }
     }

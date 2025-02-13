@@ -19,9 +19,9 @@ final class SearchDetailViewModel: ViewModelType {
     
     enum DetailType: CaseIterable {
         case poster
-        case characters
-        case teaser
         case synopsis
+        case teaser
+        case characters
         case reviews
     }
     
@@ -82,7 +82,7 @@ extension SearchDetailViewModel {
                 }
                 group.leave()
             }
-            //TODO: Reviews
+            //TODO: Reviews - page
             group.notify(queue: .global()) {
                 output.animeData.value = resultData
             }

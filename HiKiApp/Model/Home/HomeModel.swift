@@ -8,6 +8,7 @@
 import Foundation
 
 enum HomeSection: Hashable {
+    case category
     case header
     case semiHeader(title: String)
     case middle(title: String)
@@ -16,7 +17,8 @@ enum HomeSection: Hashable {
     
     var title: String {
         switch self {
-        case .header:
+        case .category,
+              .header:
             ""
         case .semiHeader:
             "이런 애니 어때요?"
@@ -31,6 +33,7 @@ enum HomeSection: Hashable {
 }
 
 enum HomeItem: Hashable {
+    case category
     case poster(ItemModel)
     case recommand(ItemModel)
     case rank(ItemModel)

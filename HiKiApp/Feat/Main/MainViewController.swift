@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 final class MainViewController: UIViewController {
-    private let leftLogo = MainNavigationView()
+    private let leftLogo = UIBarButtonItem(customView: MainNavigationView())
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
     private let category = MainCategoryView()
     private let loadingIndicator = LoadingView()
@@ -21,7 +21,6 @@ final class MainViewController: UIViewController {
     )
     private lazy var outputResult = viewModel.transform(input: inputTrigger)
     
-    private var lastContentOffset: CGFloat = 0.0
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -38,11 +37,7 @@ final class MainViewController: UIViewController {
             DispatchQueue.main.async {
                 //TODO: - 수정
                 if let animateData = animateData {
-                    if self?.inputTrigger.dataLoadTrigger.value == .upcoming {
-                        self?.setUpcomming(animateData)
-                    } else {
-                        self?.setSnapShot(animateData)
-                    }
+                    self?.setSnapShot(animateData)
                     self?.category.isUserInteractionEnabled = true
                 } else {
                     self?.errorPresent(.notFount)
@@ -61,28 +56,22 @@ final class MainViewController: UIViewController {
 extension MainViewController {
     
     private func configureHierarchy() {
-        [leftLogo, category, collectionView, loadingIndicator].forEach({
+        [collectionView, category, loadingIndicator].forEach({
             self.view.addSubview($0)
         })
         configureLayout()
     }
     
     private func configureLayout() {
-        leftLogo.snp.makeConstraints { make in
+        category.snp.makeConstraints { make in
             make.height.equalTo(40)
             make.horizontalEdges.equalToSuperview()
             make.top.equalTo(self.view.safeAreaLayoutGuide)
         }
         
-        category.snp.makeConstraints { make in
-            make.height.equalTo(40)
-            make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(leftLogo.snp.bottom).offset(4)
-        }
-        
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(category.snp.bottom)
             make.horizontalEdges.equalToSuperview()
+            make.top.equalTo(self.view.safeAreaLayoutGuide)
             make.bottom.equalToSuperview().offset(-(self.tabBarController?.tabBar.bounds.height ?? 0))
         }
         
@@ -96,6 +85,8 @@ extension MainViewController {
     private func configureView() {
         self.setNavigation()
         self.view.backgroundColor = .white
+        self.navigationItem.leftBarButtonItem = leftLogo
+//        self.navigationController?.hidesBarsOnSwipe = true
         
         category.selectedItem = { [weak self] type  in
             self?.inputTrigger.dataLoadTrigger.value = type
@@ -109,21 +100,6 @@ extension MainViewController {
 }
 
 extension MainViewController {
-    
-    private func setUpcomming(_ data: [[AnimateData]]) {
-        //TODO: Optimize
-        var snapShot = NSDiffableDataSourceSnapshot<HomeSection,HomeItem>()
-        
-        let headerSection = HomeSection.header
-        let headerData = Set(data[0]).compactMap {
-            return HomeItem.poster(ItemModel(id: $0.mal_id, title: $0.title, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0, genre: nil)) }
-        snapShot.appendSections([headerSection])
-        snapShot.appendItems(headerData, toSection: headerSection)
-        
-        self.dataSource?.apply(snapShot)
-        loadingIndicator.isStop()
-    }
-    
     //TODO: - Rx
     private func setSnapShot(_ data: [[AnimateData]]) {
         var snapShot = NSDiffableDataSourceSnapshot<HomeSection,HomeItem>()
@@ -134,6 +110,7 @@ extension MainViewController {
             .filter { $0.rank != nil }
             .sorted { $0.rank! < $1.rank! }
         
+        let categorySection = HomeSection.category
         let headerSection = HomeSection.header
         let semiHeaderSection = HomeSection.semiHeader(title: HomeSection.semiHeader(title: "").title)
         let middleSection = HomeSection.middle(title: HomeSection.middle(title: "").title)
@@ -155,10 +132,11 @@ extension MainViewController {
         let footerData = Set(totalData.filter({$0.type?.uppercased() == "ONA"})).compactMap {
             return HomeItem.onaList(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0, genre: nil)) }
         
-        [headerSection, semiHeaderSection, middleSection, semiFooterSection, footerSection].forEach({
+        [categorySection, headerSection, semiHeaderSection, middleSection, semiFooterSection, footerSection].forEach({
             snapShot.appendSections([$0])
         })
         
+        snapShot.appendItems([.category], toSection: categorySection)
         snapShot.appendItems(headerData, toSection: headerSection)
         snapShot.appendItems(semiHeaderData, toSection: semiHeaderSection)
         snapShot.appendItems(middleData, toSection: middleSection)
@@ -177,11 +155,12 @@ extension MainViewController {
 }
 
 //MARK: - CollectionView
-extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
+extension MainViewController: UICollectionViewDelegate {
     
     private func configureCollectionView() {
         collectionView.delegate = self
         collectionView.backgroundColor = .white
+        collectionView.register(EmptyCollectionViewCell.self, forCellWithReuseIdentifier: EmptyCollectionViewCell.id)
         collectionView.register(MainHeaderCell.self, forCellWithReuseIdentifier: MainHeaderCell.id)
         collectionView.register(MainPosterCell.self, forCellWithReuseIdentifier: MainPosterCell.id)
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
@@ -196,6 +175,8 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
             let width = (UIScreen.main.bounds.width)
             if section == .header {
                 return (self?.createLayout(width: 0.85, height: (width * 0.85), .groupPagingCentered))
+            } else if section == .category {
+                return (self?.createLayout(width: 1.0, height: 45, .none))
             } else if section == .semiHeader(title: HomeSection.semiHeader(title: "").title) {
                 return (self?.createLayout(width: 0.4, height: (width * 0.4) * 1.5, .continuous))
             } else {
@@ -244,6 +225,9 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<HomeSection,HomeItem>(collectionView: collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
+            case .category:
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyCollectionViewCell.id, for: indexPath) as? EmptyCollectionViewCell else { return UICollectionViewCell() }
+                return cell
             case .poster(let data):
                 return self.setCell(data, .rank, indexPath)
             case .rank(let data):
@@ -283,26 +267,9 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
             let vc = SearchDetailViewController()
             vc.id = itemModel.id
             self.push(vc)
+        default:
+            print("카테고리")
         }
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        //TODO: - 자연스럽게 수정
-        let currentOffset = scrollView.contentOffset.y
-        let maxOffset = scrollView.contentSize.height - scrollView.bounds.height
-        
-        if currentOffset >= maxOffset {
-            return
-        }
-        
-        if (self.lastContentOffset <= 0) || (self.lastContentOffset > currentOffset) {
-//                self.navigationController?.navigationBar.alpha = 1.0
-            self.additionalSafeAreaInsets.top = 0
-        } else if (self.lastContentOffset < currentOffset) {
-//                self.navigationController?.navigationBar.alpha = 0.0
-            self.additionalSafeAreaInsets.top = -(44)
-        }
-        lastContentOffset = currentOffset
     }
     
 }

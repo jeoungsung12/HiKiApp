@@ -69,7 +69,7 @@ extension MainHeaderCell {
     private func configureLayout() {
         rankLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.leading.equalToSuperview().offset(-12)
+            make.leading.equalToSuperview().offset(-24)
         }
         
         imageView.snp.makeConstraints { make in
