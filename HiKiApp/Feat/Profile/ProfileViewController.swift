@@ -15,15 +15,14 @@ final class ProfileViewController: UIViewController {
     private let spacingView = UIView()
     private let descriptionLabel = UILabel()
     private let successButton = UIButton()
-    private let mbtiView = ProfileMBTIView()
     
     private let viewModel = ProfileViewModel()
     private lazy var inputTrigger = ProfileViewModel.Input(
         configureViewTrigger: Observable(()),
         profileButtonTrigger: Observable(()),
         nameTextFieldTrigger: Observable(nil),
-        successButtonTrigger: Observable(ProfileViewModel.ProfileSuccessButtonRequest(collectionView: self.mbtiView.collectionView)),
-        buttonEnabledTrigger: Observable(ProfileViewModel.ProfileSuccessButtonRequest(collectionView: self.mbtiView.collectionView))
+        successButtonTrigger: Observable(ProfileViewModel.ProfileSuccessButtonRequest()),
+        buttonEnabledTrigger: Observable(ProfileViewModel.ProfileSuccessButtonRequest())
     )
     
     override func viewDidLoad() {
@@ -60,7 +59,7 @@ final class ProfileViewController: UIViewController {
                 let rootVC = TabBarController()
                 self?.setRootView(rootVC)
             } else {
-//                self?.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
+                self?.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
             }
         }
         
@@ -90,7 +89,7 @@ final class ProfileViewController: UIViewController {
 extension ProfileViewController {
     
     private func configureHierarchy() {
-        [profileButton, nameTextField, spacingView, descriptionLabel, mbtiView, successButton].forEach {
+        [profileButton, nameTextField, spacingView, descriptionLabel, successButton].forEach {
             self.view.addSubview($0)
         }
         self.view.addGestureRecognizer(tapGesture)
@@ -120,16 +119,10 @@ extension ProfileViewController {
             make.top.equalTo(spacingView.snp.bottom).offset(16)
         }
         
-        mbtiView.snp.makeConstraints { make in
-            make.height.equalTo(150)
-            make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(descriptionLabel.snp.bottom).offset(24)
-        }
-        
         successButton.snp.makeConstraints { make in
             make.height.equalTo(45)
-            make.bottom.equalToSuperview().offset(-44)
             make.horizontalEdges.equalToSuperview().inset(24)
+            make.top.equalTo(descriptionLabel.snp.bottom).offset(24)
         }
     }
     
@@ -159,10 +152,6 @@ extension ProfileViewController {
         
         successButton.addTarget(self, action: #selector(successButtonTapped), for: .touchUpInside)
         profileButton.addTarget(self, action: #selector(profilebuttonTapped), for: .touchUpInside)
-        
-        mbtiView.viewModel.tapped = { [weak self] in
-            self?.checkTapped()
-        }
         
         configureProfileView()
         configureHierarchy()
@@ -204,6 +193,6 @@ extension ProfileViewController: UITextFieldDelegate {
     
     private func enableTrigger(_ enable: Bool) {
         let trigger = (enable) ? inputTrigger.buttonEnabledTrigger : inputTrigger.successButtonTrigger
-        trigger.value = ProfileViewModel.ProfileSuccessButtonRequest(profileImage: profileButton.profileImage.image, name: nameTextField.text, description:  descriptionLabel.text, collectionView: mbtiView.collectionView)
+        trigger.value = ProfileViewModel.ProfileSuccessButtonRequest(profileImage: profileButton.profileImage.image, name: nameTextField.text, description:  descriptionLabel.text)
     }
 }

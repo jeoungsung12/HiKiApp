@@ -15,7 +15,7 @@ final class TeaserCollectionViewCell: UICollectionViewCell {
 
     private var player: YouTubePlayer?
     private var playerHostingView: YouTubePlayerHostingView
-    private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballScale, color: .point)
+    private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
 
     private var isPreparedToPlay = false
     private var videoURL: String?

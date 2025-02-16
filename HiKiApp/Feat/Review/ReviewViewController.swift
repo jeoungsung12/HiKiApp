@@ -7,10 +7,11 @@
 
 import UIKit
 import SnapKit
+import NVActivityIndicatorView
 
 final class ReviewViewController: UIViewController {
     private let tableView = UITableView()
-    
+    private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
     private let viewModel = ReviewViewModel()
     private let inputTrigger = ReviewViewModel.Input(reviewTrigger: Observable((1)))
     private lazy var outputResult = viewModel.transform(input: inputTrigger)
@@ -22,7 +23,6 @@ final class ReviewViewController: UIViewController {
     }
     
     private func setBinding() {
-        
         //TODO: Toast - Phase
         
         outputResult.reviewPage.lazyBind { [weak self] page in
@@ -31,6 +31,7 @@ final class ReviewViewController: UIViewController {
         
         outputResult.reviewResult.lazyBind { [weak self] data in
             self?.tableView.reloadData()
+            self?.loadingIndicator.stopAnimating()
         }
     }
 
@@ -40,6 +41,7 @@ extension ReviewViewController {
     
     private func configureHierarchy() {
         self.view.addSubview(tableView)
+        [tableView, loadingIndicator].forEach({ self.view.addSubview($0) })
         configureLayout()
     }
     
@@ -47,6 +49,10 @@ extension ReviewViewController {
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        loadingIndicator.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        loadingIndicator.startAnimating()
     }
     
     private func configureView() {
@@ -75,7 +81,6 @@ extension ReviewViewController: UITableViewDelegate, UITableViewDataSource, UITa
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ReviewTableViewCell.id, for: indexPath) as? ReviewTableViewCell else { return UITableViewCell() }
         cell.configure(outputResult.reviewResult.value[indexPath.row])
         cell.selectionStyle = .none
-        //TODO: - ViewModel
         cell.reloadCell = {
             tableView.beginUpdates()
             tableView.endUpdates()

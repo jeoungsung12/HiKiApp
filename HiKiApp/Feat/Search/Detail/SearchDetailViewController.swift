@@ -12,7 +12,7 @@ import NVActivityIndicatorView
 final class SearchDetailViewController: UIViewController {
     private lazy var heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(heartButtonTapped))
     private let tableView = UITableView()
-    private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballScale, color: .point)
+    private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
     
     //TODO: - ViewModel
     private var buttonTapped: Bool = false
@@ -68,9 +68,10 @@ extension SearchDetailViewController {
         }
         
         loadingIndicator.snp.makeConstraints { make in
-            make.size.equalTo(40)
             make.center.equalToSuperview()
         }
+        
+        loadingIndicator.startAnimating()
     }
     
     private func configureView() {
@@ -113,7 +114,7 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        return SearchDetailViewModel.DetailType.allCases.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

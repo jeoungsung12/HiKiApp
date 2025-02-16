@@ -49,7 +49,7 @@ extension ProfileViewModel {
         }
         
         input.successButtonTrigger.lazyBind { [weak self] success in
-            if let value = self?.handleSuccessButtonTap(profileImage: success.profileImage, name: success.name, description: success.description, collectionView: success.collectionView)
+            if let value = self?.handleSuccessButtonTap(profileImage: success.profileImage, name: success.name, description: success.description)
             {
                 output.successButtonResult.value = self?.validateText(value, true)
             }
@@ -65,7 +65,7 @@ extension ProfileViewModel {
         }
         
         input.buttonEnabledTrigger.lazyBind { [weak self] enable in
-            if let value = self?.handleSuccessButtonTap(profileImage: enable.profileImage, name: enable.name, description: enable.description, collectionView: enable.collectionView)
+            if let value = self?.handleSuccessButtonTap(profileImage: enable.profileImage, name: enable.name, description: enable.description)
             {
                 output.buttonEnabledResult.value = self?.validateText(value, false)
             }
@@ -80,12 +80,12 @@ extension ProfileViewModel {
     
     private func validateText(_ success: ProfileSuccessButtonResult,_ complete: Bool) -> Bool? {
         if let nicknameLabel = success.name, let descriptionLabel = success.description,
-           descriptionLabel == NickName.NickNameType.success.rawValue, let mbti = ProfileMBTIViewModel().checkMBTI(success.mbtiBools) {
+           descriptionLabel == NickName.NickNameType.success.rawValue {
             
             if complete {
                 db.isUser = true
                 //TODO: Object
-                db.userInfo = [nicknameLabel, .checkProfileImage(success.profileImage), "0", .currentDate, mbti]
+                db.userInfo = [nicknameLabel, .checkProfileImage(success.profileImage), "0", .currentDate]
             }
             return true
         } else {
@@ -93,20 +93,12 @@ extension ProfileViewModel {
         }
     }
     
-    private func collectMBTISelections(from collectionView: UICollectionView) -> [Bool?] {
-        let indexPaths = (0...3).map { IndexPath(row: $0, section: 0) }
-        return indexPaths.map { indexPath in
-            (collectionView.cellForItem(at: indexPath) as? ProfileMBTICell)?.isClicked
-        }
-    }
     
-    private func handleSuccessButtonTap(profileImage: UIImage?, name: String?, description: String?, collectionView: UICollectionView) -> ProfileSuccessButtonResult? {
-        let mbtiBools = collectMBTISelections(from: collectionView)
+    private func handleSuccessButtonTap(profileImage: UIImage?, name: String?, description: String?) -> ProfileSuccessButtonResult? {
         let profileData = ProfileSuccessButtonResult(
             profileImage: profileImage,
             name: name,
-            description: description,
-            mbtiBools: mbtiBools
+            description: description
         )
         return profileData
     }
@@ -119,14 +111,12 @@ extension ProfileViewModel {
         var profileImage: UIImage?
         var name: String?
         var description: String?
-        var collectionView: UICollectionView
     }
     
     struct ProfileSuccessButtonResult {
         var profileImage: UIImage?
         var name: String?
         var description: String?
-        var mbtiBools: [Bool?]
     }
     
     struct NickName {

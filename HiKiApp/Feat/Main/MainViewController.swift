@@ -13,7 +13,7 @@ final class MainViewController: UIViewController {
     private let leftLogo = UIBarButtonItem(customView: MainNavigationView())
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
     private let category = MainCategoryView()
-    private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballScale, color: .point)
+    private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
     private var dataSource: UICollectionViewDiffableDataSource<HomeSection,HomeItem>?
     
     private let viewModel = MainViewModel()
@@ -72,7 +72,6 @@ extension MainViewController {
         }
         
         loadingIndicator.snp.makeConstraints { make in
-            make.size.equalTo(30)
             make.center.equalToSuperview()
         }
         setDataSource()

@@ -11,7 +11,7 @@ import NVActivityIndicatorView
 
 final class TeaserViewController: UIViewController {
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout())
-    private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballScale, color: .point)
+    private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
     
     private let viewModel = TeaserViewModel()
     private let inputTrigger = TeaserViewModel.Input(dataTrigger: Observable(1))
