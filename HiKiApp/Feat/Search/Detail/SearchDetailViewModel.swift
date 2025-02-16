@@ -11,7 +11,6 @@ struct AnimateDetailData {
     var synopsis: AnimateData?
     var teaser: [VideoPromo]?
     var characters: [CharacterData]?
-    var reviews: [ReviewData]?
 }
 
 final class SearchDetailViewModel: ViewModelType {
@@ -22,7 +21,6 @@ final class SearchDetailViewModel: ViewModelType {
         case synopsis
         case teaser
         case characters
-        case reviews
     }
     
     struct Input {
@@ -48,7 +46,7 @@ extension SearchDetailViewModel {
     
     func transform(input: Input) -> Output {
         let output = Output()
-        
+        //TODO: Swift Concurency
         input.detailTrigger.bind { id in
             let group = DispatchGroup()
             var resultData = AnimateDetailData(synopsis: nil, teaser: nil, characters: nil)
@@ -66,7 +64,7 @@ extension SearchDetailViewModel {
             AnimateServices().getVideo(id: id) { response in
                 switch response {
                 case let .success(data):
-                    resultData.teaser = data
+                    resultData.teaser = data.promo
                 case .failure:
                     resultData.teaser = nil
                 }
@@ -82,7 +80,6 @@ extension SearchDetailViewModel {
                 }
                 group.leave()
             }
-            //TODO: Reviews - page
             group.notify(queue: .global()) {
                 output.animeData.value = resultData
             }
@@ -90,4 +87,5 @@ extension SearchDetailViewModel {
         
         return output
     }
+    
 }

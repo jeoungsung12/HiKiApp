@@ -7,10 +7,11 @@
 
 import UIKit
 import SnapKit
+import NVActivityIndicatorView
 
 final class TeaserViewController: UIViewController {
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout())
-    private let loadingIndicator = LoadingView()
+    private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballScale, color: .point)
     
     private let viewModel = TeaserViewModel()
     private let inputTrigger = TeaserViewModel.Input(dataTrigger: Observable(1))
@@ -37,7 +38,7 @@ final class TeaserViewController: UIViewController {
                 } else {
 //                    self?.inputTrigger.dataTrigger.value += 1
                 }
-                self?.loadingIndicator.isStop()
+                self?.loadingIndicator.stopAnimating()
             }
         }
     }
@@ -61,7 +62,7 @@ extension TeaserViewController {
             make.size.equalTo(40)
             make.center.equalToSuperview()
         }
-        loadingIndicator.isStart()
+        loadingIndicator.startAnimating()
     }
     
     private func configureView() {

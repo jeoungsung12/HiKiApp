@@ -82,7 +82,7 @@ extension ReviewTableViewCell {
         
         dateLabel.snp.makeConstraints { make in make.trailing.equalToSuperview().inset(12)
             make.top.equalTo(nameLabel.snp.bottom).offset(4)
-            make.bottom.equalTo(profileImageView.snp.bottom)
+            make.bottom.lessThanOrEqualTo(profileImageView.snp.bottom)
             make.leading.equalTo(profileImageView.snp.trailing).offset(8)
         }
         

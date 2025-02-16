@@ -8,13 +8,14 @@
 import UIKit
 import SnapKit
 import YouTubePlayerKit
+import NVActivityIndicatorView
 
 final class TeaserCollectionViewCell: UICollectionViewCell {
     static let id: String = "WatchCollectionViewCell"
 
     private var player: YouTubePlayer?
     private var playerHostingView: YouTubePlayerHostingView
-    private let loadingIndicator = LoadingView()
+    private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballScale, color: .point)
 
     private var isPreparedToPlay = false
     private var videoURL: String?
@@ -40,7 +41,7 @@ final class TeaserCollectionViewCell: UICollectionViewCell {
         playerHostingView.isUserInteractionEnabled = false
         configureHierarchy()
 
-        loadingIndicator.isStart()
+        loadingIndicator.startAnimating()
         isPreparedToPlay = false
     }
 
@@ -52,7 +53,7 @@ final class TeaserCollectionViewCell: UICollectionViewCell {
                 try await player.play()
                 DispatchQueue.main.async {
                     self.isPreparedToPlay = true
-                    self.loadingIndicator.isStop()
+                    self.loadingIndicator.stopAnimating()
                 }
             } catch {
                 print("Failed to play video: \(error)")
@@ -67,7 +68,7 @@ final class TeaserCollectionViewCell: UICollectionViewCell {
             try await player.stop()
             DispatchQueue.main.async {
                 self.isPreparedToPlay = false
-                self.loadingIndicator.isStop()
+                self.loadingIndicator.stopAnimating()
             }
         }
     }

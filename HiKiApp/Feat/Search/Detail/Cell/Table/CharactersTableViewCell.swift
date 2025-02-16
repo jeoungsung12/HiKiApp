@@ -47,7 +47,8 @@ extension CharactersTableViewCell {
         
         collectionView.snp.makeConstraints { make in
             make.height.equalTo(250)
-            make.horizontalEdges.bottom.equalToSuperview()
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalToSuperview().inset(24)
             make.top.equalTo(titleLabel.snp.bottom).offset(12)
         }
     }

@@ -15,6 +15,7 @@
 		E472DAC72D57CD3D0054E7EA /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E472DAC62D57CD3D0054E7EA /* Kingfisher */; };
 		E472E5722D59762E0054E7EA /* YouTubePlayerKit in Frameworks */ = {isa = PBXBuildFile; productRef = E472E5712D59762E0054E7EA /* YouTubePlayerKit */; };
 		E474B0E32D5C3ADE0086FD5B /* Cosmos in Frameworks */ = {isa = PBXBuildFile; productRef = E474B0E22D5C3ADE0086FD5B /* Cosmos */; };
+		E474B5992D622BAA0086FD5B /* NVActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = E474B5982D622BAA0086FD5B /* NVActivityIndicatorView */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E474B5992D622BAA0086FD5B /* NVActivityIndicatorView in Frameworks */,
 				E472DAC12D57CD270054E7EA /* SnapKit in Frameworks */,
 				E472DABE2D57CD1B0054E7EA /* RxSwift in Frameworks */,
 				E474B0E32D5C3ADE0086FD5B /* Cosmos in Frameworks */,
@@ -105,6 +107,7 @@
 				E472DAC62D57CD3D0054E7EA /* Kingfisher */,
 				E472E5712D59762E0054E7EA /* YouTubePlayerKit */,
 				E474B0E22D5C3ADE0086FD5B /* Cosmos */,
+				E474B5982D622BAA0086FD5B /* NVActivityIndicatorView */,
 			);
 			productName = NaMuApp;
 			productReference = E46EB8F22D43631200F0E536 /* HiKiApp.app */;
@@ -142,6 +145,7 @@
 				E472DAC52D57CD3D0054E7EA /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				E472E5702D59762E0054E7EA /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
 				E474B0E12D5C3ADE0086FD5B /* XCRemoteSwiftPackageReference "Cosmos" */,
+				E474B5972D622BAA0086FD5B /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E46EB8F32D43631200F0E536 /* Products */;
@@ -444,6 +448,14 @@
 				minimumVersion = 25.0.1;
 			};
 		};
+		E474B5972D622BAA0086FD5B /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ninjaprox/NVActivityIndicatorView.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.2.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -481,6 +493,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E474B0E12D5C3ADE0086FD5B /* XCRemoteSwiftPackageReference "Cosmos" */;
 			productName = Cosmos;
+		};
+		E474B5982D622BAA0086FD5B /* NVActivityIndicatorView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E474B5972D622BAA0086FD5B /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */;
+			productName = NVActivityIndicatorView;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -20,7 +20,13 @@ struct VideoData: Decodable {
 }
 
 struct VideoPromo: Decodable {
-    let trailer: AnimateTrailer
+    let trailer: VideoTrailer
+}
+
+struct VideoTrailer: Decodable {
+    let embed_url: String?
+    let url: String?
+//    let images: AnimateImages
 }
 
 struct AnimateCharacterModel: Decodable {

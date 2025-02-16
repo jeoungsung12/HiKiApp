@@ -37,7 +37,7 @@ class MainCategoryView: UIView {
     }
     
     private func setupUI() {
-        self.backgroundColor = .white
+        self.backgroundColor = .clear
         self.addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         

@@ -43,7 +43,7 @@ extension UIViewController {
         window.rootViewController = rootVC
     }
     
-    func setNavigation(_ title: String = "",_ backTitle: String = "",_ color: UIColor = .point) {
+    func setNavigation(_ title: String = "",_ backTitle: String = "",_ color: UIColor = .point,apperanceColor: UIColor = .white) {
         guard let navigationBar = navigationController?.navigationBar else { return }
         
         self.navigationItem.title = title
@@ -52,12 +52,11 @@ extension UIViewController {
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .white
+        appearance.backgroundColor = apperanceColor
         appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
         
         navigationBar.tintColor = color
         navigationBar.standardAppearance = appearance
-//        navigationBar.scrollEdgeAppearance = appearance
     }
     
     func customAlert(_ title: String = "",_ message: String = "",_ action: [AlertType] = [.ok],_ method: @escaping () -> Void) {

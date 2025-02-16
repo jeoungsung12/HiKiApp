@@ -8,10 +8,11 @@
 import UIKit
 import Kingfisher
 import SnapKit
+import NVActivityIndicatorView
 
 class SearchViewController: UIViewController {
     private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapGesture))
-    private let loadingIndicator = UIActivityIndicatorView()
+    private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballScale, color: .point)
     private let recentView = SearchRecentView()
     private let tableView = UITableView()
     private let resultLabel = UILabel()

@@ -44,6 +44,7 @@ final class AnimateServices {
         }
     }
     
+    //TODO: 합치기
     func getReviews(page: Int, completion: @escaping (Result<[ReviewData],NetworkError.CustomError>) -> Void) {
         NetworkManager.shared.getData(AnimeRouter.topReview(page: page)) { (response: Result<AnimateReviewModel,NetworkError.CustomError>) in
             switch response {
@@ -67,11 +68,11 @@ final class AnimateServices {
         }
     }
     
-    func getVideo(id: Int, completion: @escaping (Result<[VideoPromo],NetworkError.CustomError>) -> Void) {
+    func getVideo(id: Int, completion: @escaping (Result<VideoData,NetworkError.CustomError>) -> Void) {
         NetworkManager.shared.getData(AnimeRouter.getAnimeVideos(id: id)) { (response: Result<AnimateVideoModel,NetworkError.CustomError>) in
             switch response {
             case let .success(data):
-                completion(.success(data.data.promo))
+                completion(.success(data.data))
             case let .failure(error):
                 completion(.failure(error))
             }

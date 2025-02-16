@@ -7,11 +7,12 @@
 
 import UIKit
 import SnapKit
+import NVActivityIndicatorView
 
 final class SearchDetailViewController: UIViewController {
     private lazy var heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(heartButtonTapped))
     private let tableView = UITableView()
-    private let loadingIndicator = UIActivityIndicatorView()
+    private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballScale, color: .point)
     
     //TODO: - ViewModel
     private var buttonTapped: Bool = false
@@ -35,6 +36,7 @@ final class SearchDetailViewController: UIViewController {
         outputResult.animeData.bind { [weak self] data in
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
+                self?.loadingIndicator.stopAnimating()
             }
         }
     }
@@ -61,7 +63,8 @@ extension SearchDetailViewController {
     
     private func configureLayout() {
         tableView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.bottom.equalToSuperview().inset(49)
+            make.top.horizontalEdges.equalToSuperview()
         }
         
         loadingIndicator.snp.makeConstraints { make in
@@ -71,13 +74,10 @@ extension SearchDetailViewController {
     }
     
     private func configureView() {
-        self.setNavigation()
+        self.setNavigation(apperanceColor: .clear)
         self.view.backgroundColor = .white
         self.navigationItem.rightBarButtonItem = heartButton
         self.navigationController?.navigationBar.backgroundColor = .clear
-        
-        loadingIndicator.style = .medium
-        loadingIndicator.color = .customLightGray
         
         configure()
         configureTableView()
@@ -92,6 +92,7 @@ extension SearchDetailViewController {
     private func heartButtonTapped(_ sender: UIButton) {
         print(#function)
         inputTrigger.heartBtnTrigger.value = ()
+        loadingIndicator.startAnimating()
     }
     
 }
@@ -142,12 +143,6 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
             guard let cell = tableView.dequeueReusableCell(withIdentifier: CharactersTableViewCell.id, for: indexPath) as? CharactersTableViewCell else { return UITableViewCell() }
             cell.charactersData = outputResult.animeData.value?.characters ?? []
             return cell
-            
-        case .reviews:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: DetailReviewTableViewCell.id, for: indexPath) as? DetailReviewTableViewCell else { return UITableViewCell() }
-            cell.reviewData = outputResult.animeData.value?.reviews ?? []
-            return cell
-            
         }
     }
     

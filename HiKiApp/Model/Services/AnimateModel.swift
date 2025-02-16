@@ -33,9 +33,7 @@ struct AnimateGenre: Decodable, Hashable {
 
 struct AnimateTrailer: Decodable, Hashable {
     let embed_url: String?
-    let youtube_id: String?
     let url: String?
-    
     //TODO: 디코딩 전략
 }
 
