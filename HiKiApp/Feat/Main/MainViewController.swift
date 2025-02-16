@@ -10,10 +10,11 @@ import SnapKit
 import NVActivityIndicatorView
 
 final class MainViewController: UIViewController {
-    private let leftLogo = UIBarButtonItem(customView: MainNavigationView())
-    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
-    private let category = MainCategoryView()
     private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
+    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
+    private let leftLogo = UIBarButtonItem(customView: MainNavigationView())
+    private let category = MainCategoryView()
+    private var categoryTopConstraint: Constraint?
     private var dataSource: UICollectionViewDiffableDataSource<HomeSection,HomeItem>?
     
     private let viewModel = MainViewModel()
@@ -62,12 +63,12 @@ extension MainViewController {
         category.snp.makeConstraints { make in
             make.height.equalTo(40)
             make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(self.view.safeAreaLayoutGuide)
+            self.categoryTopConstraint = make.top.equalToSuperview().constraint
         }
         
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(category.snp.bottom)
-            make.horizontalEdges.equalToSuperview()
+            make.horizontalEdges.equalToSuperview().offset(8)
             make.bottom.equalToSuperview().offset(-(self.tabBarController?.tabBar.bounds.height ?? 0))
         }
         
@@ -119,7 +120,7 @@ extension MainViewController {
 }
 
 //MARK: - CollectionView
-extension MainViewController: UICollectionViewDelegate {
+extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
     
     private func configureCollectionView() {
         collectionView.delegate = self
@@ -228,4 +229,11 @@ extension MainViewController: UICollectionViewDelegate {
         }
     }
     
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let defaultOffset = view.safeAreaInsets.top
+        let offset = scrollView.contentOffset.y
+        navigationController?.navigationBar.transform = .init(translationX: 0, y: -offset)
+        let newTopOffset = max(defaultOffset - (offset), 60)
+        categoryTopConstraint?.update(offset: newTopOffset)
+    }
 }
