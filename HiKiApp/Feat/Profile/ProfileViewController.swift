@@ -7,8 +7,10 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-final class ProfileViewController: UIViewController {
+final class ProfileViewController: BaseViewController {
     private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapGesture))
     private let profileButton = CustomProfileButton(120, true)
     private let nameTextField = UITextField()
@@ -17,86 +19,97 @@ final class ProfileViewController: UIViewController {
     private let successButton = UIButton()
     
     private let viewModel = ProfileViewModel()
-    private lazy var inputTrigger = ProfileViewModel.Input(
-        configureViewTrigger: Observable(()),
-        profileButtonTrigger: Observable(()),
-        nameTextFieldTrigger: Observable(nil),
-        successButtonTrigger: Observable(ProfileViewModel.ProfileSuccessButtonRequest()),
-        buttonEnabledTrigger: Observable(ProfileViewModel.ProfileSuccessButtonRequest())
+    private var inputTrigger = ProfileViewModel.Input(
+        configureViewTrigger: PublishSubject<Void>(),
+        nameTextFieldTrigger: PublishSubject<String?>(),
+        successButtonTrigger: PublishSubject<ProfileSuccessButtonRequest>(),
+        buttonEnabledTrigger: PublishSubject<ProfileSuccessButtonRequest>()
     )
+    
+    private var disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureView()
-        setBinding()
     }
     
-    private func setBinding() {
-        let output = viewModel.transform(input: inputTrigger)
-        
-        output.configureViewResult.bind { [weak self] userInfo in
-            if !userInfo.isEmpty {
-                //TODO: Object
-                self?.nameTextField.text = userInfo[0]
-                self?.profileButton.profileImage.image = UIImage(named: userInfo[1])
-            } else {
-                guard let image = ProfileData.allCases.randomElement()?.rawValue else { return }
-                self?.profileButton.profileImage.image = UIImage(named: image)
+    override func setBindView() {
+        successButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.enableTrigger(false)
             }
-        }
+            .disposed(by: disposeBag)
         
-        output.profileButtonResult.lazyBind { [weak self] _ in
-            let vc = ProfileImageViewController()
-            vc.profileImage = self?.profileButton.profileImage.image
-            vc.returnImage = { [weak self] value in
-                self?.profileButton.profileImage.image = value
+        profileButton.rx.tap
+            .bind(with: self) { owner, _ in
+                let vc = ProfileImageViewController()
+                vc.profileImage = owner.profileButton.profileImage.image
+                vc.returnImage = { [weak self] value in
+                    self?.profileButton.profileImage.image = value
+                }
+                owner.push(vc)
             }
-            self?.push(vc)
-        }
+            .disposed(by: disposeBag)
         
-        output.successButtonResult.lazyBind { [weak self] valid in
-            if let valid = valid, valid {
-                let rootVC = TabBarController()
-                self?.setRootView(rootVC)
-            } else {
-                self?.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
+        nameTextField.rx.text.changed
+            .bind(with: self) { owner, value in
+                owner.enableTrigger(true)
             }
-        }
-        
-        output.nameTextFieldResult.lazyBind { [weak self] text in
-            self?.descriptionLabel.text = ((text == "")) ? nil : text
-            self?.descriptionLabel.textColor = (text == ProfileViewModel.NickName.NickNameType.success.rawValue) ? .systemOrange : .systemRed
-        }
-        
-        output.buttonEnabledResult.lazyBind { [weak self] valid in
-            guard let valid = valid else {
-                self?.successButton.isEnabled = false
-                self?.successButton.backgroundColor = .customDarkGray
-                return
-            }
-            self?.successButton.isEnabled = (valid) ? true : false
-            self?.successButton.backgroundColor = (valid) ? .point : .customDarkGray
-        }
+            .disposed(by: disposeBag)
     }
     
-    deinit {
-        print(#function, self)
+    override func setBinding() {
+        let output = viewModel.transform(inputTrigger)
+        
+        output.configureViewResult
+            .bind(with: self, onNext: { owner, userInfo in
+                if !userInfo.isEmpty {
+                    //TODO: Object
+                    owner.nameTextField.text = userInfo[0]
+                    owner.profileButton.profileImage.image = UIImage(named: userInfo[1] ?? "")
+                } else {
+                    guard let image = ProfileData.allCases.randomElement()?.rawValue else { return }
+                    owner.profileButton.profileImage.image = UIImage(named: image)
+                }
+            }).disposed(by: disposeBag)
+        
+        output.successButtonResult
+            .bind(with: self, onNext: { owner, valid in
+                if let valid = valid, valid {
+                    let rootVC = TabBarController()
+                    owner.setRootView(rootVC)
+                } else {
+                    owner.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
+                }
+            }).disposed(by: disposeBag)
+        
+        output.nameTextFieldResult
+            .bind(with: self, onNext: { owner, text in
+                owner.descriptionLabel.text = ((text == "")) ? nil : text
+                owner.descriptionLabel.textColor = (text == ProfileViewModel.NickName.NickNameType.success.rawValue) ? .systemOrange : .systemRed
+            }).disposed(by: disposeBag)
+        
+        output.buttonEnabledResult
+            .bind(with: self, onNext: { owner, valid in
+                guard let valid = valid else {
+                    owner.successButton.isEnabled = false
+                    owner.successButton.backgroundColor = .customDarkGray
+                    return
+                }
+                owner.successButton.isEnabled = (valid) ? true : false
+                owner.successButton.backgroundColor = (valid) ? .point : .customDarkGray
+            }).disposed(by: disposeBag)
+        
+        inputTrigger.configureViewTrigger.onNext(())
     }
     
-}
-
-//MARK: - Configure UI
-extension ProfileViewController {
-    
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         [profileButton, nameTextField, spacingView, descriptionLabel, successButton].forEach {
             self.view.addSubview($0)
         }
         self.view.addGestureRecognizer(tapGesture)
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         profileButton.snp.makeConstraints { make in
             make.size.equalTo(150)
             make.centerX.equalToSuperview().offset(10)
@@ -126,7 +139,7 @@ extension ProfileViewController {
         }
     }
     
-    private func configureView() {
+    override func configureView() {
         self.setNavigation("PROFILE SETTING")
         self.view.backgroundColor = .customWhite
         
@@ -150,40 +163,19 @@ extension ProfileViewController {
         successButton.setTitle("완료", for: .normal)
         successButton.setTitleColor(.white, for: .normal)
         
-        successButton.addTarget(self, action: #selector(successButtonTapped), for: .touchUpInside)
-        profileButton.addTarget(self, action: #selector(profilebuttonTapped), for: .touchUpInside)
-        
-        configureProfileView()
-        configureHierarchy()
     }
     
-    private func configureProfileView() {
-        inputTrigger.configureViewTrigger.value = ()
+    deinit {
+        print(#function, self)
     }
     
-}
-
-//MARK: - Action
-extension ProfileViewController {
-    
-    @objc
-    private func profilebuttonTapped(_ sender: UIButton) {
-        print(#function)
-        inputTrigger.profileButtonTrigger.value = ()
-    }
-    
-    @objc
-    private func successButtonTapped(_ sender: UIButton) {
-        print(#function)
-        enableTrigger(false)
-    }
 }
 
 //MARK: - TextField
 extension ProfileViewController: UITextFieldDelegate {
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
-        inputTrigger.nameTextFieldTrigger.value = textField.text
+        inputTrigger.nameTextFieldTrigger.onNext(textField.text)
         enableTrigger(true)
     }
     
@@ -193,6 +185,6 @@ extension ProfileViewController: UITextFieldDelegate {
     
     private func enableTrigger(_ enable: Bool) {
         let trigger = (enable) ? inputTrigger.buttonEnabledTrigger : inputTrigger.successButtonTrigger
-        trigger.value = ProfileViewModel.ProfileSuccessButtonRequest(profileImage: profileButton.profileImage.image, name: nameTextField.text, description:  descriptionLabel.text)
+        trigger.onNext(ProfileSuccessButtonRequest(profileImage: profileButton.profileImage.image, name: nameTextField.text, description:  descriptionLabel.text))
     }
 }

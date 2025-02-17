@@ -20,8 +20,8 @@ class SearchViewController: UIViewController {
     
     private let viewModel = SearchViewModel()
     private let inputTirgger = SearchViewModel.Input(
-        phaseTrigger: Observable(.notRequest),
-        searchTrigger: Observable((1))
+        phaseTrigger: CustomObservable(.notRequest),
+        searchTrigger: CustomObservable((1))
     )
     private lazy var outputResult = viewModel.transform(input: inputTirgger)
     

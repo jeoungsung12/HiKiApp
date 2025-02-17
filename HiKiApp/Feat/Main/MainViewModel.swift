@@ -10,11 +10,11 @@ import Foundation
 final class MainViewModel: ViewModelType {
     
     struct Input {
-        let dataLoadTrigger: Observable<AnimateType>
+        let dataLoadTrigger: CustomObservable<AnimateType>
     }
     
     struct Output {
-        let dataLoadResult: Observable<[[AnimateData]]?> = Observable([])
+        let dataLoadResult: CustomObservable<[[AnimateData]]?> = CustomObservable([])
     }
     
 }

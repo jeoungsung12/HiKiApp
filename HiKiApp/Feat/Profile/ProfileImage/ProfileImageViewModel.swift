@@ -11,11 +11,11 @@ final class ProfileImageViewModel: ViewModelType {
     let profileData = ProfileData.allCases
     
     struct Input {
-        let backButtonTrigger: Observable<Void>
+        let backButtonTrigger: CustomObservable<Void>
     }
     
     struct Output {
-        let backButtonResult: Observable<Void> = Observable(())
+        let backButtonResult: CustomObservable<Void> = CustomObservable(())
     }
     
     init() {

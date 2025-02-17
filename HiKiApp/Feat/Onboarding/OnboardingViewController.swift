@@ -7,45 +7,50 @@
 
 import UIKit
 import SnapKit
-import Lottie
+import RxSwift
+import RxCocoa
 
-final class OnboardingViewController: UIViewController {
-    private let imageView = LottieAnimationView(name: "lottie")
+final class OnboardingViewController: BaseViewController {
+    private let imageView = LoadingView()
     private let titleLabel = UILabel()
     private let descriptionLabel = UILabel()
     private let startButton = UIButton()
-
+    private var disposeBag = DisposeBag()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureView()
+    }
+    
+    override func setBindView() {
+        startButton.rx.tap
+            .bind(with: self) { owner, _ in
+                let vc = ProfileViewController()
+                owner.push(vc)
+            }
+            .disposed(by: disposeBag)
     }
     
     deinit {
         print(self, #function)
     }
-
-}
-
-//MARK: - Configure UI
-extension OnboardingViewController {
     
-     private func configureHierarchy() {
+    
+    override func configureHierarchy() {
         [imageView, titleLabel, descriptionLabel, startButton].forEach {
             self.view.addSubview($0)
         }
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         imageView.snp.makeConstraints { make in
+            make.height.equalTo(250)
             make.horizontalEdges.equalToSuperview()
-            make.height.equalToSuperview().dividedBy(2)
-            make.top.equalTo(self.view.safeAreaLayoutGuide)
+            make.top.equalTo(self.view.safeAreaLayoutGuide).offset(24)
         }
         
         titleLabel.snp.makeConstraints { make in
             make.height.equalTo(40)
-            make.top.equalTo(imageView.snp.bottom).offset(12)
+            make.top.equalTo(imageView.snp.bottom).offset(64)
             make.horizontalEdges.equalToSuperview().inset(24)
         }
         
@@ -62,13 +67,9 @@ extension OnboardingViewController {
         }
     }
     
-    private func configureView() {
+    override func configureView() {
         self.setNavigation()
         self.view.backgroundColor = .customWhite
-        
-        imageView.loopMode = .loop
-        imageView.contentMode = .scaleAspectFit
-        imageView.play()
         
         titleLabel.text = "HiKi"
         titleLabel.textAlignment = .center
@@ -84,21 +85,6 @@ extension OnboardingViewController {
         startButton.setBorder()
         startButton.setTitle("시작하기", for: .normal)
         startButton.setTitleColor(.point, for: .normal)
-        startButton.addTarget(self, action: #selector(startButtonTapped), for: .touchUpInside)
-        
-        configureHierarchy()
-    }
-    
-}
-
-//MARK: - Action
-extension OnboardingViewController {
-    
-    @objc
-    private func startButtonTapped(_ sender: UIButton) {
-        print(#function)
-        let vc = ProfileViewController()
-        self.push(vc)
     }
     
 }

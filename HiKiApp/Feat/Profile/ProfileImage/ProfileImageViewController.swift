@@ -14,7 +14,7 @@ final class ProfileImageViewController: UIViewController {
     
     private let viewModel = ProfileImageViewModel()
     private let inputTrigger = ProfileImageViewModel.Input(
-        backButtonTrigger: Observable(())
+        backButtonTrigger: CustomObservable(())
     )
     
     var returnImage: ((UIImage?) -> Void)?

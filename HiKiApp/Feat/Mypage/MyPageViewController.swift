@@ -19,8 +19,8 @@ final class MyPageViewController: UIViewController {
     
     private let viewModel = MyPageViewModel()
     private let inputTrigger = MyPageViewModel.Input(
-        profileTrigger: Observable(()),
-        categoryBtnTrigger: Observable(nil)
+        profileTrigger: CustomObservable(()),
+        categoryBtnTrigger: CustomObservable(nil)
     )
     private lazy var output = viewModel.transform(input: inputTrigger)
     

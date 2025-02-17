@@ -34,13 +34,13 @@ final class MyPageViewModel: ViewModelType {
     }
     
     struct Input {
-        let profileTrigger: Observable<Void>
-        let categoryBtnTrigger: Observable<MyPageCategoryType?>
+        let profileTrigger: CustomObservable<Void>
+        let categoryBtnTrigger: CustomObservable<MyPageCategoryType?>
     }
     
     struct Output {
-        let profileResult: Observable<UserInfo?> = Observable(nil)
-        let categoryBtnResult: Observable<MyPageCategoryType?> = Observable(nil)
+        let profileResult: CustomObservable<UserInfo?> = CustomObservable(nil)
+        let categoryBtnResult: CustomObservable<MyPageCategoryType?> = CustomObservable(nil)
     }
 
     init() {

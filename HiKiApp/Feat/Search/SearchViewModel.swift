@@ -37,14 +37,14 @@ final class SearchViewModel: ViewModelType {
     }
     
     struct Input {
-        let phaseTrigger: Observable<SearchPhase>
-        let searchTrigger: Observable<Int>
+        let phaseTrigger: CustomObservable<SearchPhase>
+        let searchTrigger: CustomObservable<Int>
     }
     
     struct Output {
-        var searchPage: Observable<Int> = Observable(1)
-        let phaseResult: Observable<SearchPhase> = Observable(.notRequest)
-        var searchResult: Observable<[AnimateData]> = Observable([])
+        var searchPage: CustomObservable<Int> = CustomObservable(1)
+        let phaseResult: CustomObservable<SearchPhase> = CustomObservable(.notRequest)
+        var searchResult: CustomObservable<[AnimateData]> = CustomObservable([])
     }
     
     init() {

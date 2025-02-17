@@ -19,7 +19,7 @@ final class MainViewController: UIViewController {
     
     private let viewModel = MainViewModel()
     private let inputTrigger = MainViewModel.Input(
-        dataLoadTrigger: Observable((AnimateType.airing))
+        dataLoadTrigger: CustomObservable((AnimateType.airing))
     )
     private lazy var outputResult = viewModel.transform(input: inputTrigger)
     
@@ -67,8 +67,8 @@ extension MainViewController {
         }
         
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(category.snp.bottom)
-            make.horizontalEdges.equalToSuperview().offset(8)
+            make.horizontalEdges.equalToSuperview()
+            make.top.equalTo(category.snp.bottom).offset(8)
             make.bottom.equalToSuperview().offset(-(self.tabBarController?.tabBar.bounds.height ?? 0))
         }
         
@@ -109,9 +109,13 @@ extension MainViewController {
         }
         
         self.dataSource?.apply(snapShot) {
-            //TODO: Row까지 초기화
             DispatchQueue.main.async {
-                self.collectionView.setContentOffset(.zero, animated: true)
+                if let firstIndexPath = self.collectionView.indexPathsForVisibleItems.first {
+                    let targetIndexPath = IndexPath(item: 0, section: 0)
+                    if firstIndexPath != targetIndexPath {
+                        self.collectionView.scrollToItem(at: targetIndexPath, at: .top, animated: true)
+                    }
+                }
             }
         }
         loadingIndicator.stopAnimating()

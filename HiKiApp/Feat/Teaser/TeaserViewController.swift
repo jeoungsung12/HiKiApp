@@ -14,7 +14,7 @@ final class TeaserViewController: UIViewController {
     private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
     
     private let viewModel = TeaserViewModel()
-    private let inputTrigger = TeaserViewModel.Input(dataTrigger: Observable(1))
+    private let inputTrigger = TeaserViewModel.Input(dataTrigger: CustomObservable(1))
     private lazy var outputResult = viewModel.transform(input: inputTrigger)
     override func viewDidLoad() {
         super.viewDidLoad()

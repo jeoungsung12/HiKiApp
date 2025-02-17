@@ -10,11 +10,11 @@ import Foundation
 final class TeaserViewModel: ViewModelType {
     private var videosData: [AnimateData] = []
     struct Input {
-        let dataTrigger: Observable<Int>
+        let dataTrigger: CustomObservable<Int>
     }
     
     struct Output {
-        let dataResult: Observable<[AnimateData]?> = Observable(nil)
+        let dataResult: CustomObservable<[AnimateData]?> = CustomObservable(nil)
     }
     
 }

@@ -16,13 +16,13 @@ final class ReviewViewModel: ViewModelType {
     }
     
     struct Input {
-        let reviewTrigger: Observable<Int>
+        let reviewTrigger: CustomObservable<Int>
     }
     
     struct Output {
-        let reviewPage: Observable<Int> = Observable(1)
-        let reviewResult: Observable<[ReviewData]> = Observable([])
-        let phaseResult: Observable<ReviewPhase> = Observable(.notRequest)
+        let reviewPage: CustomObservable<Int> = CustomObservable(1)
+        let reviewResult: CustomObservable<[ReviewData]> = CustomObservable([])
+        let phaseResult: CustomObservable<ReviewPhase> = CustomObservable(.notRequest)
     }
     
     init() {

@@ -21,8 +21,8 @@ final class SearchDetailViewController: UIViewController {
     
     private let viewModel = SearchDetailViewModel()
     private lazy var inputTrigger = SearchDetailViewModel.Input(
-        detailTrigger: Observable(self.id ?? 1),
-        heartBtnTrigger: Observable(())
+        detailTrigger: CustomObservable(self.id ?? 1),
+        heartBtnTrigger: CustomObservable(())
     )
     private lazy var outputResult = viewModel.transform(input: inputTrigger)
 

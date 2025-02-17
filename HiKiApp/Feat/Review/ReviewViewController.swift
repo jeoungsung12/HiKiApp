@@ -13,7 +13,7 @@ final class ReviewViewController: UIViewController {
     private let tableView = UITableView()
     private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
     private let viewModel = ReviewViewModel()
-    private let inputTrigger = ReviewViewModel.Input(reviewTrigger: Observable((1)))
+    private let inputTrigger = ReviewViewModel.Input(reviewTrigger: CustomObservable((1)))
     private lazy var outputResult = viewModel.transform(input: inputTrigger)
 
     override func viewDidLoad() {

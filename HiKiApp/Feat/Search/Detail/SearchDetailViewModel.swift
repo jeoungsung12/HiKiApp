@@ -24,12 +24,12 @@ final class SearchDetailViewModel: ViewModelType {
     }
     
     struct Input {
-        let detailTrigger: Observable<Int>
-        let heartBtnTrigger: Observable<Void>
+        let detailTrigger: CustomObservable<Int>
+        let heartBtnTrigger: CustomObservable<Void>
     }
     
     struct Output {
-        let animeData: Observable<AnimateDetailData?> = Observable(nil)
+        let animeData: CustomObservable<AnimateDetailData?> = CustomObservable(nil)
     }
     
     init() {
