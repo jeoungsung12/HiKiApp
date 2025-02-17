@@ -43,9 +43,7 @@ final class ProfileViewController: BaseViewController {
             .bind(with: self) { owner, _ in
                 let vc = ProfileImageViewController()
                 vc.profileImage = owner.profileButton.profileImage.image
-                vc.returnImage = { [weak self] value in
-                    self?.profileButton.profileImage.image = value
-                }
+                vc.profileDelegate = owner
                 owner.push(vc)
             }
             .disposed(by: disposeBag)
@@ -172,7 +170,12 @@ final class ProfileViewController: BaseViewController {
 }
 
 //MARK: - TextField
-extension ProfileViewController: UITextFieldDelegate {
+extension ProfileViewController: UITextFieldDelegate, ProfileImageDelegate {
+    
+    func returnImage(_ image: UIImage?) {
+        print(#function)
+        self.profileButton.profileImage.image = image
+    }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         inputTrigger.nameTextFieldTrigger.onNext(textField.text)
@@ -187,4 +190,5 @@ extension ProfileViewController: UITextFieldDelegate {
         let trigger = (enable) ? inputTrigger.buttonEnabledTrigger : inputTrigger.successButtonTrigger
         trigger.onNext(ProfileSuccessButtonRequest(profileImage: profileButton.profileImage.image, name: nameTextField.text, description:  descriptionLabel.text))
     }
+    
 }

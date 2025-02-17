@@ -6,16 +6,19 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
 final class ProfileImageViewModel: ViewModelType {
     let profileData = ProfileData.allCases
+    private var disposeBag = DisposeBag()
     
     struct Input {
-        let backButtonTrigger: CustomObservable<Void>
+        let backButtonTrigger: PublishSubject<Void>
     }
     
     struct Output {
-        let backButtonResult: CustomObservable<Void> = CustomObservable(())
+        let backButtonResult: PublishSubject<Void> = PublishSubject()
     }
     
     init() {
@@ -33,9 +36,10 @@ extension ProfileImageViewModel {
     func transform(input: Input) -> Output {
         let output = Output()
         
-        input.backButtonTrigger.lazyBind { _ in
-            output.backButtonResult.value = ()
-        }
+        input.backButtonTrigger
+            .bind(with: self, onNext: { owner, _ in
+                output.backButtonResult.onNext(())
+            }).disposed(by: disposeBag)
         
         return output
     }

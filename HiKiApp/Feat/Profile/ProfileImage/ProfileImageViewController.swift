@@ -7,49 +7,49 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-final class ProfileImageViewController: UIViewController {
+protocol ProfileImageDelegate: AnyObject {
+    func returnImage(_ image: UIImage?) -> Void
+}
+
+final class ProfileImageViewController: BaseViewController {
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
     private let profileButton = CustomProfileButton(120, true)
     
-    private let viewModel = ProfileImageViewModel()
-    private let inputTrigger = ProfileImageViewModel.Input(
-        backButtonTrigger: CustomObservable(())
-    )
-    
-    var returnImage: ((UIImage?) -> Void)?
+    weak var profileDelegate: ProfileImageDelegate?
     var profileImage: UIImage?
+    
+    private let viewModel = ProfileImageViewModel()
+    private let inputTrigger = ProfileImageViewModel.Input(backButtonTrigger: PublishSubject())
+    private var disposeBag = DisposeBag()
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureView()
-        setBinding()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        inputTrigger.backButtonTrigger.value = ()
+        inputTrigger.backButtonTrigger.onNext(())
     }
     
-    private func setBinding() {
-        let output = ProfileImageViewModel().transform(input: inputTrigger)
+    override func setBinding() {
+        let output = viewModel.transform(input: inputTrigger)
         
-        output.backButtonResult.lazyBind { [weak self] _ in
-            self?.returnImage?(self?.profileButton.profileImage.image)
-        }
+        output.backButtonResult
+            .bind(with: self, onNext: { owner, _ in
+                print(owner)
+                owner.profileDelegate?.returnImage(owner.profileButton.profileImage.image)
+            }).disposed(by: disposeBag)
     }
-}
-
-//MARK: - Configure UI
-extension ProfileImageViewController {
     
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         [profileButton, collectionView].forEach({
             self.view.addSubview($0)
         })
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         profileButton.snp.makeConstraints { make in
             make.size.equalTo(150)
             make.centerX.equalToSuperview().offset(10)
@@ -62,7 +62,7 @@ extension ProfileImageViewController {
         }
     }
     
-    private func configureView() {
+    override func configureView() {
         self.setNavigation("프로필 이미지 설정")
         self.view.backgroundColor = .white
         
@@ -70,7 +70,6 @@ extension ProfileImageViewController {
         profileButton.profileImage.image = profileImage
         
         configureCollectionView()
-        configureHierarchy()
     }
 }
 
@@ -100,11 +99,9 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProfileImageCollectionViewCell.id, for: indexPath) as? ProfileImageCollectionViewCell else { return UICollectionViewCell() }
-        
         let image = UIImage(named: viewModel.profileData[indexPath.row].rawValue)
         cell.configure(image)
         cell.profileButton.containerView.isHidden = true
-        
         return cell
     }
     
