@@ -6,10 +6,13 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
-final class SearchViewModel: ViewModelType {
+final class SearchViewModel: BaseViewModel {
     private let db = DataBase.shared
     private var searchText: String = ""
+    private var disposeBag = DisposeBag()
     
     enum SearchPhase {
         case success
@@ -37,14 +40,13 @@ final class SearchViewModel: ViewModelType {
     }
     
     struct Input {
-        let phaseTrigger: CustomObservable<SearchPhase>
-        let searchTrigger: CustomObservable<Int>
+        let searchTrigger: PublishSubject<Int>
     }
     
     struct Output {
-        var searchPage: CustomObservable<Int> = CustomObservable(1)
-        let phaseResult: CustomObservable<SearchPhase> = CustomObservable(.notRequest)
-        var searchResult: CustomObservable<[AnimateData]> = CustomObservable([])
+        var searchPage: BehaviorRelay<Int> = BehaviorRelay(value: 1)
+        let phaseResult: BehaviorRelay<SearchPhase> = BehaviorRelay(value: .notRequest)
+        var searchResult: BehaviorRelay<[AnimateData]> = BehaviorRelay(value: [])
     }
     
     init() {
@@ -59,23 +61,24 @@ final class SearchViewModel: ViewModelType {
 
 extension SearchViewModel {
     
-    func transform(input: Input) -> Output {
+    func transform(_ input: Input) -> Output {
         let output = Output()
         
-        input.searchTrigger.lazyBind { [weak self] page in
-            guard let text = self?.searchText else { return }
-            self?.saveData(text)
-            self?.fetchData(page) { [weak self] result in
-                switch result {
-                case let .success(data):
-                    self?.checkPhase(data, output)
-                    output.searchResult.value.append(contentsOf: data)
-                case .failure:
-                    output.phaseResult.value = .notFound
-                    output.searchResult.value = []
+        input.searchTrigger
+            .bind(with: self, onNext: { owner, page in
+                owner.saveData(owner.searchText)
+                owner.fetchData(page) { [weak self] result in
+                    switch result {
+                    case let .success(data):
+                        self?.checkPhase(data, output)
+                        output.searchResult.accept(output.searchResult.value + data)
+                    case .failure:
+                        output.phaseResult.accept(.notFound)
+                        output.searchResult.accept([])
+                    }
                 }
-            }
-        }
+            })
+            .disposed(by: disposeBag)
         
         return output
     }
@@ -88,11 +91,11 @@ extension SearchViewModel {
     
     private func checkPhase(_ data: [AnimateData] ,_ output: Output) {
         if (data.isEmpty) && (output.searchPage.value == 1) {
-            output.phaseResult.value = .notFound
+            output.phaseResult.accept(.notFound)
         } else if (data.isEmpty) {
-            output.phaseResult.value = .endPage
+            output.phaseResult.accept(.endPage)
         } else {
-            output.phaseResult.value = .success
+            output.phaseResult.accept(.success)
         }
     }
     
@@ -111,15 +114,16 @@ extension SearchViewModel {
     func checkPaging(_ input: Input,_ output: Output) {
         switch output.phaseResult.value {
         case .success:
-            output.searchPage.value += 1
+            let page = output.searchPage.value
+            output.searchPage.accept(page + 1)
         default:
-            output.phaseResult.value = .notRequest
+            output.phaseResult.accept(.notRequest)
         }
     }
     
     func initData(_ text: String,_ output: Output) {
-        output.searchPage.value = 1
-        output.searchResult.value = []
+        output.searchPage.accept(1)
+        output.searchResult.accept([])
         self.searchText = ""
     }
     

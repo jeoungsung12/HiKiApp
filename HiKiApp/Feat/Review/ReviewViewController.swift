@@ -45,7 +45,6 @@ final class ReviewViewController: BaseViewController {
             .subscribe(with: self) { owner, indexPaths in
                 let lastIndex = indexPaths.map { $0.row }.max() ?? 1
                 if outputResult.reviewResult.value.count - 2 < lastIndex {
-                    print(lastIndex)
                     owner.loadingIndicator.startAnimating()
                     owner.viewModel.checkPaging(owner.inputTrigger, outputResult)
                 }

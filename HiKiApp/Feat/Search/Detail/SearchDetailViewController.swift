@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import NVActivityIndicatorView
 
+
 final class SearchDetailViewController: UIViewController {
     private lazy var heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(heartButtonTapped))
     private let tableView = UITableView()

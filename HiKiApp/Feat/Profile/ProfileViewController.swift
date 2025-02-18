@@ -20,7 +20,7 @@ final class ProfileViewController: BaseViewController {
     
     private let viewModel = ProfileViewModel()
     private var inputTrigger = ProfileViewModel.Input(
-        configureViewTrigger: Observable.just(()),
+        configureViewTrigger: PublishSubject<Void>(),
         nameTextFieldTrigger: PublishSubject<String?>(),
         successButtonTrigger: PublishSubject<ProfileSuccessButtonRequest>(),
         buttonEnabledTrigger: PublishSubject<ProfileSuccessButtonRequest>()
