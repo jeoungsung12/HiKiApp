@@ -8,8 +8,10 @@
 import UIKit
 import SnapKit
 import NVActivityIndicatorView
+import RxSwift
+import RxCocoa
 
-final class MainViewController: UIViewController {
+final class MainViewController: BaseViewController {
     private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
     private let leftLogo = UIBarButtonItem(customView: MainNavigationView())
@@ -19,47 +21,56 @@ final class MainViewController: UIViewController {
     
     private let viewModel = MainViewModel()
     private let inputTrigger = MainViewModel.Input(
-        dataLoadTrigger: CustomObservable((AnimateType.airing))
+        dataLoadTrigger: BehaviorRelay(value: (AnimateType.airing))
     )
-    private lazy var outputResult = viewModel.transform(input: inputTrigger)
+    private var disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureView()
-        setBinding()
     }
     
-    private func setBinding() {
-        loadingIndicator.startAnimating()
-        outputResult.dataLoadResult.lazyBind { [weak self] animateData in
-            DispatchQueue.main.async {
-                if let animateData = animateData {
-                    self?.setSnapShot(self?.viewModel.setData(animateData))
-                    self?.category.isUserInteractionEnabled = true
-                } else {
-                    self?.errorPresent(.notFount)
-                }
-            }
+    override func setBindView() {
+        category.selectedItem = { [weak self] type  in
+            self?.inputTrigger.dataLoadTrigger.accept(type)
+            self?.category.isUserInteractionEnabled = false
+            self?.loadingIndicator.startAnimating()
         }
+        
+        collectionView.rx.didScroll
+            .bind(with: self) { owner, _ in
+                let defaultOffset = owner.view.safeAreaInsets.top
+                let scrollOffset = owner.collectionView.contentOffset.y
+                owner.navigationController?.navigationBar.transform =
+                    .init(translationX: 0, y: -scrollOffset)
+                let newTopOffset = max(defaultOffset - scrollOffset, 60)
+                owner.categoryTopConstraint?.update(offset: newTopOffset)
+            }
+            .disposed(by: disposeBag)
     }
     
-    deinit {
-        print(#function, self)
+    override func setBinding() {
+        let outputResult = viewModel.transform(inputTrigger)
+        loadingIndicator.startAnimating()
+        outputResult.dataLoadResult
+            .bind(with: self) { owner, data in
+                DispatchQueue.main.async {
+                    if let animateData = data {
+                        owner.setSnapShot(owner.viewModel.setData(animateData))
+                        owner.category.isUserInteractionEnabled = true
+                    } else {
+                        owner.errorPresent(.notFount)
+                    }
+                }
+            }.disposed(by: disposeBag)
     }
     
-}
-
-//MARK: - Configure UI
-extension MainViewController {
-    
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         [collectionView, category, loadingIndicator].forEach({
             self.view.addSubview($0)
         })
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         category.snp.makeConstraints { make in
             make.height.equalTo(40)
             make.horizontalEdges.equalToSuperview()
@@ -78,24 +89,22 @@ extension MainViewController {
         setDataSource()
     }
     
-    private func configureView() {
+    override func configureView() {
         self.setNavigation()
         self.view.backgroundColor = .white
         self.navigationItem.leftBarButtonItem = leftLogo
-        
-        category.selectedItem = { [weak self] type  in
-            self?.inputTrigger.dataLoadTrigger.value = type
-            self?.category.isUserInteractionEnabled = false
-            self?.loadingIndicator.startAnimating()
-        }
 
         configureCollectionView()
-        configureHierarchy()
     }
+    
+    deinit {
+        print(#function, self)
+    }
+    
 }
 
 extension MainViewController {
-    //TODO: - Rx
+    
     private func setSnapShot(_ sectionItem: SectionItem?) {
         guard let sectionItem = sectionItem else { return }
         var snapShot = NSDiffableDataSourceSnapshot<HomeSection,HomeItem>()
@@ -124,10 +133,9 @@ extension MainViewController {
 }
 
 //MARK: - CollectionView
-extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
+extension MainViewController {
     
     private func configureCollectionView() {
-        collectionView.delegate = self
         collectionView.backgroundColor = .white
         collectionView.register(MainHeaderCell.self, forCellWithReuseIdentifier: MainHeaderCell.id)
         collectionView.register(MainPosterCell.self, forCellWithReuseIdentifier: MainPosterCell.id)
@@ -231,13 +239,5 @@ extension MainViewController: UICollectionViewDelegate, UIScrollViewDelegate {
             vc.id = itemModel.id
             self.push(vc)
         }
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let defaultOffset = view.safeAreaInsets.top
-        let offset = scrollView.contentOffset.y
-        navigationController?.navigationBar.transform = .init(translationX: 0, y: -offset)
-        let newTopOffset = max(defaultOffset - (offset), 60)
-        categoryTopConstraint?.update(offset: newTopOffset)
     }
 }

@@ -7,38 +7,43 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-final class RecentView: UIView {
+final class RecentView: BaseView {
     private let stackView = UIStackView()
     private let titleButton = UIButton()
     private let removeButton = UIButton()
     
     var titleTapped: ((String)->Void)?
     var removeTapped: ((String)->Void)?
+    
+    private var disposeBag = DisposeBag()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureView()
     }
     
-    required init(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    override func setBindView() {
+        titleButton.rx.tap
+            .bind(with: self) { owner, _ in
+                guard let title = owner.titleButton.currentTitle else { return }
+                owner.titleTapped?(title)
+            }.disposed(by: disposeBag)
+        
+        removeButton.rx.tap
+            .bind(with: self) { owner, _ in
+                guard let title = owner.titleButton.currentTitle else { return }
+                owner.removeTapped?(title)
+            }.disposed(by: disposeBag)
     }
     
-    func configure(_ title: String) {
-        titleButton.setTitle(title, for: .normal)
-    }
-}
-
-extension RecentView {
-    
-    private func configureHierarchy() {
-        self.stackView.addArrangedSubview(titleButton)
-        self.stackView.addArrangedSubview(removeButton)
+    override func configureHierarchy() {
+        [titleButton, removeButton].forEach({ self.addSubview($0) })
         self.addSubview(stackView)
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         stackView.snp.makeConstraints { make in
             make.height.equalToSuperview()
             make.horizontalEdges.equalToSuperview().inset(8)
@@ -46,7 +51,7 @@ extension RecentView {
         
     }
     
-    private func configureView() {
+    override func configureView() {
         self.clipsToBounds = true
         self.layer.cornerRadius = 15
         self.backgroundColor = .customLightGray
@@ -57,29 +62,12 @@ extension RecentView {
         
         titleButton.setTitleColor(.customBlack, for: .normal)
         titleButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
-        titleButton.addTarget(self, action: #selector(recentItemTapped), for: .touchUpInside)
         
         removeButton.tintColor = .customBlack
         removeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
-        removeButton.addTarget(self, action: #selector(removeItemTapped), for: .touchUpInside)
-        configureHierarchy()
     }
     
-}
-
-extension RecentView {
-    
-    @objc
-    private func recentItemTapped(_ sender: UIButton) {
-        print(#function)
-        guard let title = sender.currentTitle else { return }
-        titleTapped?(title)
-    }
-    
-    @objc
-    private func removeItemTapped(_ sender: UIButton) {
-        print(#function)
-        guard let title = titleButton.currentTitle else { return }
-        removeTapped?(title)
+    func configure(_ title: String) {
+        titleButton.setTitle(title, for: .normal)
     }
 }

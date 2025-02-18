@@ -9,8 +9,7 @@ import UIKit
 import Kingfisher
 import SnapKit
 
-final class MainHeaderCell: UICollectionViewCell {
-    static let id: String = "MainHeaderCell"
+final class MainHeaderCell: BaseCollectionViewCell, ReusableIdentifier {
     private let imageView = UIImageView()
     private let titleLabel = UILabel()
     private let genreLabel = UILabel()
@@ -19,11 +18,6 @@ final class MainHeaderCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureView()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override func prepareForReuse() {
@@ -55,18 +49,13 @@ final class MainHeaderCell: UICollectionViewCell {
         rankLabel.text = "\(rank)"
     }
     
-}
-
-extension MainHeaderCell {
-    
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         [imageView, rankLabel, titleLabel, genreLabel].forEach({
             self.addSubview($0)
         })
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         imageView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.centerX.equalToSuperview().offset(8)
@@ -91,7 +80,7 @@ extension MainHeaderCell {
         }
     }
     
-    private func configureView() {
+    override func configureView() {
         imageView.clipsToBounds = false
         imageView.layer.cornerRadius = 15
         imageView.contentMode = .scaleToFill
@@ -117,7 +106,6 @@ extension MainHeaderCell {
             $0.layer.shadowColor = UIColor.black.cgColor
             $0.layer.shadowOffset = CGSize(width: 0, height: 2)
         })
-        configureHierarchy()
     }
     
 }

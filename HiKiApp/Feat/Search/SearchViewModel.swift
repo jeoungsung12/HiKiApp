@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 final class SearchViewModel: BaseViewModel {
-    private let db = DataBase.shared
+    private(set) var db = DataBase.shared
     private var searchText: String = ""
     private var disposeBag = DisposeBag()
     
@@ -85,8 +85,8 @@ extension SearchViewModel {
     
     private func saveData(_ text: String) {
         //TODO: Property Wrapper
-//        self.db.removeRecentSearch(text)
-//        self.db.recentSearch.append(text)
+        self.db.removeRecentSearch(text)
+        self.db.recentSearch.append(text)
     }
     
     private func checkPhase(_ data: [AnimateData] ,_ output: Output) {

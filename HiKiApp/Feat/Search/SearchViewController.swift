@@ -43,7 +43,6 @@ class SearchViewController: BaseViewController {
     
     override func setBinding() {
         let outputResult = viewModel.transform(inputTirgger)
-        //TODO: 처음에 보여주는거? 없애기!
         outputResult.searchPage
             .bind(with: self, onNext: { owner, page in
                 if let text = owner.searchBar.text {
@@ -141,8 +140,7 @@ class SearchViewController: BaseViewController {
         resultLabel.textAlignment = .center
         resultLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         
-        //TODO: 최근검색어 - 전체 삭제 버튼 설정
-//        recentView.configure(viewModel.)
+        recentView.configure(viewModel.db.recentSearch)
         tapGesture.cancelsTouchesInView = false
         
         setTableView()

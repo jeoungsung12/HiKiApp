@@ -1,13 +1,13 @@
 //
-//  BaseView.swift
+//  BaseCollectionViewCell.swift
 //  HiKiApp
 //
-//  Created by 정성윤 on 2/17/25.
+//  Created by 정성윤 on 2/19/25.
 //
 
 import UIKit
 
-class BaseView: UIView {
+class BaseCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -21,9 +21,7 @@ class BaseView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureView() {}
-    func configureHierarchy() {}
-    func configureLayout() {}
-    func setBindView() {}
-    func setBinding() {}
+    func configureView() { }
+    func configureHierarchy() { }
+    func configureLayout() { }
 }

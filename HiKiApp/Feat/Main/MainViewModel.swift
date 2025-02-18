@@ -6,43 +6,37 @@
 //
 
 import Foundation
-
-final class MainViewModel: ViewModelType {
-    
-    struct Input {
-        let dataLoadTrigger: CustomObservable<AnimateType>
-    }
-    
-    struct Output {
-        let dataLoadResult: CustomObservable<[[AnimateData]]?> = CustomObservable([])
-    }
-    
-}
+import RxSwift
+import RxCocoa
 
 struct SectionItem {
     var section: [HomeSection]
     var item: [[HomeItem]]
 }
 
+final class MainViewModel: BaseViewModel {
+    private var disposeBag = DisposeBag()
+    struct Input {
+        let dataLoadTrigger: BehaviorRelay<AnimateType>
+    }
+    
+    struct Output {
+        let dataLoadResult: BehaviorRelay<[[AnimateData]]?> = BehaviorRelay(value: [])
+    }
+    
+}
+
 extension MainViewModel {
     
-    func transform(input: Input) -> Output {
+    func transform(_ input: Input) -> Output {
         let output = Output()
         var resultData: [[AnimateData]]? = []
-        input.dataLoadTrigger.bind { [weak self] type in
-            let group = DispatchGroup()
-            group.enter()
-            self?.fetchData(type: type, page: 1, rating: "g", group: group) { result in
-                switch result {
-                case .success(let success):
-                    resultData?.append(success)
-                case .failure:
-                    resultData = nil
-                }
-            }
-            if !(type == .upcoming) {
+        input.dataLoadTrigger
+            .bind(with: self, onNext: { owner, type in
+                let group = DispatchGroup()
                 group.enter()
-                self?.fetchData(type: type, page: 2, rating: "g", group: group) { result in
+                //TODO: Swift Concurrency
+                owner.fetchData(type: type, page: 1, rating: "g", group: group) { result in
                     switch result {
                     case .success(let success):
                         resultData?.append(success)
@@ -50,20 +44,30 @@ extension MainViewModel {
                         resultData = nil
                     }
                 }
-                group.enter()
-                self?.fetchData(type: type, page: 3, rating: "g", group: group) { result in
-                    switch result {
-                    case .success(let success):
-                        resultData?.append(success)
-                    case .failure:
-                        resultData = nil
+                if !(type == .upcoming) {
+                    group.enter()
+                    owner.fetchData(type: type, page: 2, rating: "g", group: group) { result in
+                        switch result {
+                        case .success(let success):
+                            resultData?.append(success)
+                        case .failure:
+                            resultData = nil
+                        }
+                    }
+                    group.enter()
+                    owner.fetchData(type: type, page: 3, rating: "g", group: group) { result in
+                        switch result {
+                        case .success(let success):
+                            resultData?.append(success)
+                        case .failure:
+                            resultData = nil
+                        }
                     }
                 }
-            }
-            group.notify(queue: .global()) {
-                output.dataLoadResult.value = resultData
-            }
-        }
+                group.notify(queue: .global()) {
+                    output.dataLoadResult.accept(resultData)
+                }
+            }).disposed(by: disposeBag)
         
         return output
     }
