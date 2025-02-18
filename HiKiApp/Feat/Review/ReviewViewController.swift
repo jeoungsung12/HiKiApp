@@ -43,8 +43,9 @@ final class ReviewViewController: BaseViewController {
         
         tableView.rx.prefetchRows
             .subscribe(with: self) { owner, indexPaths in
-                if let indexPath = indexPaths.last,
-                   outputResult.reviewResult.value.count - 2 < indexPath.row {
+                let lastIndex = indexPaths.map { $0.row }.max() ?? 1
+                if outputResult.reviewResult.value.count - 2 < lastIndex {
+                    print(lastIndex)
                     owner.loadingIndicator.startAnimating()
                     owner.viewModel.checkPaging(owner.inputTrigger, outputResult)
                 }

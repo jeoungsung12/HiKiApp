@@ -48,7 +48,7 @@ extension ReviewViewModel {
                     switch data {
                     case let .success(data):
                         owner.checkPhase(data, output)
-                        output.reviewResult.accept(data)
+                        output.reviewResult.accept(output.reviewResult.value + data)
                     case .failure:
                         output.phaseResult.onNext(.endPage)
                     }
@@ -78,7 +78,7 @@ extension ReviewViewModel {
         switch result {
         case .success:
             let page = output.reviewPage.value
-            output.reviewPage.accept(page)
+            output.reviewPage.accept(page + 1)
         default:
             output.phaseResult.onNext(.notRequest)
         }
