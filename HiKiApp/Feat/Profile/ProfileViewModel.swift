@@ -38,7 +38,7 @@ final class ProfileViewModel: BaseViewModel {
     }
     
     struct Input {
-        let configureViewTrigger: PublishSubject<Void>
+        let configureViewTrigger: Observable<Void>
         let nameTextFieldTrigger: PublishSubject<String?>
         let successButtonTrigger: PublishSubject<ProfileSuccessButtonRequest>
         let buttonEnabledTrigger: PublishSubject<ProfileSuccessButtonRequest>
@@ -48,8 +48,8 @@ final class ProfileViewModel: BaseViewModel {
         let buttonEnabledResult: PublishSubject<Bool?> = PublishSubject()
         let successButtonResult: PublishSubject<Bool?> = PublishSubject()
         let nameTextFieldResult: PublishSubject<String?> = PublishSubject()
-        //TODO: ProfileViewResult
-        let configureViewResult: PublishSubject<[String?]> = PublishSubject()
+        //TODO: ProfileViewResult - Object
+        let configureViewResult: BehaviorSubject<[String?]> = BehaviorSubject(value: [])
     }
     
     init() {

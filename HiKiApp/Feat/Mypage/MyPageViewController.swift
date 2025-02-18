@@ -7,8 +7,10 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-final class MyPageViewController: UIViewController {
+final class MyPageViewController: BaseViewController {
     private let myProfileView = MyProfileView()
     private let buttonStackView = UIStackView()
     private let categoryStackView = UIStackView()
@@ -22,12 +24,10 @@ final class MyPageViewController: UIViewController {
         profileTrigger: CustomObservable(()),
         categoryBtnTrigger: CustomObservable(nil)
     )
-    private lazy var output = viewModel.transform(input: inputTrigger)
+    private lazy var output = viewModel.transform(inputTrigger)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureView()
-        setBinding()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -35,7 +35,13 @@ final class MyPageViewController: UIViewController {
         inputTrigger.profileTrigger.value = ()
     }
     
-    private func setBinding() {
+    override func setBindView() {
+        
+            
+            
+    }
+    
+    override func setBinding() {
         output.profileResult.bind { [weak self] userInfo in
             if let userInfo = userInfo {
                 self?.myProfileView.configure(userInfo)
@@ -56,21 +62,16 @@ final class MyPageViewController: UIViewController {
         }
     }
     
-}
-
-extension MyPageViewController {
-    
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         [aniBoxButton, teaserBoxButton, changeProfileButton].forEach({
             self.categoryStackView.addArrangedSubview($0)
         })
         [myProfileView, categoryStackView, buttonStackView, countLabel].forEach({
             self.view.addSubview($0)
         })
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         
         myProfileView.snp.makeConstraints { make in            make.height.equalTo(230)
             make.top.equalTo(self.view.safeAreaLayoutGuide)
@@ -98,7 +99,7 @@ extension MyPageViewController {
         
     }
     
-    private func configureView() {
+    override func configureView() {
         self.setNavigation("프로필")
         self.view.backgroundColor = .customWhite
         
@@ -125,13 +126,16 @@ extension MyPageViewController {
         countLabel.layer.cornerRadius = 5
         countLabel.textAlignment = .center
         countLabel.backgroundColor = .point
-        //TODO: 갯수 대응
+        //TODO: 갯수 대응 - 최대 저장 갯수
         countLabel.text = viewModel.getUserInfo() + "개 보관중"
         countLabel.font = .systemFont(ofSize: 12, weight: .heavy)
         
         configureButtonStack()
-        configureHierarchy()
     }
+    
+}
+
+extension MyPageViewController {
     
     private func configureButtonStack() {
         buttonStackView.spacing = 30

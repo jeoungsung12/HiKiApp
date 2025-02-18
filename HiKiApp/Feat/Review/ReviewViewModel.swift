@@ -6,8 +6,11 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
-final class ReviewViewModel: ViewModelType {
+final class ReviewViewModel: BaseViewModel {
+    private var disposeBag = DisposeBag()
     
     enum ReviewPhase {
         case notRequest
@@ -16,13 +19,13 @@ final class ReviewViewModel: ViewModelType {
     }
     
     struct Input {
-        let reviewTrigger: CustomObservable<Int>
+        let reviewTrigger: PublishSubject<Int>
     }
     
     struct Output {
-        let reviewPage: CustomObservable<Int> = CustomObservable(1)
-        let reviewResult: CustomObservable<[ReviewData]> = CustomObservable([])
-        let phaseResult: CustomObservable<ReviewPhase> = CustomObservable(.notRequest)
+        let reviewPage: BehaviorRelay<Int> = BehaviorRelay(value: 1)
+        let reviewResult: BehaviorRelay<[ReviewData]> = BehaviorRelay(value: [])
+        let phaseResult: BehaviorSubject<ReviewPhase> = BehaviorSubject(value: .notRequest)
     }
     
     init() {
@@ -36,29 +39,31 @@ final class ReviewViewModel: ViewModelType {
 
 extension ReviewViewModel {
     
-    func transform(input: Input) -> Output {
+    func transform(_ input: Input) -> Output {
         let output = Output()
         
-        input.reviewTrigger.bind { [weak self] page in
-            self?.fetchData(page) { [weak self] data in
-                switch data {
-                case let .success(data):
-                    self?.checkPhase(data, output)
-                    output.reviewResult.value.append(contentsOf: data)
-                case .failure:
-                    output.phaseResult.value = .endPage
+        input.reviewTrigger
+            .bind(with: self, onNext: { owner, page in
+                owner.fetchData(page) { data in
+                    switch data {
+                    case let .success(data):
+                        owner.checkPhase(data, output)
+                        output.reviewResult.accept(data)
+                    case .failure:
+                        output.phaseResult.onNext(.endPage)
+                    }
                 }
-            }
-        }
+            })
+            .disposed(by: disposeBag)
         
         return output
     }
     
     private func checkPhase(_ data: [ReviewData] ,_ output: Output) {
         if (data.isEmpty) {
-            output.phaseResult.value = .endPage
+            output.phaseResult.onNext(.endPage)
         } else {
-            output.phaseResult.value = .success
+            output.phaseResult.onNext(.success)
         }
     }
     
@@ -69,11 +74,13 @@ extension ReviewViewModel {
     }
     
     func checkPaging(_ input: Input,_ output: Output) {
-        switch output.phaseResult.value {
+        let result = try? output.phaseResult.value()
+        switch result {
         case .success:
-            output.reviewPage.value += 1
+            let page = output.reviewPage.value
+            output.reviewPage.accept(page)
         default:
-            output.phaseResult.value = .notRequest
+            output.phaseResult.onNext(.notRequest)
         }
     }
     

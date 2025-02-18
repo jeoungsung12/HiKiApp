@@ -20,7 +20,7 @@ final class ProfileViewController: BaseViewController {
     
     private let viewModel = ProfileViewModel()
     private var inputTrigger = ProfileViewModel.Input(
-        configureViewTrigger: PublishSubject<Void>(),
+        configureViewTrigger: Observable.just(()),
         nameTextFieldTrigger: PublishSubject<String?>(),
         successButtonTrigger: PublishSubject<ProfileSuccessButtonRequest>(),
         buttonEnabledTrigger: PublishSubject<ProfileSuccessButtonRequest>()
@@ -97,7 +97,7 @@ final class ProfileViewController: BaseViewController {
                 owner.successButton.backgroundColor = (valid) ? .point : .customDarkGray
             }).disposed(by: disposeBag)
         
-        inputTrigger.configureViewTrigger.onNext(())
+//        inputTrigger.configureViewTrigger.onNext(())
     }
     
     override func configureHierarchy() {

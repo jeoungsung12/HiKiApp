@@ -10,8 +10,11 @@ import Kingfisher
 import SnapKit
 import Cosmos
 
-class ReviewTableViewCell: UITableViewCell {
-    static let id: String = "ReviewTableViewCell"
+protocol ReviewHeightDelegate: AnyObject {
+    func reloadCellHeight()
+}
+
+class ReviewTableViewCell: BaseTableViewCell, ReusableIdentifier {
     private let profileImageView = UIImageView()
     private let nameLabel = UILabel()
     private let dateLabel = UILabel()
@@ -24,12 +27,12 @@ class ReviewTableViewCell: UITableViewCell {
     private let reviewLabel = UILabel()
     private let moreButton = UIButton()
     
-    var reloadCell: (()->Void)?
+    weak var heightDeleate: ReviewHeightDelegate?
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         self.contentView.isUserInteractionEnabled = false
-        configureView()
     }
     
     override var isSelected: Bool {
@@ -38,36 +41,13 @@ class ReviewTableViewCell: UITableViewCell {
         }
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func configure(_ data: ReviewData) {
-        reviewLabel.text = data.review
-        titleLabel.text = data.entry.title
-        nameLabel.text = data.user.username
-        dateLabel.text = .stringToDate(data.date)
-        spoilerLabel.text = (data.is_spoiler) ? "스포일러 주의!" : nil
-        spoilerLabel.textColor = (data.is_spoiler) ? .systemRed.withAlphaComponent(0.7) : .white
-        cosmosView.rating = Double(data.score)
-        
-        if let url = URL(string: data.entry.images.jpg.image_url) {
-            posterImageView.kf.setImage(with: url)
-        }
-    }
-    
-}
-
-extension ReviewTableViewCell {
-    
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         [profileImageView, nameLabel, dateLabel, titleLabel, cosmosView, spoilerLabel, posterImageView, reviewLabel, moreButton].forEach({
             self.addSubview($0)
         })
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         
         profileImageView.snp.makeConstraints { make in
             make.size.equalTo(48)
@@ -126,7 +106,7 @@ extension ReviewTableViewCell {
         
     }
     
-    private func configureView() {
+    override func configureView() {
         self.backgroundColor = .white
         //TODO: Opt
         [nameLabel, titleLabel].forEach({
@@ -168,15 +148,32 @@ extension ReviewTableViewCell {
         cosmosView.settings.filledColor = .systemYellow
         
         spoilerLabel.font = .boldSystemFont(ofSize: 13)
-        
-        configureHierarchy()
     }
     
+    func configure(_ data: ReviewData) {
+        reviewLabel.text = data.review
+        titleLabel.text = data.entry.title
+        nameLabel.text = data.user.username
+        dateLabel.text = .stringToDate(data.date)
+        spoilerLabel.text = (data.is_spoiler) ? "스포일러 주의!" : nil
+        spoilerLabel.textColor = (data.is_spoiler) ? .systemRed.withAlphaComponent(0.7) : .white
+        cosmosView.rating = Double(data.score)
+        
+        if let url = URL(string: data.entry.images.jpg.image_url) {
+            posterImageView.kf.setImage(with: url)
+        }
+    }
+    
+}
+
+extension ReviewTableViewCell {
+    
+    //TODO: ViewModel
     @objc
     private func moreButtonTapped(_ sender: UIButton) {
         print(#function)
         isSelected.toggle()
-        reloadCell?()
+        heightDeleate?.reloadCellHeight()
     }
     
 }

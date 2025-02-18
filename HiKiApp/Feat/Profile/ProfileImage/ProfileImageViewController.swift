@@ -38,7 +38,6 @@ final class ProfileImageViewController: BaseViewController {
         
         output.backButtonResult
             .bind(with: self, onNext: { owner, _ in
-                print(owner)
                 owner.profileDelegate?.returnImage(owner.profileButton.profileImage.image)
             }).disposed(by: disposeBag)
     }
@@ -94,12 +93,12 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.profileData.count
+        return ProfileData.allCases.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProfileImageCollectionViewCell.id, for: indexPath) as? ProfileImageCollectionViewCell else { return UICollectionViewCell() }
-        let image = UIImage(named: viewModel.profileData[indexPath.row].rawValue)
+        let image = UIImage(named: ProfileData.allCases[indexPath.row].rawValue)
         cell.configure(image)
         cell.profileButton.containerView.isHidden = true
         return cell

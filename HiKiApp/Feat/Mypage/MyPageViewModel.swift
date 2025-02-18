@@ -6,9 +6,12 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
-final class MyPageViewModel: ViewModelType {
+final class MyPageViewModel: BaseViewModel {
     private let db = DataBase.shared
+    private(set) var profileData = ProfileData.allCases
     
     enum MyPageCategoryType: String, CaseIterable {
         case aniBox = "애니 보관함"
@@ -55,7 +58,7 @@ final class MyPageViewModel: ViewModelType {
 
 extension MyPageViewModel {
     
-    func transform(input: Input) -> Output {
+    func transform(_ input: Input) -> Output {
         let output = Output()
         
         input.profileTrigger.bind { [weak self] _ in
