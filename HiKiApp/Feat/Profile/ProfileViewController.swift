@@ -32,6 +32,11 @@ final class ProfileViewController: BaseViewController {
         super.viewDidLoad()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        nameTextField.becomeFirstResponder()
+    }
+    
     override func setBindView() {
         successButton.rx.tap
             .bind(with: self) { owner, _ in

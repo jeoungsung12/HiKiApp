@@ -8,52 +8,58 @@
 import UIKit
 import SnapKit
 import NVActivityIndicatorView
+import RxSwift
+import RxCocoa
 
-final class TeaserViewController: UIViewController {
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout())
+final class TeaserViewController: BaseViewController {
     private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout())
     
     private let viewModel = TeaserViewModel()
-    private let inputTrigger = TeaserViewModel.Input(dataTrigger: CustomObservable(1))
-    private lazy var outputResult = viewModel.transform(input: inputTrigger)
+    private let inputTrigger = TeaserViewModel.Input(dataTrigger: BehaviorRelay(value: 1))
+    private var disposeBag = DisposeBag()
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureView()
-        setBinding()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isHidden = true
-        self.tabBarController?.tabBar.backgroundColor = .black
         
-//        self.inputTrigger.dataTrigger.value = Int.random(in: 1...3)
     }
     
-    private func setBinding() {
-        outputResult.dataResult.bind { [weak self] data in
-            DispatchQueue.main.async {
-                if data != nil {
-                    self?.collectionView.reloadData()
-                } else {
-//                    self?.inputTrigger.dataTrigger.value += 1
-                }
-                self?.loadingIndicator.stopAnimating()
-            }
-        }
+    override func setBindView() {
+        collectionView.rx.willDisplayCell
+            .bind(with: self) { owner, value in
+                guard let cell = value.cell as? TeaserCollectionViewCell else { return }
+                cell.playVideoIfNeeded()
+            }.disposed(by: disposeBag)
+        
+        collectionView.rx.didEndDisplayingCell
+            .bind(with: self) { owner, value in
+                guard let cell = value.cell as? TeaserCollectionViewCell else { return }
+                cell.stopVideo()
+            }.disposed(by: disposeBag)
     }
-}
-
-extension TeaserViewController {
     
-    private func configureHierarchy() {
+    override func setBinding() {
+        let outputResult = viewModel.transform(inputTrigger)
+        outputResult.dataResult
+            .bind(to: collectionView.rx.items(cellIdentifier: TeaserCollectionViewCell.id, cellType: TeaserCollectionViewCell.self)) { row, element, cell in
+                cell.configure(element)
+                self.loadingIndicator.stopAnimating()
+            }.disposed(by: disposeBag)
+        
+        //TODO: Paging
+    }
+    
+    override func configureHierarchy() {
+        setNavigation("티저 모아보기")
         [collectionView, loadingIndicator].forEach({
             self.view.addSubview($0)
         })
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -65,68 +71,53 @@ extension TeaserViewController {
         loadingIndicator.startAnimating()
     }
     
-    private func configureView() {
+    override func configureView() {
         self.view.backgroundColor = .black
-       
         configureCollectionView()
-        configureHierarchy()
     }
+    
+    deinit {
+        print(#function, self)
+    }
+    
 }
 
-extension TeaserViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDataSourcePrefetching {
+
+extension TeaserViewController {
     
     private func configureCollectionView() {
-        collectionView.delegate = self
-        collectionView.dataSource = self
         collectionView.isPagingEnabled = true
-        collectionView.backgroundColor = .black
-        collectionView.prefetchDataSource = self
+        collectionView.backgroundColor = .white
         collectionView.showsVerticalScrollIndicator = false
         collectionView.register(TeaserCollectionViewCell.self, forCellWithReuseIdentifier: TeaserCollectionViewCell.id)
     }
     
     private func createLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing = 0
-        layout.minimumInteritemSpacing = 0
-        layout.scrollDirection = .vertical
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.itemSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        return layout
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if let data = outputResult.dataResult.value {
-            return data.count
-        } else {
-            return 0
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TeaserCollectionViewCell.id, for: indexPath) as? TeaserCollectionViewCell else { return UICollectionViewCell() }
-        if let data = outputResult.dataResult.value {
-            let videoData = data.filter({ ($0.trailer.embed_url != nil) })
-            cell.configure(videoData[indexPath.row])
-        }
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        (cell as? TeaserCollectionViewCell)?.playVideoIfNeeded()
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        (cell as? TeaserCollectionViewCell)?.stopVideo()
-    }
-    
-    
-    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        //TODO: - 페이징 처리
-        if let data = outputResult.dataResult.value, let last = indexPaths.last, last.row <= data.count - 2 {
-            print(#function, indexPaths)
-//            inputTrigger.dataTrigger.value += 1
-        }
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0)
+        )
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let width = UIScreen.main.bounds.width - 48
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(width),
+            heightDimension: .absolute(width * 1.5)
+        )
+        let group = NSCollectionLayoutGroup.horizontal (
+            layoutSize: groupSize,
+            subitems: [item]
+        )
+        let section = NSCollectionLayoutSection(group: group)
+        section.orthogonalScrollingBehavior = .groupPagingCentered
+        section.interGroupSpacing = 4
+        section.contentInsets = NSDirectionalEdgeInsets(
+            top: 0,
+            leading: 24,
+            bottom: 0,
+            trailing: 24
+        )
+        
+        return UICollectionViewCompositionalLayout(section: section)
     }
     
 }

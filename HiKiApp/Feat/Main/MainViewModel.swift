@@ -21,7 +21,7 @@ final class MainViewModel: BaseViewModel {
     }
     
     struct Output {
-        let dataLoadResult: BehaviorRelay<[[AnimateData]]?> = BehaviorRelay(value: [])
+        let dataLoadResult: BehaviorRelay<[[AnimateData]]?> = BehaviorRelay(value: nil)
     }
     
 }

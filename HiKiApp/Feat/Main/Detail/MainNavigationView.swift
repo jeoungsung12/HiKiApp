@@ -9,28 +9,19 @@ import UIKit
 import SnapKit
 import Lottie
 
-final class MainNavigationView: UIView {
+final class MainNavigationView: BaseView {
     private let logoImageView = UIImageView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureView()
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-}
-
-extension MainNavigationView {
-    
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         self.addSubview(logoImageView)
         configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         logoImageView.snp.makeConstraints { make in
             make.height.equalTo(40)
             make.width.equalTo(80)
@@ -38,10 +29,9 @@ extension MainNavigationView {
         }
     }
     
-    private func configureView() {
+    override func configureView() {
         logoImageView.image = UIImage(named: "logo")
         logoImageView.contentMode = .scaleAspectFit
         configureHierarchy()
     }
-    
 }

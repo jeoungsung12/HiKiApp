@@ -40,8 +40,10 @@ final class MainViewController: BaseViewController {
             .bind(with: self) { owner, _ in
                 let defaultOffset = owner.view.safeAreaInsets.top
                 let scrollOffset = owner.collectionView.contentOffset.y
-                owner.navigationController?.navigationBar.transform =
-                    .init(translationX: 0, y: -scrollOffset)
+                UIView.animate(withDuration: 0.5) {
+                    owner.navigationController?.navigationBar.transform =
+                        .init(translationX: 0, y: -scrollOffset)
+                }
                 let newTopOffset = max(defaultOffset - scrollOffset, 60)
                 owner.categoryTopConstraint?.update(offset: newTopOffset)
             }
@@ -50,16 +52,13 @@ final class MainViewController: BaseViewController {
     
     override func setBinding() {
         let outputResult = viewModel.transform(inputTrigger)
-        loadingIndicator.startAnimating()
+        
         outputResult.dataLoadResult
             .bind(with: self) { owner, data in
                 DispatchQueue.main.async {
-                    if let animateData = data {
-                        owner.setSnapShot(owner.viewModel.setData(animateData))
-                        owner.category.isUserInteractionEnabled = true
-                    } else {
-                        owner.errorPresent(.notFount)
-                    }
+                    guard let data = data else { return }
+                    owner.setSnapShot(owner.viewModel.setData(data))
+                    owner.category.isUserInteractionEnabled = true
                 }
             }.disposed(by: disposeBag)
     }
@@ -93,7 +92,7 @@ final class MainViewController: BaseViewController {
         self.setNavigation()
         self.view.backgroundColor = .white
         self.navigationItem.leftBarButtonItem = leftLogo
-
+        loadingIndicator.startAnimating()
         configureCollectionView()
     }
     
@@ -152,7 +151,7 @@ extension MainViewController {
             if section == .header {
                 return (self?.createLayout(width: 0.85, height: (width * 0.85), spacing: -44, .groupPagingCentered))
             } else if section == .semiHeader(title: HomeSection.semiHeader(title: "").title) {
-                return (self?.createLayout(width: 0.4, height: (width * 0.4) * 1.7, .continuous))
+                return (self?.createLayout(width: 0.4, height: (width * 0.4) * 1.6, .continuous))
             } else {
                 return (self?.createLayout(width: 0.3, height: (width * 0.3) * 1.7, .continuous))
             }

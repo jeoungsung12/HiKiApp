@@ -6,35 +6,48 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
-final class TeaserViewModel: ViewModelType {
+final class TeaserViewModel: BaseViewModel {
     private var videosData: [AnimateData] = []
+    private var disposeBag = DisposeBag()
     struct Input {
-        let dataTrigger: CustomObservable<Int>
+        let dataTrigger: BehaviorRelay<Int>
     }
     
     struct Output {
-        let dataResult: CustomObservable<[AnimateData]?> = CustomObservable(nil)
+        let pageResult: BehaviorRelay<Int> = BehaviorRelay(value: 1)
+        let dataResult: BehaviorRelay<[AnimateData]> = BehaviorRelay(value: [])
+    }
+    
+    init() {
+        print(#function, self)
+    }
+    
+    deinit {
+        print(#function, self)
     }
     
 }
 
 extension TeaserViewModel {
     
-    func transform(input: Input) -> Output {
+    func transform(_ input: Input) -> Output {
         let output = Output()
         
-        input.dataTrigger.bind { [weak self] page in
-            self?.fetchData(page) { result in
-                switch result {
-                case let .success(data):
-                    self?.videosData.append(contentsOf: data)
-                    output.dataResult.value = self?.videosData
-                case .failure:
-                    output.dataResult.value = nil
+        input.dataTrigger
+            .bind(with: self, onNext: { owner, page in
+                owner.fetchData(page) { result in
+                    switch result {
+                    case let .success(data):
+                        owner.videosData.append(contentsOf: data)
+                        output.dataResult.accept(owner.videosData)
+                    case .failure:
+                        output.dataResult.accept([])
+                    }
                 }
-            }
-        }
+            }).disposed(by: disposeBag)
         
         return output
     }

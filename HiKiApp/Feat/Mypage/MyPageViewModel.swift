@@ -12,6 +12,7 @@ import RxCocoa
 final class MyPageViewModel: BaseViewModel {
     private let db = DataBase.shared
     private(set) var profileData = ProfileData.allCases
+    private var disposeBag = DisposeBag()
     
     enum MyPageCategoryType: String, CaseIterable {
         case aniBox = "애니 보관함"
@@ -37,13 +38,14 @@ final class MyPageViewModel: BaseViewModel {
     }
     
     struct Input {
-        let profileTrigger: CustomObservable<Void>
-        let categoryBtnTrigger: CustomObservable<MyPageCategoryType?>
+        let listBtnTrigger: PublishRelay<MyPageButtonType>
+        let categoryBtnTrigger: PublishRelay<MyPageCategoryType>
     }
     
     struct Output {
-        let profileResult: CustomObservable<UserInfo?> = CustomObservable(nil)
-        let categoryBtnResult: CustomObservable<MyPageCategoryType?> = CustomObservable(nil)
+        let profileResult: BehaviorRelay<UserInfo>
+        let listBtnResult: PublishRelay<MyPageButtonType>
+        let categoryBtnResult: PublishRelay<MyPageCategoryType>
     }
 
     init() {
@@ -59,18 +61,22 @@ final class MyPageViewModel: BaseViewModel {
 extension MyPageViewModel {
     
     func transform(_ input: Input) -> Output {
-        let output = Output()
+        let categoryType = PublishRelay<MyPageCategoryType>()
+        input.categoryBtnTrigger
+            .bind { value in
+                categoryType.accept(value)
+            }.disposed(by: disposeBag)
         
-        input.profileTrigger.bind { [weak self] _ in
-            output.profileResult.value = self?.db.getUser()
-        }
+        let btnType = PublishRelay<MyPageButtonType>()
+        input.listBtnTrigger
+            .bind { value in
+                btnType.accept(value)
+            }.disposed(by: disposeBag)
         
-        input.categoryBtnTrigger.lazyBind { type in
-            guard let type = type else { return }
-            output.categoryBtnResult.value = type
-        }
-        
-        return output
+        return Output(
+            profileResult: BehaviorRelay(value: db.getUser()),
+            listBtnResult: btnType,
+            categoryBtnResult: categoryType)
     }
     
     func removeUserInfo() {

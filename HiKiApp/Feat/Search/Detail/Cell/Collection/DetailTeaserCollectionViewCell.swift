@@ -36,11 +36,7 @@ final class DetailTeaserCollectionViewCell: UICollectionViewCell {
         playerHostingView.removeFromSuperview()
         playerHostingView = YouTubePlayerHostingView(player: player!)
         playerHostingView.isUserInteractionEnabled = true
-        //TODO: Optional
-//        if let url = URL(string: video.images?.jpg.image_url ?? "") {
-//            posterImageView.kf.setImage(with: url)
-//        }
-//        
+        
         Task {
             try await playerHostingView.player.pause()
         }
