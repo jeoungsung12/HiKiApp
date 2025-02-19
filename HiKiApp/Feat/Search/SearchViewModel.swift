@@ -85,7 +85,6 @@ extension SearchViewModel {
     
     private func saveData(_ text: String) {
         //TODO: Property Wrapper
-        self.db.removeRecentSearch(text)
         self.db.recentSearch.append(text)
     }
     
@@ -100,6 +99,7 @@ extension SearchViewModel {
     }
     
     private func fetchData(_ page: Int, completion: @escaping (Result<[AnimateData],NetworkError.CustomError>) -> Void) {
+        print(self.searchText)
         let searchData = SearchRequest(searchPage: page, searchText: self.searchText)
         AnimateServices().searchAnime(searchData) { response in
             completion(response)
@@ -121,10 +121,9 @@ extension SearchViewModel {
         }
     }
     
-    func initData(_ text: String,_ output: Output) {
+    func initData(_ output: Output) {
         output.searchPage.accept(1)
         output.searchResult.accept([])
-        self.searchText = ""
     }
     
     func setSearchText(_ text: String) {

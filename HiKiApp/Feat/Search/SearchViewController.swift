@@ -31,6 +31,7 @@ class SearchViewController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         searchBar.becomeFirstResponder()
+
     }
     
     override func setBindView() {
@@ -55,15 +56,14 @@ class SearchViewController: BaseViewController {
         outputResult.phaseResult
             .bind(with: self, onNext: { owner, phase in
                 owner.resultLabel.text = phase.message
-                owner.recentView.isHidden = (phase == .notRequest) ? false : true
             })
             .disposed(by: disposeBag)
         
         outputResult.searchResult
             .bind(to: tableView.rx.items(cellIdentifier: SearchTableViewCell.id, cellType: SearchTableViewCell.self)) { row, element, cell in
+                self.loadingIndicator.stopAnimating()
                 guard let text = self.searchBar.text else { return }
                 cell.configure(text, element)
-                self.loadingIndicator.stopAnimating()
             }
             .disposed(by: disposeBag)
         
@@ -76,10 +76,14 @@ class SearchViewController: BaseViewController {
             }
             .disposed(by: disposeBag)
         
+        searchBar.rx.text.orEmpty
+            .bind(with: self) { owner, text in
+                owner.viewModel.setSearchText(text)
+            }.disposed(by: disposeBag)
+        
         searchBar.rx.searchButtonClicked
             .bind(with: self) { owner, text in
-                guard let text = owner.searchBar.text else { return }
-                owner.viewModel.initData(text, outputResult)
+                owner.viewModel.initData(outputResult)
                 owner.loadingIndicator.startAnimating()
             }
             .disposed(by: disposeBag)
@@ -112,9 +116,8 @@ class SearchViewController: BaseViewController {
             make.horizontalEdges.equalToSuperview().inset(12)
         }
         
-        tableView.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom).offset(4)
-            make.horizontalEdges.bottom.equalToSuperview()
+        tableView.snp.makeConstraints { make in            make.horizontalEdges.bottom.equalToSuperview()
+            make.top.equalTo(recentView.snp.bottom).offset(8)
         }
         
         resultLabel.snp.makeConstraints { make in
@@ -152,5 +155,9 @@ class SearchViewController: BaseViewController {
         tableView.keyboardDismissMode = .onDrag
         tableView.showsVerticalScrollIndicator = true
         tableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.id)
+    }
+    
+    deinit {
+        print(#function, self)
     }
 }

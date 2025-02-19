@@ -24,6 +24,14 @@ final class MainViewModel: BaseViewModel {
         let dataLoadResult: BehaviorRelay<[[AnimateData]]?> = BehaviorRelay(value: nil)
     }
     
+    init() {
+        print(#function, self)
+    }
+    
+    deinit {
+        print(#function, self)
+    }
+    
 }
 
 extension MainViewModel {

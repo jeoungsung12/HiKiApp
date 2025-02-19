@@ -151,6 +151,10 @@ final class MyPageViewController: BaseViewController {
         configureButtonStack()
     }
     
+    deinit {
+        print(#function, self)
+    }
+    
 }
 
 extension MyPageViewController {
