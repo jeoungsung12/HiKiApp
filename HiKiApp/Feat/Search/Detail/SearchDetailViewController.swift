@@ -8,7 +8,8 @@
 import UIKit
 import SnapKit
 import NVActivityIndicatorView
-
+import RxSwift
+import RxCocoa
 
 final class SearchDetailViewController: UIViewController {
     private lazy var heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(heartButtonTapped))
@@ -25,7 +26,7 @@ final class SearchDetailViewController: UIViewController {
         detailTrigger: CustomObservable(self.id ?? 1),
         heartBtnTrigger: CustomObservable(())
     )
-    private lazy var outputResult = viewModel.transform(input: inputTrigger)
+    private lazy var outputResult = viewModel.transform(inputTrigger)
 
     override func viewDidLoad() {
         super.viewDidLoad()

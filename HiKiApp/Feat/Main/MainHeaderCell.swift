@@ -51,7 +51,7 @@ final class MainHeaderCell: BaseCollectionViewCell, ReusableIdentifier {
     
     override func configureHierarchy() {
         [imageView, rankLabel, titleLabel, genreLabel].forEach({
-            self.addSubview($0)
+            self.contentView.addSubview($0)
         })
     }
     

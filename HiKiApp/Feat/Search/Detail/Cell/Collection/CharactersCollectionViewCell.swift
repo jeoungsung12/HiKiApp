@@ -41,7 +41,7 @@ extension CharactersCollectionViewCell {
     
     private func configureHierarchy() {
         [imageView, nameLabel].forEach({
-            self.addSubview($0)
+            self.contentView.addSubview($0)
         })
         configureLayout()
     }

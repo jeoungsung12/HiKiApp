@@ -61,7 +61,7 @@ extension DetailTeaserCollectionViewCell {
         playerHostingView.layer.cornerRadius = 15
         
         [playerHostingView, playButton].forEach({
-            self.addSubview($0)
+            self.contentView.addSubview($0)
         })
         configureLayout()
     }

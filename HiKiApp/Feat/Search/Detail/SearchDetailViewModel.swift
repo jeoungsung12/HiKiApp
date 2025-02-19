@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
 struct AnimateDetailData {
     var synopsis: AnimateData?
@@ -13,7 +15,7 @@ struct AnimateDetailData {
     var characters: [CharacterData]?
 }
 
-final class SearchDetailViewModel: ViewModelType {
+final class SearchDetailViewModel: BaseViewModel {
     private let db = DataBase.shared
     
     enum DetailType: CaseIterable {
@@ -44,7 +46,7 @@ final class SearchDetailViewModel: ViewModelType {
 
 extension SearchDetailViewModel {
     
-    func transform(input: Input) -> Output {
+    func transform(_ input: Input) -> Output {
         let output = Output()
         //TODO: Swift Concurency
         input.detailTrigger.bind { id in

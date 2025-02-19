@@ -40,12 +40,12 @@ final class MainViewController: BaseViewController {
             .bind(with: self) { owner, _ in
                 let defaultOffset = owner.view.safeAreaInsets.top
                 let scrollOffset = owner.collectionView.contentOffset.y
+                let newTopOffset = max(defaultOffset - scrollOffset, 60)
                 UIView.animate(withDuration: 0.5) {
                     owner.navigationController?.navigationBar.transform =
                         .init(translationX: 0, y: -scrollOffset)
+                    owner.categoryTopConstraint?.update(offset: newTopOffset)
                 }
-                let newTopOffset = max(defaultOffset - scrollOffset, 60)
-                owner.categoryTopConstraint?.update(offset: newTopOffset)
             }
             .disposed(by: disposeBag)
     }
@@ -132,9 +132,10 @@ extension MainViewController {
 }
 
 //MARK: - CollectionView
-extension MainViewController {
+extension MainViewController: UICollectionViewDelegate {
     
     private func configureCollectionView() {
+        collectionView.delegate = self
         collectionView.backgroundColor = .white
         collectionView.register(MainHeaderCell.self, forCellWithReuseIdentifier: MainHeaderCell.id)
         collectionView.register(MainPosterCell.self, forCellWithReuseIdentifier: MainPosterCell.id)

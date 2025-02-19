@@ -31,7 +31,7 @@ class SearchTableViewCell: BaseTableViewCell, ReusableIdentifier {
     
     override func configureHierarchy() {
         [posterImageView, imageResult, titleLabel, dateLabel, heartButton, genreView].forEach({
-            self.addSubview($0)
+            self.contentView.addSubview($0)
         })
     }
     

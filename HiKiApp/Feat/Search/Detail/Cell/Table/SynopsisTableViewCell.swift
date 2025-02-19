@@ -43,7 +43,7 @@ extension SynopsisTableViewCell {
     
     private func configureHierarchy() {
         [moreButton, titleLabel, synopsisLabel].forEach({
-            self.addSubview($0)
+            self.contentView.addSubview($0)
         })
         configureLayout()
     }

@@ -35,7 +35,7 @@ extension CharactersTableViewCell {
     
     private func configureHierarchy() {
         [titleLabel, collectionView].forEach({
-            self.addSubview($0)
+            self.contentView.addSubview($0)
         })
         configureLayout()
     }

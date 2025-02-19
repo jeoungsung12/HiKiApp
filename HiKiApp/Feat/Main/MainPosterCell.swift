@@ -55,7 +55,7 @@ final class MainPosterCell: BaseCollectionViewCell, ReusableIdentifier {
     
     override func configureHierarchy() {
         [imageView, starLabel, subtitleLabel].forEach({
-            self.addSubview($0)
+            self.contentView.addSubview($0)
         })
     }
     

@@ -43,7 +43,7 @@ class ReviewTableViewCell: BaseTableViewCell, ReusableIdentifier {
     
     override func configureHierarchy() {
         [profileImageView, nameLabel, dateLabel, titleLabel, cosmosView, spoilerLabel, posterImageView, reviewLabel, moreButton].forEach({
-            self.addSubview($0)
+            self.contentView.addSubview($0)
         })
     }
     
