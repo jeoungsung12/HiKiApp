@@ -7,40 +7,43 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-class CharactersTableViewCell: UITableViewCell {
-    static let id: String = "CharactersTableViewCell"
-    private let titleLabel = UILabel()
+final class CharactersTableViewCell: BaseTableViewCell, ReusableIdentifier {
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.setCollectionViewLayout())
+    private let titleLabel = UILabel()
     
-    var charactersData: [CharacterData] = [] {
-        didSet {
-            collectionView.reloadData()
-        }
-    }
+    private let viewModel = CharactersTableViewModel()
+    let input = CharactersTableViewModel.Input(
+        inputTrigger: PublishSubject()
+    )
+    private var disposeBag = DisposeBag()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-        self.contentView.isUserInteractionEnabled = false
-        configureView()
+        self.contentView.isUserInteractionEnabled = true
+        setBinding()
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    private func setBinding() {
+        let output = viewModel.transform(input)
+        
+        output.charactersResult
+            .bind(to: collectionView.rx.items(cellIdentifier: CharactersCollectionViewCell.id, cellType: CharactersCollectionViewCell.self)) { items, element, cell in
+                cell.configure(element.character)
+            }
+            .disposed(by: disposeBag)
     }
-}
-
-extension CharactersTableViewCell {
     
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         [titleLabel, collectionView].forEach({
             self.contentView.addSubview($0)
         })
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         titleLabel.snp.makeConstraints { make in
             make.top.horizontalEdges.equalToSuperview().inset(12)
         }
@@ -53,7 +56,7 @@ extension CharactersTableViewCell {
         }
     }
     
-    private func configureView() {
+    override func configureView() {
         self.backgroundColor = .white
         titleLabel.text = "Characters"
         titleLabel.numberOfLines = 1
@@ -62,16 +65,13 @@ extension CharactersTableViewCell {
         titleLabel.font = .boldSystemFont(ofSize: 20)
         
         configureCollectionView()
-        configureHierarchy()
     }
     
 }
 
-extension CharactersTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
+extension CharactersTableViewCell {
     
     private func configureCollectionView() {
-        collectionView.delegate = self
-        collectionView.dataSource = self
         collectionView.backgroundColor = .white
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.register(CharactersCollectionViewCell.self, forCellWithReuseIdentifier: CharactersCollectionViewCell.id)
@@ -84,15 +84,5 @@ extension CharactersTableViewCell: UICollectionViewDelegate, UICollectionViewDat
         layout.minimumInteritemSpacing = 4
         layout.itemSize = CGSize(width: 100, height: 120)
         return layout
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return charactersData.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CharactersCollectionViewCell.id, for: indexPath) as? CharactersCollectionViewCell else { return UICollectionViewCell() }
-        cell.configure(charactersData[indexPath.row].character)
-        return cell
     }
 }

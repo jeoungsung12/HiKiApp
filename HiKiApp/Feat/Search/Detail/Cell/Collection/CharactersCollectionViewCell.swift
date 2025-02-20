@@ -9,18 +9,12 @@ import UIKit
 import Kingfisher
 import SnapKit
 
-class CharactersCollectionViewCell: UICollectionViewCell {
-    static let id: String = "CharactersCollectionViewCell"
+final class CharactersCollectionViewCell: BaseCollectionViewCell, ReusableIdentifier {
     private let imageView = UIImageView()
     private let nameLabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureView()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override func prepareForReuse() {
@@ -28,25 +22,13 @@ class CharactersCollectionViewCell: UICollectionViewCell {
         imageView.image = nil
     }
     
-    func configure(_ model: CharacterEntry) {
-        nameLabel.text = model.name
-        if let images = model.images, let url = URL(string: images.jpg.image_url) {
-            imageView.kf.setImage(with: url)
-        }
-    }
-    
-}
-
-extension CharactersCollectionViewCell {
-    
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         [imageView, nameLabel].forEach({
             self.contentView.addSubview($0)
         })
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         
         imageView.snp.makeConstraints { make in
             make.size.equalTo(60)
@@ -61,7 +43,7 @@ extension CharactersCollectionViewCell {
         
     }
     
-    private func configureView() {
+    override func configureView() {
         self.backgroundColor = .white
         
         imageView.clipsToBounds = true
@@ -73,8 +55,13 @@ extension CharactersCollectionViewCell {
         nameLabel.textColor = .black
         nameLabel.textAlignment = .center
         nameLabel.font = .boldSystemFont(ofSize: 15)
-        
-        configureHierarchy()
+    }
+    
+    func configure(_ model: CharacterEntry) {
+        nameLabel.text = model.name
+        if let images = model.images, let url = URL(string: images.jpg.image_url) {
+            imageView.kf.setImage(with: url)
+        }
     }
     
 }

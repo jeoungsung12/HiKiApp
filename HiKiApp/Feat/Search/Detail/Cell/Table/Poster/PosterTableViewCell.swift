@@ -9,8 +9,7 @@ import UIKit
 import Kingfisher
 import SnapKit
 
-class PosterTableViewCell: UITableViewCell {
-    static let id: String = "PosterTableViewCell"
+final class PosterTableViewCell: BaseTableViewCell, ReusableIdentifier {
     private let posterImageView = UIImageView()
     private let imageShadowView = UIImageView()
     private let titleLabel = UILabel()
@@ -18,33 +17,16 @@ class PosterTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-        self.contentView.isUserInteractionEnabled = false
-        configureView()
+        self.contentView.isUserInteractionEnabled = true
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func configure(title: String?, image: String?) {
-        titleLabel.text = title
-        if let image = image, let url = URL(string: image) {
-            posterImageView.kf.setImage(with: url)
-        }
-    }
-
-}
-
-extension PosterTableViewCell {
-    
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         [posterImageView, imageShadowView, titleLabel].forEach({
             self.contentView.addSubview($0)
         })
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         posterImageView.snp.makeConstraints { make in
             make.height.equalTo(UIScreen.main.bounds.width * 1.2)
             make.edges.equalToSuperview()
@@ -61,7 +43,7 @@ extension PosterTableViewCell {
         }
     }
     
-    private func configureView() {
+    override func configureView() {
         self.backgroundColor = .customBlack
         titleLabel.numberOfLines = 0
         titleLabel.textColor = .white
@@ -73,8 +55,13 @@ extension PosterTableViewCell {
         [posterImageView, imageShadowView].forEach({
             $0.contentMode = .scaleToFill
         })
-        
-        configureHierarchy()
     }
     
+    func configure(title: String?, image: String?) {
+        titleLabel.text = title
+        if let image = image, let url = URL(string: image) {
+            posterImageView.kf.setImage(with: url)
+        }
+    }
+
 }

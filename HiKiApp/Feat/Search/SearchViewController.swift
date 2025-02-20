@@ -90,8 +90,7 @@ class SearchViewController: BaseViewController {
         
         Observable.zip(tableView.rx.itemSelected, tableView.rx.modelSelected(AnimateData.self))
             .bind(with: self) { owner, value in
-                let vc = SearchDetailViewController()
-                vc.id = value.1.mal_id
+                let vc = SearchDetailViewController(viewModel: SearchDetailViewModel(id: value.1.mal_id))
                 owner.push(vc)
             }
             .disposed(by: disposeBag)

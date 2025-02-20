@@ -7,18 +7,28 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-class SynopsisTableViewCell: UITableViewCell {
-    static let id: String = "SynopsisTableViewCell"
+final class SynopsisTableViewCell: BaseTableViewCell, ReusableIdentifier {
     private let titleLabel = UILabel()
     private let synopsisLabel = UILabel()
     private let moreButton = UIButton()
+    private var disposeBag = DisposeBag()
     var reloadCell: (()->Void)?
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-        self.contentView.isUserInteractionEnabled = false
-        configureView()
+        self.contentView.isUserInteractionEnabled = true
+        setBinding()
+    }
+    
+    private func setBinding() {
+        moreButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.isSelected.toggle()
+                owner.reloadCell?()
+            }.disposed(by: disposeBag)
     }
     
     override var isSelected: Bool {
@@ -27,28 +37,13 @@ class SynopsisTableViewCell: UITableViewCell {
         }
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func configure(_ synopsis: String?) {
-        if let synopsis = synopsis {
-            synopsisLabel.text = synopsis
-        }
-    }
-    
-}
-
-extension SynopsisTableViewCell {
-    
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         [moreButton, titleLabel, synopsisLabel].forEach({
             self.contentView.addSubview($0)
         })
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         
         moreButton.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(24)
@@ -68,7 +63,7 @@ extension SynopsisTableViewCell {
         
     }
     
-    private func configureView() {
+    override func configureView() {
         self.backgroundColor = .white
         
         titleLabel.text = "Synopsis"
@@ -80,21 +75,18 @@ extension SynopsisTableViewCell {
         moreButton.setTitle(isSelected ? "숨김" : "더보기", for: .normal)
         moreButton.setTitleColor(.point, for: .normal)
         moreButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
-        moreButton.addTarget(self, action: #selector(moreButtonTapped), for: .touchUpInside)
         
         synopsisLabel.textColor = .darkGray
         synopsisLabel.textAlignment = .left
         synopsisLabel.numberOfLines = (isSelected ? 0 : 3)
         synopsisLabel.font = .systemFont(ofSize: 17, weight: .regular)
         
-        configureHierarchy()
     }
     
-    @objc
-    private func moreButtonTapped(_ sender: UIButton) {
-        print(#function)
-        isSelected.toggle()
-        reloadCell?()
+    func configure(_ synopsis: String?) {
+        if let synopsis = synopsis {
+            synopsisLabel.text = synopsis
+        }
     }
     
 }

@@ -235,8 +235,7 @@ extension MainViewController: UICollectionViewDelegate {
                 .rank(let itemModel),
                 .tvList(let itemModel),
                 .onaList(let itemModel):
-            let vc = SearchDetailViewController()
-            vc.id = itemModel.id
+            let vc = SearchDetailViewController(viewModel: SearchDetailViewModel(id: itemModel.id))
             self.push(vc)
         }
     }
