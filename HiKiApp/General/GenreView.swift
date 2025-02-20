@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class GenreView: UIView {
+final class GenreView: BaseView {
     private let genreStackView = UIStackView()
     private let genreScrollView = UIScrollView()
     private var genreType: GenreLocation = .search
@@ -17,27 +17,18 @@ final class GenreView: UIView {
         super.init(frame: frame)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     func configure(_ type: GenreLocation) {
         genreType = type
         configureView()
 //        configureStackView(model)
     }
     
-}
-
-extension GenreView {
-    
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         genreScrollView.addSubview(genreStackView)
         self.addSubview(genreScrollView)
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         switch genreType {
         case .detail:
             genreStackView.snp.makeConstraints { make in
@@ -56,14 +47,17 @@ extension GenreView {
         }
     }
     
-    private func configureView() {
+    override func configureView() {
         genreStackView.spacing = 8
         genreStackView.axis = .horizontal
         genreStackView.alignment = .center
         genreStackView.distribution = .fill
         genreScrollView.showsHorizontalScrollIndicator = false
-        configureHierarchy()
     }
+    
+}
+
+extension GenreView {
     
     private func configureStackView() {
 //        

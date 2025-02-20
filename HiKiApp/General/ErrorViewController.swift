@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class ErrorViewController: UIViewController {
+class ErrorViewController: BaseViewController {
     private let titleLabel = UILabel()
     private let descriptionLabel = UILabel()
     
@@ -23,21 +23,15 @@ class ErrorViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureView()
     }
-
-}
-
-extension ErrorViewController {
     
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         [titleLabel, descriptionLabel].forEach({
             self.view.addSubview($0)
         })
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         titleLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview().offset(-80)
@@ -50,7 +44,7 @@ extension ErrorViewController {
         }
     }
     
-    private func configureView() {
+    override func configureView() {
         self.view.backgroundColor = .white
         
         titleLabel.numberOfLines = 0
@@ -63,7 +57,5 @@ extension ErrorViewController {
         descriptionLabel.textColor = .lightGray
         descriptionLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         descriptionLabel.text = "서비스 이용에 불편을 드려 죄송합니다.\n잠시 후 다시 시도해 주세요.😢"
-        
-        configureHierarchy()
     }
 }
