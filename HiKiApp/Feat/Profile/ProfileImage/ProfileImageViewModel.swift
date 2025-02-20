@@ -24,7 +24,7 @@ enum ProfileData: String, CaseIterable {
     case profile11 = "profile_11"
 }
 
-final class ProfileImageViewModel: ViewModelType {
+final class ProfileImageViewModel: BaseViewModel {
 
     private var disposeBag = DisposeBag()
     
@@ -48,7 +48,7 @@ final class ProfileImageViewModel: ViewModelType {
 
 extension ProfileImageViewModel {
     
-    func transform(input: Input) -> Output {
+    func transform(_ input: Input) -> Output {
         let output = Output()
         
         input.backButtonTrigger

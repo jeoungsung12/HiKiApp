@@ -34,7 +34,7 @@ final class ProfileImageViewController: BaseViewController {
     }
     
     override func setBinding() {
-        let output = viewModel.transform(input: inputTrigger)
+        let output = viewModel.transform(inputTrigger)
         
         output.backButtonResult
             .bind(with: self, onNext: { owner, _ in
