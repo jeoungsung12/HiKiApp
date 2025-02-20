@@ -6,13 +6,17 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
-final class MyPageViewModel: ViewModelType {
+final class MyPageViewModel: BaseViewModel {
     private let db = DataBase.shared
+    private(set) var profileData = ProfileData.allCases
+    private var disposeBag = DisposeBag()
     
     enum MyPageCategoryType: String, CaseIterable {
         case aniBox = "애니 보관함"
-        case watchBox = "하이라이트"
+        case watchBox = "티저 보관함"
         case profile = "프로필 수정"
         
         var image: String {
@@ -34,13 +38,14 @@ final class MyPageViewModel: ViewModelType {
     }
     
     struct Input {
-        let profileTrigger: Observable<Void>
-        let categoryBtnTrigger: Observable<MyPageCategoryType?>
+        let listBtnTrigger: PublishRelay<MyPageButtonType>
+        let categoryBtnTrigger: PublishRelay<MyPageCategoryType>
     }
     
     struct Output {
-        let profileResult: Observable<UserInfo?> = Observable(nil)
-        let categoryBtnResult: Observable<MyPageCategoryType?> = Observable(nil)
+        let profileResult: BehaviorRelay<UserInfo>
+        let listBtnResult: PublishRelay<MyPageButtonType>
+        let categoryBtnResult: PublishRelay<MyPageCategoryType>
     }
 
     init() {
@@ -55,19 +60,23 @@ final class MyPageViewModel: ViewModelType {
 
 extension MyPageViewModel {
     
-    func transform(input: Input) -> Output {
-        let output = Output()
+    func transform(_ input: Input) -> Output {
+        let categoryType = PublishRelay<MyPageCategoryType>()
+        input.categoryBtnTrigger
+            .bind { value in
+                categoryType.accept(value)
+            }.disposed(by: disposeBag)
         
-        input.profileTrigger.bind { [weak self] _ in
-            output.profileResult.value = self?.db.getUser()
-        }
+        let btnType = PublishRelay<MyPageButtonType>()
+        input.listBtnTrigger
+            .bind { value in
+                btnType.accept(value)
+            }.disposed(by: disposeBag)
         
-        input.categoryBtnTrigger.lazyBind { type in
-            guard let type = type else { return }
-            output.categoryBtnResult.value = type
-        }
-        
-        return output
+        return Output(
+            profileResult: BehaviorRelay(value: db.getUser()),
+            listBtnResult: btnType,
+            categoryBtnResult: categoryType)
     }
     
     func removeUserInfo() {

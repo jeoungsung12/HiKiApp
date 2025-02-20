@@ -5,26 +5,51 @@
 //  Created by 정성윤 on 2/5/25.
 //
 
-import Foundation
 import UIKit
+import RxSwift
+import RxCocoa
 
-final class ProfileViewModel: ViewModelType {
+final class ProfileViewModel: BaseViewModel {
     private let db = DataBase.shared
+    private var disposeBag = DisposeBag()
+    
+    struct NickName {
+        enum NickNameType: String {
+            case nilText = ""
+            case success = "사용할 수 있는 닉네임이에요"
+            case notCount = "2글자 이상 10글자 미만으로 설정해 주세요"
+            case notSpecial = "닉네임에 @, #, $, % 는 포함할 수 없어요"
+            case notNumeric = "닉네임에 숫자는 포함할 수 없어요"
+        }
+        
+        func checkNickName(_ text: String?) -> NickNameType {
+            guard let text, !text.isEmpty else { return .nilText }
+            if ((text.count < 2) || (text.count >= 10)) {
+                return NickNameType.notCount
+            }
+            if (text.rangeOfCharacter(from: CharacterSet(charactersIn: "@#$%")) != nil) {
+                return NickNameType.notSpecial
+            }
+            if (text.rangeOfCharacter(from: .decimalDigits) != nil) {
+                return NickNameType.notNumeric
+            }
+            return NickNameType.success
+        }
+    }
     
     struct Input {
-        let configureViewTrigger: Observable<Void>
-        let profileButtonTrigger: Observable<Void>
-        let nameTextFieldTrigger: Observable<String?>
-        let successButtonTrigger: Observable<ProfileSuccessButtonRequest>
-        let buttonEnabledTrigger: Observable<ProfileSuccessButtonRequest>
+        let configureViewTrigger: PublishSubject<Void>
+        let nameTextFieldTrigger: PublishSubject<String?>
+        let successButtonTrigger: PublishSubject<ProfileSuccessButtonRequest>
+        let buttonEnabledTrigger: PublishSubject<ProfileSuccessButtonRequest>
     }
     
     struct Output {
-        let profileButtonResult: Observable<Void> = Observable(())
-        let buttonEnabledResult: Observable<Bool?> = Observable(nil)
-        let successButtonResult: Observable<Bool?> = Observable(nil)
-        let nameTextFieldResult: Observable<String?> = Observable(nil)
-        let configureViewResult: Observable<[String]> = Observable(([]))
+        let buttonEnabledResult: PublishSubject<Bool?> = PublishSubject()
+        let successButtonResult: PublishSubject<Bool?> = PublishSubject()
+        let nameTextFieldResult: PublishSubject<String?> = PublishSubject()
+        //TODO: ProfileViewResult - Object
+        let configureViewResult: BehaviorSubject<[String?]> = BehaviorSubject(value: [])
     }
     
     init() {
@@ -39,37 +64,34 @@ final class ProfileViewModel: ViewModelType {
 
 extension ProfileViewModel {
     
-    func transform(input: Input) -> Output {
+    func transform(_ input: Input) -> Output {
         let output = Output()
         
-        input.configureViewTrigger.bind { [weak self] _ in
-            if let userInfo = self?.db.userInfo {
-                output.configureViewResult.value = userInfo
-            }
-        }
+        input.configureViewTrigger
+            .bind(with: self) { owner, _ in
+                output.configureViewResult.onNext(owner.db.userInfo)
+            }.disposed(by: disposeBag)
         
-        input.successButtonTrigger.lazyBind { [weak self] success in
-            if let value = self?.handleSuccessButtonTap(profileImage: success.profileImage, name: success.name, description: success.description, collectionView: success.collectionView)
-            {
-                output.successButtonResult.value = self?.validateText(value, true)
-            }
-        }
+        input.successButtonTrigger
+            .bind(with: self) { owner, success in
+                if let value = owner.handleSuccessButtonTap(profileImage: success.profileImage, name: success.name, description: success.description) {
+                    output.successButtonResult.onNext(owner.validateText(value, true))
+                }
+            }.disposed(by: disposeBag)
         
-        input.profileButtonTrigger.lazyBind { _ in
-            output.profileButtonResult.value = ()
-        }
+        input.nameTextFieldTrigger
+            .bind(with: self) { owner, text in
+                let nicknameText = NickName().checkNickName(text)
+                output.nameTextFieldResult.onNext(nicknameText.rawValue)
+            }.disposed(by: disposeBag)
         
-        input.nameTextFieldTrigger.lazyBind { text in
-            let nicknameText = NickName().checkNickName(text)
-            output.nameTextFieldResult.value = nicknameText.rawValue
-        }
-        
-        input.buttonEnabledTrigger.lazyBind { [weak self] enable in
-            if let value = self?.handleSuccessButtonTap(profileImage: enable.profileImage, name: enable.name, description: enable.description, collectionView: enable.collectionView)
-            {
-                output.buttonEnabledResult.value = self?.validateText(value, false)
-            }
-        }
+        input.buttonEnabledTrigger
+            .bind(with: self) { owner, enable in
+                if let value = owner.handleSuccessButtonTap(profileImage: enable.profileImage, name: enable.name, description: enable.description)
+                {
+                    output.buttonEnabledResult.onNext(owner.validateText(value, false))
+                }
+            }.disposed(by: disposeBag)
         
         return output
     }
@@ -78,14 +100,14 @@ extension ProfileViewModel {
 
 extension ProfileViewModel {
     
-    private func validateText(_ success: ProfileSuccessButtonResult,_ complete: Bool) -> Bool? {
+    private func validateText(_ success: ProfileSuccessButtonResponse,_ complete: Bool) -> Bool? {
         if let nicknameLabel = success.name, let descriptionLabel = success.description,
-           descriptionLabel == NickName.NickNameType.success.rawValue, let mbti = ProfileMBTIViewModel().checkMBTI(success.mbtiBools) {
+           descriptionLabel == NickName.NickNameType.success.rawValue {
             
             if complete {
                 db.isUser = true
                 //TODO: Object
-                db.userInfo = [nicknameLabel, .checkProfileImage(success.profileImage), "0", .currentDate, mbti]
+                db.userInfo = [nicknameLabel, .checkProfileImage(success.profileImage), "0", .currentDate]
             }
             return true
         } else {
@@ -93,67 +115,13 @@ extension ProfileViewModel {
         }
     }
     
-    private func collectMBTISelections(from collectionView: UICollectionView) -> [Bool?] {
-        let indexPaths = (0...3).map { IndexPath(row: $0, section: 0) }
-        return indexPaths.map { indexPath in
-            (collectionView.cellForItem(at: indexPath) as? ProfileMBTICell)?.isClicked
-        }
-    }
     
-    private func handleSuccessButtonTap(profileImage: UIImage?, name: String?, description: String?, collectionView: UICollectionView) -> ProfileSuccessButtonResult? {
-        let mbtiBools = collectMBTISelections(from: collectionView)
-        let profileData = ProfileSuccessButtonResult(
+    private func handleSuccessButtonTap(profileImage: UIImage?, name: String?, description: String?) -> ProfileSuccessButtonResponse? {
+        let profileData = ProfileSuccessButtonResponse(
             profileImage: profileImage,
             name: name,
-            description: description,
-            mbtiBools: mbtiBools
+            description: description
         )
         return profileData
-    }
-}
-
-
-extension ProfileViewModel {
-    
-    struct ProfileSuccessButtonRequest {
-        var profileImage: UIImage?
-        var name: String?
-        var description: String?
-        var collectionView: UICollectionView
-    }
-    
-    struct ProfileSuccessButtonResult {
-        var profileImage: UIImage?
-        var name: String?
-        var description: String?
-        var mbtiBools: [Bool?]
-    }
-    
-    struct NickName {
-        
-        enum NickNameType: String {
-            case nilText = ""
-            case success = "사용할 수 있는 닉네임이에요"
-            case notCount = "2글자 이상 10글자 미만으로 설정해 주세요"
-            case notSpecial = "닉네임에 @, #, $, % 는 포함할 수 없어요"
-            case notNumeric = "닉네임에 숫자는 포함할 수 없어요"
-        }
-        
-        func checkNickName(_ text: String?) -> NickNameType {
-            guard let text, !text.isEmpty else { return .nilText }
-            if ((text.count < 2) || (text.count >= 10)) {
-                return NickNameType.notCount
-            }
-            
-            if (text.rangeOfCharacter(from: CharacterSet(charactersIn: "@#$%")) != nil) {
-                return NickNameType.notSpecial
-            }
-            
-            if (text.rangeOfCharacter(from: .decimalDigits) != nil) {
-                return NickNameType.notNumeric
-            }
-            
-            return NickNameType.success
-        }
     }
 }

@@ -42,7 +42,7 @@ final class ProfileImageCollectionViewCell: UICollectionViewCell {
 extension ProfileImageCollectionViewCell {
     
     private func configureHierarchy() {
-        self.addSubview(profileButton)
+        self.contentView.addSubview(profileButton)
         configureLayout()
     }
     

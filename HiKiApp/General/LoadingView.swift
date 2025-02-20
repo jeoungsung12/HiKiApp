@@ -4,50 +4,64 @@
 //
 //  Created by 정성윤 on 2/10/25.
 //
-
 import UIKit
-import Lottie
 import SnapKit
+import Kingfisher
+import FLAnimatedImage
 
-final class LoadingView: UIView {
-    private let imageView = LottieAnimationView(name: "lottie")
+final class LoadingView: BaseView {
+    private let imageView = AnimatedImageView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureView()
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-extension LoadingView {
-    
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         self.addSubview(imageView)
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         imageView.snp.makeConstraints { make in
-            make.size.equalTo(80)
-            make.center.equalToSuperview()
+            make.edges.equalToSuperview()
         }
     }
     
-    private func configureView() {
+    override func configureView() {
         self.backgroundColor = .clear
-        imageView.loopMode = .loop
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleToFill
         
-        configureHierarchy()
-    }
- 
-    func isStop() {
-        imageView.isHidden = true
+        if let imageData = Bundle.main.url(forResource: "onboarding", withExtension: "gif") {
+            imageView.kf.setImage(with: imageData)
+        }
     }
     
-    func isStart() {
-        imageView.play()
+    private func applyParallelogramMask() {
+        let maskLayer = CAShapeLayer()
+        maskLayer.path = createVerticalParallelogramPath().cgPath
+        imageView.layer.mask = maskLayer
+    }
+    
+    private func createVerticalParallelogramPath() -> UIBezierPath {
+        let path = UIBezierPath()
+        let width = self.bounds.width
+        let height = self.bounds.height
+        let offset: CGFloat = 40
+        
+        path.move(to: CGPoint(x: 0, y: offset))
+        path.addLine(to: CGPoint(x: width, y: 0))
+        path.addLine(to: CGPoint(x: width, y: height - offset))
+        path.addLine(to: CGPoint(x: 0, y: height))
+        path.close()
+        
+        return path
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        applyParallelogramMask()
+    }
+    
+    deinit {
+        print(#function, self)
     }
 }

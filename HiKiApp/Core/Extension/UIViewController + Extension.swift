@@ -43,17 +43,19 @@ extension UIViewController {
         window.rootViewController = rootVC
     }
     
-    func setNavigation(_ title: String = "",_ backTitle: String = "",_ color: UIColor = .point) {
+    func setNavigation(_ title: String = "",_ backTitle: String = "",_ color: UIColor = .point,apperanceColor: UIColor = .white) {
         guard let navigationBar = navigationController?.navigationBar else { return }
         
         self.navigationItem.title = title
         let back = UIBarButtonItem(title: backTitle, style: .plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = back
+        self.navigationItem.backBarButtonItem = back
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .white
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.point]
+        appearance.backgroundColor = apperanceColor
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
+        appearance.shadowColor = nil
         
         navigationBar.tintColor = color
         navigationBar.standardAppearance = appearance

@@ -7,69 +7,90 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-final class MyPageViewController: UIViewController {
+final class MyPageViewController: BaseViewController {
     private let myProfileView = MyProfileView()
     private let buttonStackView = UIStackView()
     private let categoryStackView = UIStackView()
     private let countLabel = UILabel()
     private let aniBoxButton = UIButton()
-    private let watchBoxButton = UIButton()
+    private let teaserBoxButton = UIButton()
     private let changeProfileButton = UIButton()
     
     private let viewModel = MyPageViewModel()
-    private let inputTrigger = MyPageViewModel.Input(
-        profileTrigger: Observable(()),
-        categoryBtnTrigger: Observable(nil)
+    let inputTrigger = MyPageViewModel.Input(
+        listBtnTrigger: PublishRelay<MyPageViewModel.MyPageButtonType>(),
+        categoryBtnTrigger: PublishRelay<MyPageViewModel.MyPageCategoryType>()
     )
-    private lazy var output = viewModel.transform(input: inputTrigger)
+    private var disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureView()
-        setBinding()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        inputTrigger.profileTrigger.value = ()
+    override func setBindView() {
+        [aniBoxButton, teaserBoxButton, changeProfileButton].forEach({ btn in
+            btn.rx.tap
+                .bind(with: self) { owner, _ in
+                    let type = MyPageViewModel.MyPageCategoryType.allCases[btn.tag]
+                    owner.inputTrigger.categoryBtnTrigger.accept(type)
+                }.disposed(by: disposeBag)
+        })
     }
     
-    private func setBinding() {
-        output.profileResult.bind { [weak self] userInfo in
-            if let userInfo = userInfo {
-                self?.myProfileView.configure(userInfo)
-            }
-        }
+    override func setBinding() {
+        let output = viewModel.transform(inputTrigger)
         
-        output.categoryBtnResult.lazyBind { [weak self] type in
-            guard let type = type else { return }
-            switch type {
-            case .aniBox:
-                self?.push(SheetProfileViewController())
-            case .watchBox:
-                self?.push(SheetProfileViewController())
-            case .profile:
-                self?.push(SheetProfileViewController())
-            }
-        }
+        output.profileResult
+            .bind(with: self, onNext: { owner, userInfo in
+                owner.myProfileView.configure(userInfo)
+            }).disposed(by: disposeBag)
+        
+        output.listBtnResult
+            .bind(with: self) { owner, type in
+                switch type {
+                case .oftenQS:
+                    print("자주묻는 질문")
+                case .feedback:
+                    print("피드백")
+                case .withdraw:
+                    owner.customAlert(
+                        "탈퇴하기",
+                        "탈퇴를 하면 데이터가 모두 초기화됩니다. 탈퇴 하시겠습니까?",
+                        [.ok, .cancel]
+                    ) {
+                        owner.viewModel.removeUserInfo()
+                        let rootVC = UINavigationController(rootViewController: OnboardingViewController())
+                        owner.setRootView(rootVC)
+                    }
+                }
+            }.disposed(by: disposeBag)
+        
+        output.categoryBtnResult
+            .bind(with: self, onNext: { owner, type in
+                switch type {
+                case .aniBox:
+                    owner.push(SheetProfileViewController())
+                case .watchBox:
+                    owner.push(SheetProfileViewController())
+                case .profile:
+                    owner.push(SheetProfileViewController())
+                }
+            }).disposed(by: disposeBag)
     }
     
-}
-
-extension MyPageViewController {
-    
-    private func configureHierarchy() {
-        [aniBoxButton, watchBoxButton, changeProfileButton].forEach({
+    override func configureHierarchy() {
+        [aniBoxButton, teaserBoxButton, changeProfileButton].forEach({
             self.categoryStackView.addArrangedSubview($0)
         })
         [myProfileView, categoryStackView, buttonStackView, countLabel].forEach({
             self.view.addSubview($0)
         })
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         
         myProfileView.snp.makeConstraints { make in            make.height.equalTo(230)
             make.top.equalTo(self.view.safeAreaLayoutGuide)
@@ -97,7 +118,7 @@ extension MyPageViewController {
         
     }
     
-    private func configureView() {
+    override func configureView() {
         self.setNavigation("프로필")
         self.view.backgroundColor = .customWhite
         
@@ -106,14 +127,13 @@ extension MyPageViewController {
         aniBoxButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.aniBox.rawValue, MyPageViewModel.MyPageCategoryType.aniBox.image)
         
         aniBoxButton.tag = 1
-        watchBoxButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.watchBox.rawValue, MyPageViewModel.MyPageCategoryType.watchBox.image)
+        teaserBoxButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.watchBox.rawValue, MyPageViewModel.MyPageCategoryType.watchBox.image)
         
         aniBoxButton.tag = 2
         changeProfileButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.profile.rawValue, MyPageViewModel.MyPageCategoryType.profile.image)
         
-        [aniBoxButton, watchBoxButton, changeProfileButton].forEach({
+        [aniBoxButton, teaserBoxButton, changeProfileButton].forEach({
             $0.tintColor = .black
-            $0.addTarget(self, action: #selector(categoryButtonTapped), for: .touchUpInside)
         })
         categoryStackView.axis = .horizontal
         categoryStackView.alignment = .center
@@ -124,13 +144,20 @@ extension MyPageViewController {
         countLabel.layer.cornerRadius = 5
         countLabel.textAlignment = .center
         countLabel.backgroundColor = .point
-        //TODO: 갯수 대응
+        //TODO: 갯수 대응 - 최대 저장 갯수
         countLabel.text = viewModel.getUserInfo() + "개 보관중"
         countLabel.font = .systemFont(ofSize: 12, weight: .heavy)
         
         configureButtonStack()
-        configureHierarchy()
     }
+    
+    deinit {
+        print(#function, self)
+    }
+    
+}
+
+extension MyPageViewController {
     
     private func configureButtonStack() {
         buttonStackView.spacing = 30
@@ -139,7 +166,10 @@ extension MyPageViewController {
         for (type) in MyPageViewModel.MyPageButtonType.allCases {
             let button = MyPageSectionButton()
             if type == .withdraw {
-                button.addTarget(self, action: #selector(withdrawTapped), for: .touchUpInside)
+                button.rx.tap
+                    .bind(with: self) { owner, _ in
+                        owner.inputTrigger.listBtnTrigger.accept(type)
+                    }.disposed(by: disposeBag)
             }
             button.configure(type.rawValue)
             buttonStackView.addArrangedSubview(button)
@@ -158,38 +188,4 @@ extension MyPageViewController {
         return config
     }
     
-}
-
-
-extension MyPageViewController {
-    
-    @objc
-    private func profileButtonTapped(_ sender: UIButton) {
-        //TODO: ViewModel
-        let vc = SheetProfileViewController()
-        //TODO: - 델리겟으로 써보기
-        vc.dismissClosure = { [weak self] in
-            self?.inputTrigger.profileTrigger.value = ()
-        }
-        self.sheet(vc)
-    }
-    
-    @objc
-    private func categoryButtonTapped(_ sender: UIButton) {
-        inputTrigger.categoryBtnTrigger.value = MyPageViewModel.MyPageCategoryType.allCases[sender.tag]
-    }
-    
-    @objc
-    private func withdrawTapped(_ sender: UIButton) {
-        //TODO: ViewModel
-        self.customAlert(
-            "탈퇴하기",
-            "탈퇴를 하면 데이터가 모두 초기화됩니다. 탈퇴 하시겠습니까?",
-            [.ok, .cancel]
-        ) {
-            self.viewModel.removeUserInfo()
-            let rootVC = UINavigationController(rootViewController: OnboardingViewController())
-            self.setRootView(rootVC)
-        }
-    }
 }

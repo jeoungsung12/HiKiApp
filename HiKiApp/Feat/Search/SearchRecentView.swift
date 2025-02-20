@@ -7,8 +7,10 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-final class SearchRecentView: UIView {
+final class SearchRecentView: BaseView {
     private let titleLabel = UILabel()
     private let resultLabel = UILabel()
     private let removeButton = UIButton()
@@ -18,36 +20,26 @@ final class SearchRecentView: UIView {
     var removeAll: (()->Void)?
     var recentTapped: ((String)->Void)?
     var removeTapped: ((String)->Void)?
+    
+    private var disposeBag = DisposeBag()
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureView()
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    override func setBindView() {
+        removeButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.removeAll?()
+            }.disposed(by: disposeBag)
     }
     
-    func configure(_ recentSearch: [String]) {
-        configureStackView(recentSearch)
-        removeButton.isHidden = (recentSearch.isEmpty) ? true : false
-        resultLabel.text = (recentSearch.isEmpty) ? "최근 검색어 내역이 없습니다." : ""
-    }
-    
-}
-
-//MARK: - Configure UI
-extension SearchRecentView {
-    
-    private func configureHierarchy() {
-        self.addSubview(removeButton)
-        self.addSubview(titleLabel)
+    override func configureHierarchy() {
+        [removeButton, titleLabel].forEach({ self.addSubview($0 )})
         self.scrollView.addSubview(stackView)
-        self.addSubview(scrollView)
-        self.addSubview(resultLabel)
-        configureLayout()
+        [scrollView, resultLabel].forEach({ self.addSubview($0) })
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         removeButton.snp.makeConstraints { make in
             make.top.trailing.equalToSuperview().inset(12)
         }
@@ -73,11 +65,10 @@ extension SearchRecentView {
         }
     }
     
-    private func configureView() {
+    override func configureView() {
         removeButton.setTitle("전체 삭제", for: .normal)
         removeButton.setTitleColor(.point, for: .normal)
         removeButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
-        removeButton.addTarget(self, action: #selector(removeButtonTapped), for: .touchUpInside)
         
         titleLabel.text = "최근검색어"
         titleLabel.textColor = .black
@@ -93,9 +84,18 @@ extension SearchRecentView {
         stackView.distribution = .fill
         
         scrollView.showsHorizontalScrollIndicator = false
-        
-        configureHierarchy()
     }
+    
+    func configure(_ recentSearch: [String]) {
+        configureStackView(recentSearch)
+        removeButton.isHidden = (recentSearch.isEmpty) ? true : false
+        resultLabel.text = (recentSearch.isEmpty) ? "최근 검색어 내역이 없습니다." : ""
+    }
+    
+}
+
+//MARK: - Configure UI
+extension SearchRecentView {
     
     private func configureStackView(_ recentSearch: [String]) {
         stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
@@ -113,12 +113,6 @@ extension SearchRecentView {
 //MARK: - Action
 extension SearchRecentView {
     
-    @objc
-    private func removeButtonTapped(_ sender: UIButton) {
-        print(#function)
-        removeAll?()
-    }
-    
     private func recentItemTapped(_ sender: String) {
         print(#function)
         recentTapped?(sender)
@@ -128,4 +122,5 @@ extension SearchRecentView {
         print(#function)
         removeTapped?(sender)
     }
+    
 }

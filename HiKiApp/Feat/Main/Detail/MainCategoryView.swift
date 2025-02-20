@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class MainCategoryView: UIView {
+class MainCategoryView: BaseView {
     private let categories = AnimateType.allCases
     private var selectedCategory: AnimateType = .airing {
         didSet {
@@ -26,20 +26,20 @@ class MainCategoryView: UIView {
     
     private var categoryButtons: [UIButton] = []
     var selectedItem: ((AnimateType)->Void)?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupUI()
     }
     
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupUI()
+    override func configureView() {
+        self.backgroundColor = .clear
     }
     
-    private func setupUI() {
-        addSubview(stackView)
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
+    override func configureHierarchy() {
+        self.addSubview(stackView)
+    }
+    
+    override func configureLayout() {
         stackView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.verticalEdges.equalToSuperview()

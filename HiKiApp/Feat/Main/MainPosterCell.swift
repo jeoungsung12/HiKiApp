@@ -16,19 +16,13 @@ enum PosterType {
     case gnere
 }
 
-final class MainPosterCell: UICollectionViewCell {
-    static let id: String = "MoviePosterCell"
+final class MainPosterCell: BaseCollectionViewCell, ReusableIdentifier {
     private let imageView = UIImageView()
     private let subtitleLabel = UILabel()
     private let starLabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureView()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override func prepareForReuse() {
@@ -59,18 +53,13 @@ final class MainPosterCell: UICollectionViewCell {
         }
     }
     
-}
-
-extension MainPosterCell {
-    
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         [imageView, starLabel, subtitleLabel].forEach({
-            self.addSubview($0)
+            self.contentView.addSubview($0)
         })
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         
         imageView.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-52)
@@ -91,7 +80,7 @@ extension MainPosterCell {
         }
     }
     
-    private func configureView() {
+    override func configureView() {
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 15
         imageView.contentMode = .scaleToFill
@@ -117,7 +106,6 @@ extension MainPosterCell {
             $0.layer.shadowColor = UIColor.darkGray.cgColor
             $0.layer.shadowOffset = CGSize(width: 0, height: 2)
         })
-        configureHierarchy()
     }
     
 }

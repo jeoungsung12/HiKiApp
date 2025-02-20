@@ -33,7 +33,7 @@ enum AnimateType: CaseIterable {
         case .airing:
             "방영"
         case .upcoming:
-            "방영예정"
+            "랜덤추천"
         case .bypopularity:
             "최신인기"
         case .favorite:

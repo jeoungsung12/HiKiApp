@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class MyProfileView: UIView {
+final class MyProfileView: BaseView {
     private let profileImage = CustomProfileButton(120, true)
     
     private let nameLabel = UILabel()
@@ -16,31 +16,15 @@ final class MyProfileView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureView()
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func configure(_ userInfo: UserInfo) {
-        dateLabel.text = userInfo.date
-        nameLabel.text = userInfo.nickname
-        profileImage.profileImage.image = userInfo.profile
-    }
-    
-}
-
-extension MyProfileView {
-    
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         [profileImage, nameLabel, dateLabel].forEach({
             self.addSubview($0)
         })
-        configureLayout()
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         profileImage.snp.makeConstraints { make in
             make.size.equalTo(150)
             make.centerX.equalToSuperview()
@@ -58,7 +42,7 @@ extension MyProfileView {
         }
     }
     
-    private func configureView() {
+    override func configureView() {
         self.clipsToBounds = true
         self.layer.cornerRadius = 15
         self.backgroundColor = .white
@@ -73,7 +57,12 @@ extension MyProfileView {
         dateLabel.textColor = .gray
         dateLabel.textAlignment = .center
         dateLabel.font = .systemFont(ofSize: 13, weight: .semibold)
-        
-        configureHierarchy()
     }
+    
+    func configure(_ userInfo: UserInfo) {
+        dateLabel.text = userInfo.date
+        nameLabel.text = userInfo.nickname
+        profileImage.profileImage.image = userInfo.profile
+    }
+    
 }

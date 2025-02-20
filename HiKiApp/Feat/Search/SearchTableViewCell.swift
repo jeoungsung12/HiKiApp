@@ -9,25 +9,17 @@ import UIKit
 import Kingfisher
 import SnapKit
 
-class SearchTableViewCell: UITableViewCell {
-    static let id: String = "SearchTableViewCell"
+class SearchTableViewCell: BaseTableViewCell, ReusableIdentifier {
     private let posterImageView = UIImageView()
     private let imageResult = UILabel()
     private let titleLabel = UILabel()
     private let dateLabel = UILabel()
     private let heartButton = UIButton()
-    private let genreView = GenreView()
     private let db = DataBase.shared
     private var buttonTapped: Bool = false
     
-    var isButton: ((Bool)->Void)?
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        configureView()
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
     }
     
     override func prepareForReuse() {
@@ -36,35 +28,13 @@ class SearchTableViewCell: UITableViewCell {
         imageResult.text = NetworkError.noImage
     }
     
-    func configure(_ search: String,_ model: AnimateData) {
-        highlightLabel(search, model.title)
-        dateLabel.text = model.title_english
-//        genreView.configure(model, .search)
-        buttonTapped = db.heartList.contains(model.title)
-        heartButton.setImage(UIImage(systemName: (db.heartList.contains(model.title)) ? "heart.fill" : "heart"), for: .normal)
-        if   let url = URL(string: model.images.jpg.image_url) {
-            imageResult.text = nil
-            posterImageView.kf.setImage(with: url)
-        }
+    override func configureHierarchy() {
+        [posterImageView, imageResult, titleLabel, dateLabel, heartButton].forEach({
+            self.contentView.addSubview($0)
+        })
     }
     
-}
-
-extension SearchTableViewCell {
-    
-    private func configureHierarchy() {
-        self.addSubview(posterImageView)
-        self.addSubview(imageResult)
-        self.addSubview(titleLabel)
-        self.addSubview(dateLabel)
-        self.addSubview(heartButton)
-        self.addSubview(genreView)
-        
-        configureLayout()
-    }
-    
-    private func configureLayout() {
-        
+    override func configureLayout() {
         posterImageView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(12)
             make.width.equalToSuperview().dividedBy(4)
@@ -94,16 +64,9 @@ extension SearchTableViewCell {
             make.bottom.trailing.equalToSuperview().inset(12)
         }
         
-        genreView.snp.makeConstraints { make in
-            make.height.equalTo(20)
-            make.bottom.equalToSuperview().inset(12)
-            make.trailing.equalTo(heartButton.snp.leading).offset(-12)
-            make.leading.equalTo(posterImageView.snp.trailing).offset(12)
-        }
-        
     }
     
-    private func configureView() {
+    override func configureView() {
         self.contentView.backgroundColor = .white
         imageResult.numberOfLines = 0
         imageResult.textColor = .black
@@ -126,10 +89,21 @@ extension SearchTableViewCell {
         dateLabel.font = .systemFont(ofSize: 13, weight: .regular)
         
         heartButton.tintColor = .point
+        //TODO: ViewModel
         heartButton.addTarget(self, action: #selector(heartButtonTapped), for: .touchUpInside)
-        
-        configureHierarchy()
     }
+    
+    func configure(_ search: String,_ model: AnimateData) {
+        highlightLabel(search, model.title)
+        dateLabel.text = model.title_english
+        buttonTapped = db.heartList.contains(model.title)
+        heartButton.setImage(UIImage(systemName: (db.heartList.contains(model.title)) ? "heart.fill" : "heart"), for: .normal)
+        if let url = URL(string: model.images.jpg.image_url) {
+            imageResult.text = nil
+            posterImageView.kf.setImage(with: url)
+        }
+    }
+    
 }
 
 extension SearchTableViewCell {
@@ -146,6 +120,7 @@ extension SearchTableViewCell {
         }
     }
     
+    //TODO: ViewModel
     @objc
     private func heartButtonTapped(_ sender: UIButton) {
         print(#function)
@@ -155,10 +130,8 @@ extension SearchTableViewCell {
                 var list = db.heartList
                 list.append(text)
                 db.heartList = list
-                isButton?(true)
             } else {
                 db.removeHeartButton(text)
-                isButton?(false)
             }
         }
     }

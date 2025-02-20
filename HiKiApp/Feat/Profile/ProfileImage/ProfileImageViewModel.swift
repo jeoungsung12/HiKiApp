@@ -6,16 +6,34 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
-final class ProfileImageViewModel: ViewModelType {
-    let profileData = ProfileData.allCases
+enum ProfileData: String, CaseIterable {
+    case profile0 = "profile_0"
+    case profile1 = "profile_1"
+    case profile2 = "profile_2"
+    case profile3 = "profile_3"
+    case profile4 = "profile_4"
+    case profile5 = "profile_5"
+    case profile6 = "profile_6"
+    case profile7 = "profile_7"
+    case profile8 = "profile_8"
+    case profile9 = "profile_9"
+    case profile10 = "profile_10"
+    case profile11 = "profile_11"
+}
+
+final class ProfileImageViewModel: BaseViewModel {
+
+    private var disposeBag = DisposeBag()
     
     struct Input {
-        let backButtonTrigger: Observable<Void>
+        let backButtonTrigger: PublishSubject<Void>
     }
     
     struct Output {
-        let backButtonResult: Observable<Void> = Observable(())
+        let backButtonResult: PublishSubject<Void> = PublishSubject()
     }
     
     init() {
@@ -30,12 +48,13 @@ final class ProfileImageViewModel: ViewModelType {
 
 extension ProfileImageViewModel {
     
-    func transform(input: Input) -> Output {
+    func transform(_ input: Input) -> Output {
         let output = Output()
         
-        input.backButtonTrigger.lazyBind { _ in
-            output.backButtonResult.value = ()
-        }
+        input.backButtonTrigger
+            .bind(with: self, onNext: { owner, _ in
+                output.backButtonResult.onNext(())
+            }).disposed(by: disposeBag)
         
         return output
     }

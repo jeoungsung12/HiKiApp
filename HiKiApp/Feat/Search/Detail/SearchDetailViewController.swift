@@ -7,123 +7,82 @@
 
 import UIKit
 import SnapKit
+import NVActivityIndicatorView
+import RxSwift
+import RxCocoa
 
-final class SearchDetailViewController: UIViewController {
-    private lazy var heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(heartButtonTapped))
+final class SearchDetailViewController: BaseViewController {
+    private lazy var heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: nil, action: nil)
     private let tableView = UITableView()
-    private let loadingIndicator = UIActivityIndicatorView()
-    private var imageData: ImageModel?
-    private var creditData: CreditModel?
-    private let db = DataBase.shared
-    private var buttonTapped: Bool = false
+    private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
     
+    //TODO: - ViewModel
     var isButton: (()->Void)?
-    var searchData: AnimateData?
+    
+    let viewModel: SearchDetailViewModel
+    private lazy var inputTrigger = SearchDetailViewModel.Input(
+        heartBtnTrigger: heartButton.rx.tap
+    )
+    private lazy var outputResult = viewModel.transform(inputTrigger)
+    init(viewModel: SearchDetailViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private let disposeBag = DisposeBag()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureView()
     }
     
-    func configure() {
-        guard let data = searchData else { return }
-        buttonTapped = db.heartList.contains(data.title)
-        heartButton.image = UIImage(systemName: (db.heartList.contains(data.title) ? "heart.fill" : "heart"))
+    override func setBinding() {
+        outputResult.animeData
+            .bind(with: self) { owner, data in
+                owner.tableView.reloadData()
+                owner.loadingIndicator.stopAnimating()
+            }
+            .disposed(by: disposeBag)
     }
     
-}
-
-//MARK: - Configure UI
-extension SearchDetailViewController {
-    
-    private func configureHierarchy() {
-        self.view.addSubview(tableView)
-        self.view.addSubview(loadingIndicator)
-        configureLayout()
+    override func configureHierarchy() {
+        [tableView, loadingIndicator].forEach({
+            self.view.addSubview($0)
+        })
     }
     
-    private func configureLayout() {
-        
+    override func configureLayout() {
         tableView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.bottom.equalToSuperview().inset(49)
+            make.top.horizontalEdges.equalToSuperview()
         }
         
         loadingIndicator.snp.makeConstraints { make in
-            make.size.equalTo(40)
             make.center.equalToSuperview()
         }
         
-        fetchData()
-    }
-    
-    private func configureView() {
-        guard let searchData = searchData else { return }
-        self.setNavigation(searchData.title)
-        self.view.backgroundColor = .customBlack
-        self.navigationItem.rightBarButtonItem = heartButton
-        
-        loadingIndicator.style = .medium
-        loadingIndicator.color = .customLightGray
-        
-        configure()
-        configureTableView()
-        configureHierarchy()
-    }
-    
-}
-
-extension SearchDetailViewController {
-    
-    private func fetchData() {
-        guard let searchData = searchData else { return }
         loadingIndicator.startAnimating()
-        let group = DispatchGroup()
-        group.enter()
-//        ImageServices().getImage(searchData.id) { [weak self] response in
-//            guard let self = self else { return }
-//            switch response {
-//            case let .success(data):
-//                self.imageData = data
-//                group.leave()
-//            case  let .failure(error):
-//                self.errorPresent(error)
-//                group.leave()
-//            }
-//        }
-        group.enter()
-//        CastServices().getCredit(searchData.id) { [weak self] response in
-//            guard let self = self else { return }
-//            switch response {
-//            case let .success(data):
-//                self.creditData = data
-//                group.leave()
-//            case  let .failure(error):
-//                self.errorPresent(error)
-//                group.leave()
-//            }
-//        }
-        group.notify(queue: .main) {
-            self.tableView.reloadData()
-            self.loadingIndicator.stopAnimating()
-        }
     }
     
-    @objc
-    private func heartButtonTapped(_ sender: UIButton) {
-        print(#function)
-        if let data = self.searchData {
-            buttonTapped.toggle()
-            if buttonTapped {
-                var list = db.heartList
-                list.append(data.title)
-//                self.customAlert("보관 성공!") { }
-                db.heartList = list
-            } else {
-                db.removeHeartButton(data.title)
-//                self.customAlert("삭제 성공!") { }
-            }
-            self.configure()
-            self.isButton?()
-        }
+    override func configureView() {
+        self.setNavigation(apperanceColor: .clear)
+        self.view.backgroundColor = .white
+        self.navigationItem.rightBarButtonItem = heartButton
+        self.navigationController?.navigationBar.backgroundColor = .clear
+        self.navigationController?.navigationBar.tintColor = .point
+        
+        configureTableView()
+    }
+    
+    func configure() {
+        //TODO: id로 좋아요 유무 구분
+    }
+    
+    deinit {
+        print(#function, self)
     }
     
 }
@@ -135,50 +94,47 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
-        tableView.backgroundColor = .customBlack
-        tableView.register(BackDropTableViewCell.self, forCellReuseIdentifier: BackDropTableViewCell.id)
-        tableView.register(SynopsisTableViewCell.self, forCellReuseIdentifier: SynopsisTableViewCell.id)
-        tableView.register(CastTableViewCell.self, forCellReuseIdentifier: CastTableViewCell.id)
+        tableView.backgroundColor = .white
+        tableView.contentInsetAdjustmentBehavior = .never
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.register(PosterTableViewCell.self, forCellReuseIdentifier: PosterTableViewCell.id)
+        tableView.register(SynopsisTableViewCell.self, forCellReuseIdentifier: SynopsisTableViewCell.id)
+        tableView.register(CharactersTableViewCell.self, forCellReuseIdentifier: CharactersTableViewCell.id)
+        tableView.register(TeaserTableViewCell.self, forCellReuseIdentifier: TeaserTableViewCell.id)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        return SearchDetailViewModel.DetailType.allCases.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let searchData = self.searchData, let imageData = self.imageData, let creditData = self.creditData else { return UITableViewCell() }
-        
-        switch SearchItems.allCases[indexPath.row] {
-        case .backdrop:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: BackDropTableViewCell.id, for: indexPath) as? BackDropTableViewCell else { return UITableViewCell() }
-            cell.backdrops = imageData.backdrops
-            cell.configure(searchData)
+        switch SearchDetailViewModel.DetailType.allCases[indexPath.row] {
+        case .poster:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: PosterTableViewCell.id, for: indexPath) as? PosterTableViewCell else { return UITableViewCell() }
+            //TODO: 디코딩 전략
+            let value = outputResult.animeData.value
+            cell.configure(title: value?.synopsis?.title, image: value?.synopsis?.images.jpg.image_url)
             return cell
-
+            
         case .synopsis:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: SynopsisTableViewCell.id, for: indexPath) as? SynopsisTableViewCell else { return UITableViewCell() }
-//            cell.configure(searchData.overview)
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: SynopsisTableViewCell.id, for: indexPath) as? SynopsisTableViewCell, let synopsis = outputResult.animeData.value?.synopsis?.synopsis else { return UITableViewCell() }
+            cell.configure(synopsis)
             cell.reloadCell = {
                 tableView.beginUpdates()
                 tableView.endUpdates()
             }
             return cell
             
-        case .cast:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: CastTableViewCell.id, for: indexPath) as? CastTableViewCell else { return UITableViewCell() }
-            cell.castData = creditData.cast ?? []
+        case .teaser:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: TeaserTableViewCell.id, for: indexPath) as? TeaserTableViewCell, let teaser = outputResult.animeData.value?.teaser else { return UITableViewCell() }
+            cell.input.inputTrigger.onNext(teaser)
             return cell
             
-        case .poster:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: PosterTableViewCell.id, for: indexPath) as? PosterTableViewCell else { return UITableViewCell() }
-            cell.posterData = imageData.posters
+        case .characters:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: CharactersTableViewCell.id, for: indexPath) as? CharactersTableViewCell, let characters = outputResult.animeData.value?.characters  else { return UITableViewCell() }
+            cell.input.inputTrigger.onNext(characters)
             return cell
         }
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
     }
     
 }

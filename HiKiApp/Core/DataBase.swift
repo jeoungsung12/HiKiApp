@@ -7,6 +7,13 @@
 
 import UIKit
 
+struct UserInfo {
+    let nickname: String
+    let profile: UIImage?
+    let movie: String
+    let date: String
+}
+
 //TODO: - Property Wrapper 구현하기
 final class DataBase {
     static let shared = DataBase()

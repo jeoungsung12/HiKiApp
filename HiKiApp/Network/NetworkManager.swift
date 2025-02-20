@@ -7,27 +7,32 @@
 
 import Foundation
 import Alamofire
+import RxSwift
 
 final class NetworkManager {
     static let shared = NetworkManager()
     
-    //TODO: - RouterPattern
     private init() { }
     
-    func getData<T: Decodable>(_ api: APIEndpoint, completion: @escaping (Result<T, NetworkError.CustomError>) -> Void) {
-        print(api.endpoint)
-        AF.request(api.endpoint, method: api.method, parameters: api.parmas, encoding: URLEncoding.queryString, headers: api.headers)
-            .validate(statusCode: 200...500)
-            .responseDecodable(of: T.self) { response in
-//                dump(response.debugDescription)
-                let statucCode = NetworkError().checkErrorType(response.response?.statusCode)
-                switch response.result {
-                case let .success(data):
-                    completion(.success(data))
-                case .failure:
-                    completion(.failure(statucCode))
+    func getData<T: Decodable, U: Router>(_ api: U) -> Observable<T> {
+//        print(api.endpoint)
+        return Observable<T>.create { observer in
+            AF.request(api)
+                .validate(statusCode: 200...500)
+                .responseDecodable(of: T.self) { response in
+    //                dump(response.debugDescription)
+    //                print(response.debugDescription)
+                    let statucCode = NetworkError().checkErrorType(response.response?.statusCode)
+                    switch response.result {
+                    case let .success(data):
+                        observer.onNext((data))
+                        observer.onCompleted()
+                    case .failure:
+                        observer.onError(statucCode)
+                    }
                 }
-            }
+            return Disposables.create()
+        }
     }
     
 }
