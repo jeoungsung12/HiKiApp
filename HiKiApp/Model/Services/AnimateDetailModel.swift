@@ -26,7 +26,6 @@ struct VideoPromo: Decodable {
 struct VideoTrailer: Decodable {
     let embed_url: String?
     let url: String?
-//    let images: AnimateImages
 }
 
 struct AnimateCharacterModel: Decodable {

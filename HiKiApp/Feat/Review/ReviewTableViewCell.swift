@@ -9,6 +9,8 @@ import UIKit
 import Kingfisher
 import SnapKit
 import Cosmos
+import RxSwift
+import RxCocoa
 
 protocol ReviewHeightDelegate: AnyObject {
     func reloadCellHeight()
@@ -27,18 +29,29 @@ class ReviewTableViewCell: BaseTableViewCell, ReusableIdentifier {
     private let reviewLabel = UILabel()
     private let moreButton = UIButton()
     
+    private var disposeBag = DisposeBag()
     weak var heightDeleate: ReviewHeightDelegate?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-        self.contentView.isUserInteractionEnabled = false
+        self.contentView.isUserInteractionEnabled = true
+        setBinding()
     }
     
     override var isSelected: Bool {
         didSet {
             configureView()
         }
+    }
+    
+    private func setBinding() {
+        moreButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.isSelected.toggle()
+                owner.heightDeleate?.reloadCellHeight()
+            }.disposed(by: disposeBag)
+        
     }
     
     override func configureHierarchy() {
@@ -125,7 +138,6 @@ class ReviewTableViewCell: BaseTableViewCell, ReusableIdentifier {
         moreButton.setTitleColor(.point, for: .normal)
         moreButton.setTitle(isSelected ? "숨기기" : "더보기", for: .normal)
         moreButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .heavy)
-        moreButton.addTarget(self, action: #selector(moreButtonTapped), for: .touchUpInside)
         
         reviewLabel.textColor = .darkGray
         reviewLabel.textAlignment = .left
@@ -162,18 +174,6 @@ class ReviewTableViewCell: BaseTableViewCell, ReusableIdentifier {
         if let url = URL(string: data.entry.images.jpg.image_url) {
             posterImageView.kf.setImage(with: url)
         }
-    }
-    
-}
-
-extension ReviewTableViewCell {
-    
-    //TODO: ViewModel
-    @objc
-    private func moreButtonTapped(_ sender: UIButton) {
-        print(#function)
-        isSelected.toggle()
-        heightDeleate?.reloadCellHeight()
     }
     
 }

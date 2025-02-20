@@ -15,7 +15,6 @@ class SearchTableViewCell: BaseTableViewCell, ReusableIdentifier {
     private let titleLabel = UILabel()
     private let dateLabel = UILabel()
     private let heartButton = UIButton()
-    private let genreView = GenreView()
     private let db = DataBase.shared
     private var buttonTapped: Bool = false
     
@@ -30,7 +29,7 @@ class SearchTableViewCell: BaseTableViewCell, ReusableIdentifier {
     }
     
     override func configureHierarchy() {
-        [posterImageView, imageResult, titleLabel, dateLabel, heartButton, genreView].forEach({
+        [posterImageView, imageResult, titleLabel, dateLabel, heartButton].forEach({
             self.contentView.addSubview($0)
         })
     }
@@ -63,13 +62,6 @@ class SearchTableViewCell: BaseTableViewCell, ReusableIdentifier {
         heartButton.snp.makeConstraints { make in
             make.size.equalTo(30)
             make.bottom.trailing.equalToSuperview().inset(12)
-        }
-        
-        genreView.snp.makeConstraints { make in
-            make.height.equalTo(20)
-            make.bottom.equalToSuperview().inset(12)
-            make.trailing.equalTo(heartButton.snp.leading).offset(-12)
-            make.leading.equalTo(posterImageView.snp.trailing).offset(12)
         }
         
     }

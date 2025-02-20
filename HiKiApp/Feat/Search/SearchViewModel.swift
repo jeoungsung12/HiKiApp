@@ -99,7 +99,6 @@ extension SearchViewModel {
     }
     
     private func fetchData(_ page: Int, completion: @escaping (Result<[AnimateData],NetworkError.CustomError>) -> Void) {
-        print(self.searchText)
         let searchData = SearchRequest(searchPage: page, searchText: self.searchText)
         AnimateServices().searchAnime(searchData) { response in
             completion(response)

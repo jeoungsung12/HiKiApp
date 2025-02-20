@@ -54,12 +54,11 @@ final class MainViewController: BaseViewController {
         let outputResult = viewModel.transform(inputTrigger)
         
         outputResult.dataLoadResult
+            .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, data in
-                DispatchQueue.main.async {
-                    guard let data = data else { return }
-                    owner.setSnapShot(owner.viewModel.setData(data))
-                    owner.category.isUserInteractionEnabled = true
-                }
+                guard let data = data else { return }
+                owner.setSnapShot(owner.viewModel.setData(data))
+                owner.category.isUserInteractionEnabled = true
             }.disposed(by: disposeBag)
     }
     
@@ -117,12 +116,10 @@ extension MainViewController {
         }
         
         self.dataSource?.apply(snapShot) {
-            DispatchQueue.main.async {
-                if let firstIndexPath = self.collectionView.indexPathsForVisibleItems.first {
-                    let targetIndexPath = IndexPath(item: 0, section: 0)
-                    if firstIndexPath != targetIndexPath {
-                        self.collectionView.scrollToItem(at: targetIndexPath, at: .top, animated: true)
-                    }
+            if let firstIndexPath = self.collectionView.indexPathsForVisibleItems.first {
+                let targetIndexPath = IndexPath(item: 0, section: 0)
+                if firstIndexPath != targetIndexPath {
+                    self.collectionView.scrollToItem(at: targetIndexPath, at: .top, animated: true)
                 }
             }
         }
