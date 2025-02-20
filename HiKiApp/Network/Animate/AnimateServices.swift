@@ -9,45 +9,38 @@ import Foundation
 import Alamofire
 import RxSwift
 
-protocol AnimateServicesType {
-    func getTopAnime(request: AnimateRequest) -> Observable<AnimateModel>
-    func searchAnime(_ searchData: SearchViewModel.SearchRequest) -> Observable<AnimateModel>
-    func getRandomAnime(page: Int) -> Observable<AnimateModel>
-    func getReviews(page: Int) -> Observable<AnimateReviewModel>
-    func getDetailAnime(id: Int) -> Observable<AnimateDetailModel>
-    func getTeaser(id: Int) ->  Observable<AnimateVideoModel>
-    func getCharacters(id: Int) -> Observable<AnimateCharacterModel>
-}
+final class AnimateServices {
+    private let repository: AnimateRepositoryType
+    
+    init(repository: AnimateRepositoryType = AnimateRepository()) {
+        self.repository = repository
+    }
+    
+    func getTopAnime(request: AnimateRequest) -> Observable<AnimateDataResponseDTO> {
+        return repository.fetchTopAnime(request: request)
+    }
 
-final class AnimateServices: AnimateServicesType {
-    private var disposeBag = DisposeBag()
-    
-    func getTopAnime(request: AnimateRequest) -> Observable<AnimateModel> {
-        return NetworkManager.shared.getData((AnimeRouter.topAnime(request: AnimateRequest(page: request.page, rating: request.rating, filter: request.filter))))
+    func searchAnime(_ searchData: SearchViewModel.SearchRequest) -> Observable<AnimateDataResponseDTO> {
+        return repository.searchAnime(searchData)
     }
-    
-    func searchAnime(_ searchData: SearchViewModel.SearchRequest) ->  Observable<AnimateModel> {
-        return  NetworkManager.shared.getData(AnimeRouter.search(request: searchData))
+
+    func getRandomAnime(page: Int) -> Observable<AnimateDataResponseDTO> {
+        return repository.fetchRandomAnime(page: page)
     }
-    
-    func getRandomAnime(page: Int) -> Observable<AnimateModel> {
-        return NetworkManager.shared.getData(AnimeRouter.ranomAnime(page: page))
+
+    func getReviews(page: Int) -> Observable<AnimateReviewResponseDTO> {
+        return repository.fetchReviews(page: page)
     }
-    
-    func getReviews(page: Int) -> Observable<AnimateReviewModel> {
-        return NetworkManager.shared.getData(AnimeRouter.topReview(page: page))
+
+    func getDetailAnime(id: Int) -> Observable<AnimateDetailResponseDTO> {
+        return repository.fetchDetailAnime(id: id)
     }
-    
-    func getDetailAnime(id: Int) -> Observable<AnimateDetailModel> {
-        return NetworkManager.shared.getData(AnimeRouter.detailAnime(id: id))
+
+    func getTeaser(id: Int) -> Observable<AnimateVideoResponseDTO> {
+        return repository.fetchTeaser(id: id)
     }
-    
-    func getTeaser(id: Int) -> Observable<AnimateVideoModel> {
-        return NetworkManager.shared.getData(AnimeRouter.getAnimeVideos(id: id))
+
+    func getCharacters(id: Int) -> Observable<AnimateCharacterResponseDTO> {
+        return repository.fetchCharacters(id: id)
     }
-    
-    func getCharacters(id: Int) -> Observable<AnimateCharacterModel> {
-        return NetworkManager.shared.getData(AnimeRouter.characters(id: id))
-    }
-    
 }
