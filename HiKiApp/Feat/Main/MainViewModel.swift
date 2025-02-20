@@ -38,53 +38,25 @@ extension MainViewModel {
     
     func transform(_ input: Input) -> Output {
         let output = Output()
-        var resultData: [[AnimateData]]? = []
         input.dataLoadTrigger
             .bind(with: self, onNext: { owner, type in
-                let group = DispatchGroup()
-                group.enter()
-                //TODO: Swift Concurrency
-                owner.fetchData(type: type, page: 1, rating: "g", group: group) { result in
-                    switch result {
-                    case .success(let success):
-                        resultData?.append(success)
-                    case .failure:
-                        resultData = nil
-                    }
+                Observable.zip(
+                    AnimateServices().getTopAnime(request: AnimateRequest(page: 1, rating: "g", filter: type.filter)),
+                    AnimateServices().getTopAnime(request: AnimateRequest(page: 2, rating: "g", filter: type.filter)),
+                    AnimateServices().getTopAnime(request: AnimateRequest(page: 3, rating: "g", filter: type.filter))
+                )
+                .map { result in
+                    return [result.0.data, result.1.data, result.2.data]
                 }
-                if !(type == .upcoming) {
-                    group.enter()
-                    owner.fetchData(type: type, page: 2, rating: "g", group: group) { result in
-                        switch result {
-                        case .success(let success):
-                            resultData?.append(success)
-                        case .failure:
-                            resultData = nil
-                        }
-                    }
-                    group.enter()
-                    owner.fetchData(type: type, page: 3, rating: "g", group: group) { result in
-                        switch result {
-                        case .success(let success):
-                            resultData?.append(success)
-                        case .failure:
-                            resultData = nil
-                        }
-                    }
+                .subscribe { data in
+                    output.dataLoadResult.accept(data)
+                } onError: { error in
+                    output.dataLoadResult.accept(nil)
                 }
-                group.notify(queue: .global()) {
-                    output.dataLoadResult.accept(resultData)
-                }
+                .disposed(by: owner.disposeBag)
             }).disposed(by: disposeBag)
         
         return output
-    }
- 
-    private func fetchData(type: AnimateType, page: Int, rating: String, group: DispatchGroup, completion: @escaping (Result<[AnimateData],NetworkError.CustomError>) -> Void) {
-        AnimateServices().getTopAnime(request: AnimateRequest(page: page, rating: "g", filter: type.filter)) { response in
-            completion(response)
-            group.leave()
-        }
     }
     
     func setData(_ data: [[AnimateData]]) -> SectionItem {

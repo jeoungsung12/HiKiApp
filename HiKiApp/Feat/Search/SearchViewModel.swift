@@ -67,16 +67,17 @@ extension SearchViewModel {
         input.searchTrigger
             .bind(with: self, onNext: { owner, page in
                 owner.saveData(owner.searchText)
-                owner.fetchData(page) { [weak self] result in
-                    switch result {
-                    case let .success(data):
-                        self?.checkPhase(data, output)
-                        output.searchResult.accept(output.searchResult.value + data)
-                    case .failure:
+                
+                let searchData = SearchRequest(searchPage: page, searchText: self.searchText)
+                AnimateServices().searchAnime(searchData)
+                    .subscribe(with: self) { owner, response in
+                        owner.checkPhase(response.data, output)
+                        output.searchResult.accept(output.searchResult.value + response.data)
+                    } onError: { owner, error in
                         output.phaseResult.accept(.notFound)
                         output.searchResult.accept([])
                     }
-                }
+                    .disposed(by: owner.disposeBag)
             })
             .disposed(by: disposeBag)
         
@@ -97,14 +98,6 @@ extension SearchViewModel {
             output.phaseResult.accept(.success)
         }
     }
-    
-    private func fetchData(_ page: Int, completion: @escaping (Result<[AnimateData],NetworkError.CustomError>) -> Void) {
-        let searchData = SearchRequest(searchPage: page, searchText: self.searchText)
-        AnimateServices().searchAnime(searchData) { response in
-            completion(response)
-        }
-    }
-    
 }
 
 

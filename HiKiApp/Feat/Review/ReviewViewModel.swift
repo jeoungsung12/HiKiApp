@@ -44,15 +44,15 @@ extension ReviewViewModel {
         
         input.reviewTrigger
             .bind(with: self, onNext: { owner, page in
-                owner.fetchData(page) { data in
-                    switch data {
-                    case let .success(data):
+                AnimateServices().getReviews(page: page)
+                    .subscribe { response in
+                        let data = response.data
                         owner.checkPhase(data, output)
                         output.reviewResult.accept(output.reviewResult.value + data)
-                    case .failure:
+                    } onError: { error in
                         output.phaseResult.onNext(.endPage)
                     }
-                }
+                    .disposed(by: owner.disposeBag)
             })
             .disposed(by: disposeBag)
         
@@ -64,12 +64,6 @@ extension ReviewViewModel {
             output.phaseResult.onNext(.endPage)
         } else {
             output.phaseResult.onNext(.success)
-        }
-    }
-    
-    private func fetchData(_ page: Int, completion: @escaping (Result<[ReviewData],NetworkError.CustomError>) -> Void) {
-        AnimateServices().getReviews(page: page) { response in
-            completion(response)
         }
     }
     

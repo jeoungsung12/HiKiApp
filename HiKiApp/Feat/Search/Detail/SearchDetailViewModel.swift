@@ -55,42 +55,16 @@ extension SearchDetailViewModel {
                 //TODO: HeartTapped
             }.disposed(by: disposeBag)
         
-        //TODO: Swift Concurency
-        let group = DispatchGroup()
-        var resultData = AnimateDetailData(synopsis: nil, teaser: nil, characters: nil)
-        group.enter()
-        AnimateServices().getDetailAnime(id: self.id) { response in
-            switch response {
-            case let .success(data):
-                resultData.synopsis = data
-            case .failure:
-                resultData.synopsis = nil
+        let resultData = AnimateDetailData(synopsis: nil, teaser: nil, characters: nil)
+        Observable.zip(AnimateServices().getDetailAnime(id: self.id), AnimateServices().getTeaser(id: self.id), AnimateServices().getCharacters(id: self.id))
+            .map { response in
+                return AnimateDetailData(synopsis: response.0.data, teaser: response.1.data.promo, characters: response.2.data)
             }
-            group.leave()
-        }
-        group.enter()
-        AnimateServices().getVideo(id: self.id) { response in
-            switch response {
-            case let .success(data):
-                resultData.teaser = data.promo
-            case .failure:
-                resultData.teaser = nil
-            }
-            group.leave()
-        }
-        group.enter()
-        AnimateServices().getCharacters(id: self.id) { response in
-            switch response {
-            case let .success(data):
-                resultData.characters = data
-            case .failure:
-                resultData.characters = nil
-            }
-            group.leave()
-        }
-        group.notify(queue: .main) {
-            output.animeData.accept(resultData)
-        }
+            .subscribe(with: self) { owner, data in
+                output.animeData.accept(data)
+            } onError: { owner, error in
+                output.animeData.accept(resultData)
+            }.disposed(by: disposeBag)
         
         return output
     }

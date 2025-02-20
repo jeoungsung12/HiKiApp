@@ -10,132 +10,44 @@ import Alamofire
 import RxSwift
 
 protocol AnimateServicesType {
-    func getTopAnime(request: AnimateRequest) -> Observable<[AnimateData]>
-    func searchAnime(_ searchData: SearchViewModel.SearchRequest) -> Observable<[AnimateData]>
-    func getRandomAnime(page: Int) -> Observable<[AnimateData]>
-    func getReviews(page: Int) -> Observable<[ReviewData]>
-    func getDetailAnime(id: Int) -> Observable<AnimateData>
-    func getVideo(id: Int) ->  Observable<VideoData>
-    func getCharacters(id: Int) -> Observable<[CharacterData]>
+    func getTopAnime(request: AnimateRequest) -> Observable<AnimateModel>
+    func searchAnime(_ searchData: SearchViewModel.SearchRequest) -> Observable<AnimateModel>
+    func getRandomAnime(page: Int) -> Observable<AnimateModel>
+    func getReviews(page: Int) -> Observable<AnimateReviewModel>
+    func getDetailAnime(id: Int) -> Observable<AnimateDetailModel>
+    func getTeaser(id: Int) ->  Observable<AnimateVideoModel>
+    func getCharacters(id: Int) -> Observable<AnimateCharacterModel>
 }
 
 final class AnimateServices: AnimateServicesType {
     private var disposeBag = DisposeBag()
     
-    func getTopAnime(request: AnimateRequest) -> Observable<[AnimateData]> {
-        return Observable<[AnimateData]>.create { observer in
-            
-            NetworkManager.shared.getData((AnimeRouter.topAnime(request: AnimateRequest(page: request.page, rating: request.rating, filter: request.filter))))
-                .subscribe { (response: AnimateModel) in
-                    observer.onNext(response.data)
-                    observer.onCompleted()
-                } onError: { error in
-                    observer.onError(error)
-                }
-                .disposed(by: self.disposeBag)
-            
-            return Disposables.create()
-        }
+    func getTopAnime(request: AnimateRequest) -> Observable<AnimateModel> {
+        return NetworkManager.shared.getData((AnimeRouter.topAnime(request: AnimateRequest(page: request.page, rating: request.rating, filter: request.filter))))
     }
     
-    func searchAnime(_ searchData: SearchViewModel.SearchRequest) ->  Observable<[AnimateData]> {
-        return Observable<[AnimateData]>.create { observer in
-            
-            NetworkManager.shared.getData(AnimeRouter.search(request: searchData))
-                .subscribe { (response: AnimateModel) in
-                    observer.onNext(response.data)
-                    observer.onCompleted()
-                } onError: { error in
-                    observer.onError(error)
-                }
-                .disposed(by: self.disposeBag)
-
-            return Disposables.create()
-        }
+    func searchAnime(_ searchData: SearchViewModel.SearchRequest) ->  Observable<AnimateModel> {
+        return  NetworkManager.shared.getData(AnimeRouter.search(request: searchData))
     }
     
-    func getRandomAnime(page: Int) -> Observable<[AnimateData]> {
-        return Observable.create { observer in
-            
-            NetworkManager.shared.getData(AnimeRouter.ranomAnime(page: page))
-                .subscribe { (response: AnimateModel) in
-                    observer.onNext(response.data)
-                    observer.onCompleted()
-                } onError: { error in
-                    observer.onError(error)
-                }
-                .disposed(by: self.disposeBag)
-            
-            return Disposables.create()
-        }
+    func getRandomAnime(page: Int) -> Observable<AnimateModel> {
+        return NetworkManager.shared.getData(AnimeRouter.ranomAnime(page: page))
     }
     
-    
-    func getReviews(page: Int) -> Observable<[ReviewData]> {
-        return Observable.create { observer in
-            
-            NetworkManager.shared.getData(AnimeRouter.topReview(page: page))
-                .subscribe { (response: AnimateReviewModel) in
-                    observer.onNext(response.data)
-                    observer.onCompleted()
-                } onError: { error in
-                    observer.onError(error)
-                }
-                .disposed(by: self.disposeBag)
-            
-            return Disposables.create()
-        }
-            
+    func getReviews(page: Int) -> Observable<AnimateReviewModel> {
+        return NetworkManager.shared.getData(AnimeRouter.topReview(page: page))
     }
     
-    func getDetailAnime(id: Int) -> Observable<AnimateData> {
-        return Observable.create { observer in
-            
-            NetworkManager.shared.getData(AnimeRouter.detailAnime(id: id))
-                .subscribe { (response: AnimateDetailModel) in
-                    observer.onNext(response.data)
-                    observer.onCompleted()
-                } onError: { error in
-                    observer.onError(error)
-                }
-                .disposed(by: self.disposeBag)
-            
-            return Disposables.create()
-        }
+    func getDetailAnime(id: Int) -> Observable<AnimateDetailModel> {
+        return NetworkManager.shared.getData(AnimeRouter.detailAnime(id: id))
     }
     
-    func getVideo(id: Int) -> Observable<VideoData> {
-        return Observable.create { observer in
-            
-            NetworkManager.shared.getData(AnimeRouter.getAnimeVideos(id: id))
-                .subscribe { (response: AnimateVideoModel) in
-                    observer.onNext(response.data)
-                    observer.onCompleted()
-                } onError: { error in
-                    observer.onError(error)
-                }
-                .disposed(by: self.disposeBag)
-            
-            return Disposables.create()
-        }
-        
+    func getTeaser(id: Int) -> Observable<AnimateVideoModel> {
+        return NetworkManager.shared.getData(AnimeRouter.getAnimeVideos(id: id))
     }
     
-    func getCharacters(id: Int) -> Observable<[CharacterData]> {
-        return Observable.create { observer in
-            
-            NetworkManager.shared.getData(AnimeRouter.characters(id: id))
-                .subscribe { (response: AnimateCharacterModel) in
-                    observer.onNext(response.data)
-                    observer.onCompleted()
-                } onError: { error in
-                    observer.onError(error)
-                }
-                .disposed(by: self.disposeBag)
-            
-            return Disposables.create()
-        }
-        
+    func getCharacters(id: Int) -> Observable<AnimateCharacterModel> {
+        return NetworkManager.shared.getData(AnimeRouter.characters(id: id))
     }
     
 }

@@ -38,24 +38,17 @@ extension TeaserViewModel {
         
         input.dataTrigger
             .bind(with: self, onNext: { owner, page in
-                owner.fetchData(page) { result in
-                    switch result {
-                    case let .success(data):
-                        owner.videosData.append(contentsOf: data)
+                AnimateServices().getRandomAnime(page: page)
+                    .subscribe { response in
+                        owner.videosData.append(contentsOf: response.data)
                         output.dataResult.accept(owner.videosData)
-                    case .failure:
+                    } onError: { error in
                         output.dataResult.accept([])
                     }
-                }
+                    .disposed(by: owner.disposeBag)
             }).disposed(by: disposeBag)
         
         return output
-    }
-    
-    private func fetchData(_ page: Int, completion: @escaping (Result<[AnimateData],NetworkError.CustomError>) -> Void) {
-        AnimateServices().getRandomAnime(page: page) { result in
-            completion(result)
-        }
     }
     
 }
