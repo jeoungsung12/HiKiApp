@@ -21,6 +21,7 @@ final class MyPageViewController: BaseViewController {
     
     private let viewModel = MyPageViewModel()
     let inputTrigger = MyPageViewModel.Input(
+        profileTrigger: PublishSubject<Void>(),
         listBtnTrigger: PublishRelay<MyPageViewModel.MyPageButtonType>(),
         categoryBtnTrigger: PublishRelay<MyPageViewModel.MyPageCategoryType>()
     )
@@ -28,6 +29,11 @@ final class MyPageViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        inputTrigger.profileTrigger.onNext(())
     }
     
     override func setBindView() {
@@ -46,6 +52,7 @@ final class MyPageViewController: BaseViewController {
         output.profileResult
             .bind(with: self, onNext: { owner, userInfo in
                 owner.myProfileView.configure(userInfo)
+                owner.countLabel.text = owner.viewModel.getSaveAnime()
             }).disposed(by: disposeBag)
         
         output.listBtnResult
@@ -62,8 +69,7 @@ final class MyPageViewController: BaseViewController {
                         [.ok, .cancel]
                     ) {
                         owner.viewModel.removeUserInfo()
-                        let rootVC = UINavigationController(rootViewController: OnboardingViewController())
-                        owner.setRootView(rootVC)
+                        owner.setRootView(UINavigationController(rootViewController: OnboardingViewController()))
                     }
                 }
             }.disposed(by: disposeBag)
@@ -73,7 +79,7 @@ final class MyPageViewController: BaseViewController {
                 switch type {
                 case .aniBox:
                     owner.push(SheetProfileViewController())
-                case .watchBox:
+                case .reviewBox:
                     owner.push(SheetProfileViewController())
                 case .profile:
                     owner.push(SheetProfileViewController())
@@ -121,13 +127,11 @@ final class MyPageViewController: BaseViewController {
     override func configureView() {
         self.setNavigation("프로필")
         self.view.backgroundColor = .customWhite
-        
-        //TODO: - 간소화
         aniBoxButton.tag = 0
         aniBoxButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.aniBox.rawValue, MyPageViewModel.MyPageCategoryType.aniBox.image)
         
         aniBoxButton.tag = 1
-        teaserBoxButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.watchBox.rawValue, MyPageViewModel.MyPageCategoryType.watchBox.image)
+        teaserBoxButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.reviewBox.rawValue, MyPageViewModel.MyPageCategoryType.reviewBox.image)
         
         aniBoxButton.tag = 2
         changeProfileButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.profile.rawValue, MyPageViewModel.MyPageCategoryType.profile.image)
@@ -144,8 +148,6 @@ final class MyPageViewController: BaseViewController {
         countLabel.layer.cornerRadius = 5
         countLabel.textAlignment = .center
         countLabel.backgroundColor = .point
-        //TODO: 갯수 대응 - 최대 저장 갯수
-        countLabel.text = viewModel.getUserInfo() + "개 보관중"
         countLabel.font = .systemFont(ofSize: 12, weight: .heavy)
         
         configureButtonStack()

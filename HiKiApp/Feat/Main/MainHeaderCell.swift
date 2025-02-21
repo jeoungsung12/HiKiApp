@@ -74,7 +74,7 @@ final class MainHeaderCell: BaseCollectionViewCell, ReusableIdentifier {
         }
         
         titleLabel.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-4)
+            make.bottom.greaterThanOrEqualToSuperview()
             make.top.equalTo(genreLabel.snp.bottom).offset(4)
             make.horizontalEdges.equalToSuperview().inset(24)
         }
@@ -90,7 +90,7 @@ final class MainHeaderCell: BaseCollectionViewCell, ReusableIdentifier {
         rankLabel.textAlignment = .left
         rankLabel.font = .boldItalicFont(130)
         
-        titleLabel.numberOfLines = 1
+        titleLabel.numberOfLines = 2
         titleLabel.textColor = .black
         titleLabel.textAlignment = .center
         titleLabel.font = .systemFont(ofSize: 20, weight: .bold)

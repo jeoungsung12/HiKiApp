@@ -90,7 +90,7 @@ class SearchViewController: BaseViewController {
         
         Observable.zip(tableView.rx.itemSelected, tableView.rx.modelSelected(AnimateDataEntity.self))
             .bind(with: self) { owner, value in
-                let vc = SearchDetailViewController(viewModel: SearchDetailViewModel(id: value.1.id))
+                let vc = AnimateDetailViewController(viewModel: AnimateDetailViewModel(id: value.1.id))
                 owner.push(vc)
             }
             .disposed(by: disposeBag)
@@ -142,7 +142,7 @@ class SearchViewController: BaseViewController {
         resultLabel.textAlignment = .center
         resultLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         
-        recentView.configure(viewModel.db.recentSearch)
+//        recentView.configure(viewModel.db.recentSearch)
         tapGesture.cancelsTouchesInView = false
         
         setTableView()

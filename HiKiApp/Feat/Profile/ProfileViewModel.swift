@@ -16,7 +16,7 @@ struct ProfileButton {
 }
 
 final class ProfileViewModel: BaseViewModel {
-    private let db = DataBase.shared
+    private let db = UserDefaultManager.shared
     private var disposeBag = DisposeBag()
     
     struct Input {
@@ -27,11 +27,10 @@ final class ProfileViewModel: BaseViewModel {
     }
     
     struct Output {
-        let buttonEnabledResult: PublishSubject<Bool?> = PublishSubject()
-        let successButtonResult: PublishSubject<Bool?> = PublishSubject()
-        let nameTextFieldResult: PublishSubject<String?> = PublishSubject()
-        //TODO: ProfileViewResult - Object
-        let configureViewResult: BehaviorSubject<[String?]> = BehaviorSubject(value: [])
+        let buttonEnabledResult: Driver<Bool?>
+        let successButtonResult: Driver<Bool?>
+        let nameTextFieldResult: Driver<String?>
+        let configureViewResult: Driver<UserInfo?>
     }
     
     init() {
@@ -47,35 +46,42 @@ final class ProfileViewModel: BaseViewModel {
 extension ProfileViewModel {
     
     func transform(_ input: Input) -> Output {
-        let output = Output()
-        
+        let configureResult = PublishSubject<UserInfo?>()
         input.configureViewTrigger
             .bind(with: self) { owner, _ in
-                output.configureViewResult.onNext(owner.db.userInfo)
+                configureResult.onNext(owner.db.userInfo)
             }.disposed(by: disposeBag)
         
+        let successResult = PublishSubject<Bool?>()
         input.successButtonTrigger
             .bind(with: self) { owner, success in
                 if let value = owner.handleSuccessButtonTap(profileImage: success.profileImage, name: success.name, description: success.description) {
-                    output.successButtonResult.onNext(owner.validateText(value, true))
+                    successResult.onNext(owner.validateText(value, true))
                 }
             }.disposed(by: disposeBag)
         
+        let nameResult = PublishSubject<String?>()
         input.nameTextFieldTrigger
             .bind(with: self) { owner, text in
                 let nicknameText = NickName().checkNickName(text)
-                output.nameTextFieldResult.onNext(nicknameText.rawValue)
+                nameResult.onNext(nicknameText.rawValue)
             }.disposed(by: disposeBag)
         
+        let buttonResult = PublishSubject<Bool?>()
         input.buttonEnabledTrigger
             .bind(with: self) { owner, enable in
                 if let value = owner.handleSuccessButtonTap(profileImage: enable.profileImage, name: enable.name, description: enable.description)
                 {
-                    output.buttonEnabledResult.onNext(owner.validateText(value, false))
+                    buttonResult.onNext(owner.validateText(value, false))
                 }
             }.disposed(by: disposeBag)
         
-        return output
+        return Output(
+            buttonEnabledResult: buttonResult.asDriver(onErrorJustReturn: nil),
+            successButtonResult: successResult.asDriver(onErrorJustReturn: nil),
+            nameTextFieldResult: nameResult.asDriver(onErrorJustReturn: nil),
+            configureViewResult: configureResult.asDriver(onErrorJustReturn: nil)
+        )
     }
     
 }
@@ -85,18 +91,14 @@ extension ProfileViewModel {
     private func validateText(_ success: ProfileButton,_ complete: Bool) -> Bool? {
         if let nicknameLabel = success.name, let descriptionLabel = success.description,
            descriptionLabel == NickName.NickNameType.success.rawValue {
-            
             if complete {
-                db.isUser = true
-                //TODO: Object
-                db.userInfo = [nicknameLabel, .checkProfileImage(success.profileImage), "0", .currentDate]
+                db.userInfo = UserInfo(nickname: nicknameLabel, profile: .checkProfileImage(success.profileImage), saveAnimateID: [], date: .currentDate)
             }
             return true
         } else {
             return false
         }
     }
-    
     
     private func handleSuccessButtonTap(profileImage: UIImage?, name: String?, description: String?) -> ProfileButton? {
         let profileData = ProfileButton(

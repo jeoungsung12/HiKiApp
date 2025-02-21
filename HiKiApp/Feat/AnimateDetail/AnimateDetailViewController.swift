@@ -11,20 +11,15 @@ import NVActivityIndicatorView
 import RxSwift
 import RxCocoa
 
-final class SearchDetailViewController: BaseViewController {
-    private lazy var heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: nil, action: nil)
-    private let tableView = UITableView()
+final class AnimateDetailViewController: BaseViewController {
+    let heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: nil, action: nil)
     private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
+    private let tableView = UITableView()
     
-    //TODO: - ViewModel
-    var isButton: (()->Void)?
-    
-    let viewModel: SearchDetailViewModel
-    private lazy var inputTrigger = SearchDetailViewModel.Input(
-        heartBtnTrigger: heartButton.rx.tap
-    )
+    let viewModel: AnimateDetailViewModel
+    private lazy var inputTrigger = AnimateDetailViewModel.Input(heartBtnTrigger:heartButton.rx.tap)
     private lazy var outputResult = viewModel.transform(inputTrigger)
-    init(viewModel: SearchDetailViewModel) {
+    init(viewModel: AnimateDetailViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -40,6 +35,12 @@ final class SearchDetailViewController: BaseViewController {
     }
     
     override func setBinding() {
+        outputResult.heartResult
+            .bind(with: self) { owner, valid in
+                owner.heartButton.image = (valid) ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
+            }
+            .disposed(by: disposeBag)
+        
         outputResult.animeData
             .bind(with: self) { owner, data in
                 owner.tableView.reloadData()
@@ -77,10 +78,6 @@ final class SearchDetailViewController: BaseViewController {
         configureTableView()
     }
     
-    func configure() {
-        //TODO: id로 좋아요 유무 구분
-    }
-    
     deinit {
         print(#function, self)
     }
@@ -88,7 +85,7 @@ final class SearchDetailViewController: BaseViewController {
 }
 
 //MARK: - TableView
-extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource {
+extension AnimateDetailViewController: UITableViewDelegate, UITableViewDataSource {
     
     private func configureTableView() {
         tableView.delegate = self
@@ -104,11 +101,11 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return SearchDetailViewModel.DetailType.allCases.count
+        return AnimateDetailViewModel.DetailType.allCases.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch SearchDetailViewModel.DetailType.allCases[indexPath.row] {
+        switch AnimateDetailViewModel.DetailType.allCases[indexPath.row] {
         case .poster:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: PosterTableViewCell.id, for: indexPath) as? PosterTableViewCell else { return UITableViewCell() }
             let value = outputResult.animeData.value

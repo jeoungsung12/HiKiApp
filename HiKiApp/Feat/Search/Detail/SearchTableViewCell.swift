@@ -8,6 +8,8 @@
 import UIKit
 import Kingfisher
 import SnapKit
+import RxSwift
+import RxCocoa
 
 class SearchTableViewCell: BaseTableViewCell, ReusableIdentifier {
     private let posterImageView = UIImageView()
@@ -15,17 +17,35 @@ class SearchTableViewCell: BaseTableViewCell, ReusableIdentifier {
     private let titleLabel = UILabel()
     private let dateLabel = UILabel()
     private let heartButton = UIButton()
-    private let db = DataBase.shared
     private var buttonTapped: Bool = false
+    
+    private let viewModel = SearchTableViewModel()
+    private lazy var inputTigger = SearchTableViewModel.Input(
+        heartBtnTrigger: self.heartButton.rx.tap,
+        heartLoadTrigger: PublishRelay<Int>()
+    )
+    private var disposeBag = DisposeBag()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setBinding()
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         posterImageView.image = nil
         imageResult.text = NetworkError.noImage
+    }
+    
+    private func setBinding() {
+        let output = viewModel.transform(inputTigger)
+        
+        output.heartBtnResult
+            .drive(with: self) { owner, valid in
+                let image = (valid) ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
+                owner.heartButton.setImage(image, for: .normal)
+            }
+            .disposed(by: disposeBag)
     }
     
     override func configureHierarchy() {
@@ -89,15 +109,14 @@ class SearchTableViewCell: BaseTableViewCell, ReusableIdentifier {
         dateLabel.font = .systemFont(ofSize: 13, weight: .regular)
         
         heartButton.tintColor = .point
-        //TODO: ViewModel
-        heartButton.addTarget(self, action: #selector(heartButtonTapped), for: .touchUpInside)
     }
     
     func configure(_ search: String,_ model: AnimateDataEntity) {
-        highlightLabel(search, model.title)
+        viewModel.id = model.id
+        
         dateLabel.text = model.enTitle
-        buttonTapped = db.heartList.contains(model.title)
-        heartButton.setImage(UIImage(systemName: (db.heartList.contains(model.title)) ? "heart.fill" : "heart"), for: .normal)
+        highlightLabel(search, model.title)
+        inputTigger.heartLoadTrigger.accept(model.id)
         if let url = URL(string: model.imageURL) {
             imageResult.text = nil
             posterImageView.kf.setImage(with: url)
@@ -117,22 +136,6 @@ extension SearchTableViewCell {
         } else {
             let attributes = NSMutableAttributedString(string: text)
             titleLabel.attributedText = attributes
-        }
-    }
-    
-    //TODO: ViewModel
-    @objc
-    private func heartButtonTapped(_ sender: UIButton) {
-        print(#function)
-        if let text = titleLabel.text {
-            buttonTapped.toggle()
-            if buttonTapped {
-                var list = db.heartList
-                list.append(text)
-                db.heartList = list
-            } else {
-                db.removeHeartButton(text)
-            }
         }
     }
     

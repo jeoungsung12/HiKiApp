@@ -22,7 +22,7 @@ extension TabBarController {
         let firstVC = UINavigationController(rootViewController: MainViewController())
         let secondVC = UINavigationController(rootViewController: SearchViewController())
         let thirdVC = UINavigationController(rootViewController: ReviewViewController())
-        let forthVC = UINavigationController(rootViewController: TeaserViewController())
+        let forthVC = UINavigationController(rootViewController: MineReviewViewController())
         let fifthVC = UINavigationController(rootViewController: MyPageViewController())
         
         self.setViewControllers([firstVC, secondVC, thirdVC, forthVC, fifthVC], animated: true)
@@ -30,13 +30,13 @@ extension TabBarController {
         items[0].image = UIImage(systemName: "popcorn")
         items[1].image = UIImage(systemName: "magnifyingglass")
         items[2].image = UIImage(systemName: "star.bubble")
-        items[3].image = UIImage(systemName: "film.stack")
+        items[3].image = UIImage(systemName: "bubble.and.pencil.rtl")
         items[4].image = UIImage(systemName: "person.circle")
         
         items[0].title = "시네마"
         items[1].title = "검색"
-        items[2].title = "리뷰"
-        items[3].title = "티저"
+        items[2].title = "모두의 리뷰"
+        items[3].title = "나만의 리뷰"
         items[4].title = "프로필"
            
         let appearance = UITabBarAppearance()

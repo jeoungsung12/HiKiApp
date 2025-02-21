@@ -15,9 +15,7 @@ final class SheetProfileViewController: UIViewController {
     private let nameTextField = UITextField()
     private let spacingView = UIView()
     private let descriptionLabel = UILabel()
-    private let db = DataBase.shared
     
-    var dismissClosure: (()->Void)?
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -41,7 +39,6 @@ extension SheetProfileViewController {
     }
     
     private func configureLayout() {
-        
         profileButton.snp.makeConstraints { make in
             make.size.equalTo(150)
             make.centerX.equalToSuperview().offset(10)
@@ -91,15 +88,15 @@ extension SheetProfileViewController {
     }
     
     private func configureProfileView() {
-        let userInfo = db.userInfo
-        if let text = nameTextField.text, !userInfo.isEmpty {
-            nameTextField.text = userInfo[0]
-            profileButton.profileImage.image = UIImage(named: userInfo[1])
-            descriptionLabel.text = NickName().checkNickName(text).rawValue
-        } else {
-            guard let image = ProfileData.allCases.randomElement()?.rawValue else { return }
-            profileButton.profileImage.image = UIImage(named: image)
-        }
+//        let userInfo = db.userInfo
+//        if let text = nameTextField.text, !userInfo.isEmpty {
+//            nameTextField.text = userInfo[0]
+//            profileButton.profileImage.image = UIImage(named: userInfo[1])
+//            descriptionLabel.text = NickName().checkNickName(text).rawValue
+//        } else {
+//            guard let image = ProfileData.allCases.randomElement()?.rawValue else { return }
+//            profileButton.profileImage.image = UIImage(named: image)
+//        }
     }
     
 }
@@ -127,15 +124,15 @@ extension SheetProfileViewController {
     @objc
     private func successButtonTapped(_ sender: UIBarButtonItem) {
         print(#function)
-        if let nicknameLabel = nameTextField.text, let descriptionLabel = descriptionLabel.text,
-           descriptionLabel == NickName.NickNameType.success.rawValue {
-            db.isUser = true
-            db.userInfo = [nicknameLabel, .checkProfileImage(profileButton.profileImage.image), "0", .currentDate]
-            self.dismissClosure?()
-            self.dismiss(animated: true)
-        } else {
-//            self.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
-        }
+//        if let nicknameLabel = nameTextField.text, let descriptionLabel = descriptionLabel.text,
+//           descriptionLabel == NickName.NickNameType.success.rawValue {
+//            db.isUser = true
+//            db.userInfo = [nicknameLabel, .checkProfileImage(profileButton.profileImage.image), "0", .currentDate]
+//            self.dismissClosure?()
+//            self.dismiss(animated: true)
+//        } else {
+////            self.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
+//        }
     }
 }
 

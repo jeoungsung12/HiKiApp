@@ -10,21 +10,21 @@ import RxSwift
 import RxCocoa
 
 final class MyPageViewModel: BaseViewModel {
-    private let db = DataBase.shared
+    private let db = UserDefaultManager.shared
     private(set) var profileData = ProfileData.allCases
     private var disposeBag = DisposeBag()
     
     enum MyPageCategoryType: String, CaseIterable {
         case aniBox = "애니 보관함"
-        case watchBox = "티저 보관함"
+        case reviewBox = "리뷰 보관함"
         case profile = "프로필 수정"
         
         var image: String {
             switch self {
             case .aniBox:
                 "cube.box"
-            case .watchBox:
-                "play.tv"
+            case .reviewBox:
+                "bubble.and.pencil.rtl"
             case .profile:
                 "person.text.rectangle"
             }
@@ -38,6 +38,7 @@ final class MyPageViewModel: BaseViewModel {
     }
     
     struct Input {
+        let profileTrigger: PublishSubject<Void>
         let listBtnTrigger: PublishRelay<MyPageButtonType>
         let categoryBtnTrigger: PublishRelay<MyPageCategoryType>
     }
@@ -61,30 +62,39 @@ final class MyPageViewModel: BaseViewModel {
 extension MyPageViewModel {
     
     func transform(_ input: Input) -> Output {
-        let categoryType = PublishRelay<MyPageCategoryType>()
+        let profileResult = BehaviorRelay(value: db.userInfo)
+        input.profileTrigger
+            .bind(with: self) { owner, _ in
+                profileResult.accept(owner.db.userInfo)
+            }
+            .disposed(by: disposeBag)
+        
+        let categoryResult = PublishRelay<MyPageCategoryType>()
         input.categoryBtnTrigger
             .bind { value in
-                categoryType.accept(value)
+                categoryResult.accept(value)
             }.disposed(by: disposeBag)
         
-        let btnType = PublishRelay<MyPageButtonType>()
+        let btnResult = PublishRelay<MyPageButtonType>()
         input.listBtnTrigger
             .bind { value in
-                btnType.accept(value)
+                btnResult.accept(value)
             }.disposed(by: disposeBag)
         
         return Output(
-            profileResult: BehaviorRelay(value: db.getUser()),
-            listBtnResult: btnType,
-            categoryBtnResult: categoryType)
+            profileResult: profileResult,
+            listBtnResult: btnResult,
+            categoryBtnResult: categoryResult)
     }
     
     func removeUserInfo() {
-        self.db.removeUserInfo()
+        db.removeUserDefault(.userInfo)
+        db.removeUserDefault(.userReview)
+        db.removeUserDefault(.recentSearch)
     }
     
-    func getUserInfo() -> String {
-        return self.db.getUser().movie
+    func getSaveAnime() -> String {
+        return db.userInfo.saveAnimateID.count.formatted() + "개 보관중"
     }
     
 }

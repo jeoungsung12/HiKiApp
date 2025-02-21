@@ -64,11 +64,10 @@ final class ProfileViewController: BaseViewController {
         let output = viewModel.transform(inputTrigger)
         
         output.configureViewResult
-            .bind(with: self, onNext: { owner, userInfo in
-                if !userInfo.isEmpty {
-                    //TODO: Object
-                    owner.nameTextField.text = userInfo[0]
-                    owner.profileButton.profileImage.image = UIImage(named: userInfo[1] ?? "")
+            .drive(with: self, onNext: { owner, userInfo in
+                if let userInfo = userInfo, let image = userInfo.profile {
+                    owner.nameTextField.text = userInfo.nickname
+                    owner.profileButton.profileImage.image = UIImage(named: image)
                 } else {
                     guard let image = ProfileData.allCases.randomElement()?.rawValue else { return }
                     owner.profileButton.profileImage.image = UIImage(named: image)
@@ -76,7 +75,7 @@ final class ProfileViewController: BaseViewController {
             }).disposed(by: disposeBag)
         
         output.successButtonResult
-            .bind(with: self, onNext: { owner, valid in
+            .drive(with: self, onNext: { owner, valid in
                 if let valid = valid, valid {
                     let rootVC = TabBarController()
                     owner.setRootView(rootVC)
@@ -86,13 +85,13 @@ final class ProfileViewController: BaseViewController {
             }).disposed(by: disposeBag)
         
         output.nameTextFieldResult
-            .bind(with: self, onNext: { owner, text in
+            .drive(with: self, onNext: { owner, text in
                 owner.descriptionLabel.text = ((text == "")) ? nil : text
                 owner.descriptionLabel.textColor = (text == NickName.NickNameType.success.rawValue) ? .systemOrange : .systemRed
             }).disposed(by: disposeBag)
         
         output.buttonEnabledResult
-            .bind(with: self, onNext: { owner, valid in
+            .drive(with: self, onNext: { owner, valid in
                 guard let valid = valid else {
                     owner.successButton.isEnabled = false
                     owner.successButton.backgroundColor = .customDarkGray
@@ -102,7 +101,7 @@ final class ProfileViewController: BaseViewController {
                 owner.successButton.backgroundColor = (valid) ? .point : .customDarkGray
             }).disposed(by: disposeBag)
         
-//        inputTrigger.configureViewTrigger.onNext(())
+        inputTrigger.configureViewTrigger.onNext(())
     }
     
     override func configureHierarchy() {

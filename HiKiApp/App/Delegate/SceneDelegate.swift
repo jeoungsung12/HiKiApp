@@ -15,8 +15,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
         sleep(2)
-        let rootDirection = DataBase.shared.isUser
-        let vc = (rootDirection) ? TabBarController() : UINavigationController(rootViewController: OnboardingViewController())
+        let rootDirection = UserDefaultManager.shared.userInfo.nickname.isEmpty
+        let vc = (!rootDirection) ? TabBarController() : UINavigationController(rootViewController: OnboardingViewController())
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
     }

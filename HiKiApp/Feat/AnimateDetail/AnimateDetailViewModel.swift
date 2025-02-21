@@ -9,20 +9,22 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+
+
 struct AnimateDetailData {
     var synopsis: AnimateDataEntity?
     var teaser: [AnimateVideoEntity]?
     var characters: [AnimateCharacterEntity]?
 }
 
-final class SearchDetailViewModel: BaseViewModel {
+final class AnimateDetailViewModel: BaseViewModel {
     enum DetailType: CaseIterable {
         case poster
         case synopsis
         case teaser
         case characters
     }
-    private let db = DataBase.shared
+    private let db = UserDefaultManager.shared
     private var disposeBag = DisposeBag()
     
     var id: Int
@@ -36,6 +38,7 @@ final class SearchDetailViewModel: BaseViewModel {
     }
     
     struct Output {
+        let heartResult: BehaviorRelay<Bool> = BehaviorRelay(value: false)
         let animeData: BehaviorRelay<AnimateDetailData?> = BehaviorRelay(value: nil)
     }
     
@@ -45,14 +48,15 @@ final class SearchDetailViewModel: BaseViewModel {
     
 }
 
-extension SearchDetailViewModel {
+extension AnimateDetailViewModel {
     
     func transform(_ input: Input) -> Output {
         let output = Output()
         
         input.heartBtnTrigger
             .bind(with: self) { owner, _ in
-                //TODO: HeartTapped
+                owner.heartBtnTapped(self.id)
+                output.heartResult.accept(owner.heartResult())
             }.disposed(by: disposeBag)
         
         let resultData = AnimateDetailData(synopsis: nil, teaser: nil, characters: nil)
@@ -66,7 +70,23 @@ extension SearchDetailViewModel {
                 output.animeData.accept(resultData)
             }.disposed(by: disposeBag)
         
+        output.heartResult.accept(heartResult())
+        
         return output
     }
     
+    //TODO: Optimistic UI
+    private func heartBtnTapped(_ id: Int) {
+        var userInfo = db.userInfo
+        if !userInfo.saveAnimateID.contains(id) {
+            userInfo.saveAnimateID.append(id)
+        } else {
+            userInfo.saveAnimateID.removeAll(where: { $0 == id})
+        }
+        db.userInfo = userInfo
+    }
+    
+    private func heartResult() -> Bool {
+        return db.userInfo.saveAnimateID.contains(self.id)
+    }
 }

@@ -62,7 +62,9 @@ final class MyProfileView: BaseView {
     func configure(_ userInfo: UserInfo) {
         dateLabel.text = userInfo.date
         nameLabel.text = userInfo.nickname
-        profileImage.profileImage.image = userInfo.profile
+        if let image =  userInfo.profile {
+            profileImage.profileImage.image = UIImage(named: image)
+        }
     }
     
 }
