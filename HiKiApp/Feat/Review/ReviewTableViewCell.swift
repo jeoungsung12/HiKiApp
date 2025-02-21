@@ -162,16 +162,16 @@ class ReviewTableViewCell: BaseTableViewCell, ReusableIdentifier {
         spoilerLabel.font = .boldSystemFont(ofSize: 13)
     }
     
-    func configure(_ data: ReviewData) {
+    func configure(_ data: AnimateReviewEntity) {
         reviewLabel.text = data.review
-        titleLabel.text = data.entry.title
-        nameLabel.text = data.user.username
+        titleLabel.text = data.animeTitle
+        nameLabel.text = data.username
         dateLabel.text = .stringToDate(data.date)
-        spoilerLabel.text = (data.is_spoiler) ? "스포일러 주의!" : nil
-        spoilerLabel.textColor = (data.is_spoiler) ? .systemRed.withAlphaComponent(0.7) : .white
+        spoilerLabel.text = (data.isSpoiler) ? "스포일러 주의!" : nil
+        spoilerLabel.textColor = (data.isSpoiler) ? .systemRed.withAlphaComponent(0.7) : .white
         cosmosView.rating = Double(data.score)
         
-        if let url = URL(string: data.entry.images.jpg.image_url) {
+        if let url = URL(string: data.imageUrl) {
             posterImageView.kf.setImage(with: url)
         }
     }

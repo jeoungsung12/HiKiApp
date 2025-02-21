@@ -22,8 +22,8 @@ final class ProfileViewController: BaseViewController {
     private var inputTrigger = ProfileViewModel.Input(
         configureViewTrigger: PublishSubject<Void>(),
         nameTextFieldTrigger: PublishSubject<String?>(),
-        successButtonTrigger: PublishSubject<ProfileSuccessButtonRequest>(),
-        buttonEnabledTrigger: PublishSubject<ProfileSuccessButtonRequest>()
+        successButtonTrigger: PublishSubject<ProfileButton>(),
+        buttonEnabledTrigger: PublishSubject<ProfileButton>()
     )
     
     private var disposeBag = DisposeBag()
@@ -88,7 +88,7 @@ final class ProfileViewController: BaseViewController {
         output.nameTextFieldResult
             .bind(with: self, onNext: { owner, text in
                 owner.descriptionLabel.text = ((text == "")) ? nil : text
-                owner.descriptionLabel.textColor = (text == ProfileViewModel.NickName.NickNameType.success.rawValue) ? .systemOrange : .systemRed
+                owner.descriptionLabel.textColor = (text == NickName.NickNameType.success.rawValue) ? .systemOrange : .systemRed
             }).disposed(by: disposeBag)
         
         output.buttonEnabledResult
@@ -193,7 +193,7 @@ extension ProfileViewController: UITextFieldDelegate, ProfileImageDelegate {
     
     private func enableTrigger(_ enable: Bool) {
         let trigger = (enable) ? inputTrigger.buttonEnabledTrigger : inputTrigger.successButtonTrigger
-        trigger.onNext(ProfileSuccessButtonRequest(profileImage: profileButton.profileImage.image, name: nameTextField.text, description:  descriptionLabel.text))
+        trigger.onNext(ProfileButton(profileImage: profileButton.profileImage.image, name: nameTextField.text, description:  descriptionLabel.text))
     }
     
 }

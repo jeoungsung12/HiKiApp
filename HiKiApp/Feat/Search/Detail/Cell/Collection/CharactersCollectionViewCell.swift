@@ -57,9 +57,9 @@ final class CharactersCollectionViewCell: BaseCollectionViewCell, ReusableIdenti
         nameLabel.font = .boldSystemFont(ofSize: 15)
     }
     
-    func configure(_ model: CharacterEntry) {
-        nameLabel.text = model.name
-        if let images = model.images, let url = URL(string: images.jpg.image_url) {
+    func configure(nameEntity: String, imageEntity: String?) {
+        nameLabel.text = nameEntity
+        if let image = imageEntity, let url = URL(string: image) {
             imageView.kf.setImage(with: url)
         }
     }

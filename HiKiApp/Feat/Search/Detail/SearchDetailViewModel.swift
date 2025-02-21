@@ -10,9 +10,9 @@ import RxSwift
 import RxCocoa
 
 struct AnimateDetailData {
-    var synopsis: AnimateData?
-    var teaser: [VideoPromo]?
-    var characters: [CharacterData]?
+    var synopsis: AnimateDataEntity?
+    var teaser: [AnimateVideoEntity]?
+    var characters: [AnimateCharacterEntity]?
 }
 
 final class SearchDetailViewModel: BaseViewModel {
@@ -58,7 +58,7 @@ extension SearchDetailViewModel {
         let resultData = AnimateDetailData(synopsis: nil, teaser: nil, characters: nil)
         Observable.zip(AnimateServices().getDetailAnime(id: self.id), AnimateServices().getTeaser(id: self.id), AnimateServices().getCharacters(id: self.id))
             .map { response in
-                return AnimateDetailData(synopsis: response.0.data, teaser: response.1.data.promo, characters: response.2.data)
+                return AnimateDetailData(synopsis: response.0.data.toEntity(), teaser: response.1.toEntity(), characters: response.2.toEntity())
             }
             .subscribe(with: self) { owner, data in
                 output.animeData.accept(data)

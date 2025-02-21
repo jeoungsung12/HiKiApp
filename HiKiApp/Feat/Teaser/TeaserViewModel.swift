@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 final class TeaserViewModel: BaseViewModel {
-    private var videosData: [AnimateData] = []
+    private var videosData: [AnimateDataEntity] = []
     private var disposeBag = DisposeBag()
     struct Input {
         let dataTrigger: BehaviorRelay<Int>
@@ -18,7 +18,7 @@ final class TeaserViewModel: BaseViewModel {
     
     struct Output {
         let pageResult: BehaviorRelay<Int> = BehaviorRelay(value: 1)
-        let dataResult: BehaviorRelay<[AnimateData]> = BehaviorRelay(value: [])
+        let dataResult: BehaviorRelay<[AnimateDataEntity]> = BehaviorRelay(value: [])
     }
     
     init() {
@@ -40,7 +40,8 @@ extension TeaserViewModel {
             .bind(with: self, onNext: { owner, page in
                 AnimateServices().getRandomAnime(page: page)
                     .subscribe { response in
-                        owner.videosData.append(contentsOf: response.data)
+                        let data = response.data.map { $0.toEntity() }
+                        owner.videosData.append(contentsOf: data)
                         output.dataResult.accept(owner.videosData)
                     } onError: { error in
                         output.dataResult.accept([])

@@ -34,7 +34,7 @@ final class MainHeaderCell: BaseCollectionViewCell, ReusableIdentifier {
         if let genres = data.genre {
             var text: String = ""
             for genre in genres {
-                text += "#\(genre.name) "
+                text += "#\(genre) "
             }
             genreLabel.text = text
         }

@@ -13,11 +13,11 @@ final class CharactersTableViewModel: BaseViewModel {
     private var disposeBag = DisposeBag()
     
     struct Input {
-        let inputTrigger: PublishSubject<[CharacterData]>
+        let inputTrigger: PublishSubject<[AnimateCharacterEntity]>
     }
     
     struct Output {
-        let charactersResult: BehaviorRelay<[CharacterData]>
+        let charactersResult: BehaviorRelay<[AnimateCharacterEntity]>
     }
     
 }
@@ -25,7 +25,7 @@ final class CharactersTableViewModel: BaseViewModel {
 extension CharactersTableViewModel {
     
     func transform(_ input: Input) -> Output {
-        let output: BehaviorRelay<[CharacterData]> = BehaviorRelay(value: [])
+        let output: BehaviorRelay<[AnimateCharacterEntity]> = BehaviorRelay(value: [])
         
         input.inputTrigger
             .bind(to: output)

@@ -65,8 +65,8 @@ final class DetailTeaserCollectionViewCell: BaseCollectionViewCell, ReusableIden
         }
     }
     
-    func configure(_ video: VideoTrailer) {
-        guard var url = video.embed_url else { return }
+    func configure(_ video: String?) {
+        guard var url = video else { return }
         url += "&cc_load_policy=1"
         videoURL = url
         player = YouTubePlayer(urlString: url)

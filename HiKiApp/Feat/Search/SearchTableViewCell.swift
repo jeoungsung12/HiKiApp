@@ -93,12 +93,12 @@ class SearchTableViewCell: BaseTableViewCell, ReusableIdentifier {
         heartButton.addTarget(self, action: #selector(heartButtonTapped), for: .touchUpInside)
     }
     
-    func configure(_ search: String,_ model: AnimateData) {
+    func configure(_ search: String,_ model: AnimateDataEntity) {
         highlightLabel(search, model.title)
-        dateLabel.text = model.title_english
+        dateLabel.text = model.enTitle
         buttonTapped = db.heartList.contains(model.title)
         heartButton.setImage(UIImage(systemName: (db.heartList.contains(model.title)) ? "heart.fill" : "heart"), for: .normal)
-        if let url = URL(string: model.images.jpg.image_url) {
+        if let url = URL(string: model.imageURL) {
             imageResult.text = nil
             posterImageView.kf.setImage(with: url)
         }

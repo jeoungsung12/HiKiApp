@@ -30,7 +30,7 @@ final class TeaserTableViewCell: BaseTableViewCell, ReusableIdentifier {
         
         output.teaserResult
             .bind(to: collectionView.rx.items(cellIdentifier: DetailTeaserCollectionViewCell.id, cellType: DetailTeaserCollectionViewCell.self)) { items, element, cell in
-                cell.configure(element.trailer)
+                cell.configure(element.trailerURL)
             }.disposed(by: disposeBag)
     }
     

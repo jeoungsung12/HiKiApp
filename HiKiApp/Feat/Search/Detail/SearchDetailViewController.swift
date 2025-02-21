@@ -111,9 +111,8 @@ extension SearchDetailViewController: UITableViewDelegate, UITableViewDataSource
         switch SearchDetailViewModel.DetailType.allCases[indexPath.row] {
         case .poster:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: PosterTableViewCell.id, for: indexPath) as? PosterTableViewCell else { return UITableViewCell() }
-            //TODO: 디코딩 전략
             let value = outputResult.animeData.value
-            cell.configure(title: value?.synopsis?.title, image: value?.synopsis?.images.jpg.image_url)
+            cell.configure(title: value?.synopsis?.enTitle, image: value?.synopsis?.imageURL)
             return cell
             
         case .synopsis:

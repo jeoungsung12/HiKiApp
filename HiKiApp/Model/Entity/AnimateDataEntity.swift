@@ -9,6 +9,8 @@ import Foundation
 struct AnimateDataEntity: Hashable {
     let id: Int
     let title: String
+    let enTitle: String?
+    let type: String
     let synopsis: String
     let score: Double
     let rank: Int?
@@ -22,6 +24,8 @@ extension AnimateDataDTO {
         return AnimateDataEntity(
             id: mal_id,
             title: title,
+            enTitle: title_english,
+            type: type ?? "",
             synopsis: synopsis ?? "정보 준비 중입니다 ⚠️",
             score: score ?? 0.0,
             rank: rank,

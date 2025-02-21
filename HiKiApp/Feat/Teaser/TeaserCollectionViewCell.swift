@@ -79,13 +79,13 @@ final class TeaserCollectionViewCell: BaseCollectionViewCell, ReusableIdentifier
         }
     }
     
-    func configure(_ video: AnimateData) {
+    func configure(_ video: AnimateDataEntity) {
         titleLabel.text = video.title
         var genreString = ""
-        video.genres?.forEach({ genreString += $0.name})
+        video.genres.forEach({ genreString += $0})
         descriptionLabel.text = genreString
         
-        guard var url = video.trailer.embed_url else { return }
+        guard var url = video.trailerURL else { return }
         url += "&cc_load_policy=1"
         videoURL = url
         player = YouTubePlayer(urlString: url)

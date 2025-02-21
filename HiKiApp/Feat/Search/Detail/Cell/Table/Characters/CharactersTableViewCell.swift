@@ -32,7 +32,7 @@ final class CharactersTableViewCell: BaseTableViewCell, ReusableIdentifier {
         
         output.charactersResult
             .bind(to: collectionView.rx.items(cellIdentifier: CharactersCollectionViewCell.id, cellType: CharactersCollectionViewCell.self)) { items, element, cell in
-                cell.configure(element.character)
+                cell.configure(nameEntity: element.names, imageEntity: element.images)
             }
             .disposed(by: disposeBag)
     }

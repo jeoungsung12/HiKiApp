@@ -13,7 +13,6 @@ struct AnimateDataResponseDTO: Decodable, Hashable {
 
 struct AnimateDataDTO: Decodable, Hashable {
     let mal_id: Int
-    let url: String
     let title: String
     let type: String?
     let synopsis: String?

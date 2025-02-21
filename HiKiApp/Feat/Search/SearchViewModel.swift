@@ -46,7 +46,7 @@ final class SearchViewModel: BaseViewModel {
     struct Output {
         var searchPage: BehaviorRelay<Int> = BehaviorRelay(value: 1)
         let phaseResult: BehaviorRelay<SearchPhase> = BehaviorRelay(value: .notRequest)
-        var searchResult: BehaviorRelay<[AnimateData]> = BehaviorRelay(value: [])
+        var searchResult: BehaviorRelay<[AnimateDataEntity]> = BehaviorRelay(value: [])
     }
     
     init() {
@@ -71,8 +71,9 @@ extension SearchViewModel {
                 let searchData = SearchRequest(searchPage: page, searchText: self.searchText)
                 AnimateServices().searchAnime(searchData)
                     .subscribe(with: self) { owner, response in
-                        owner.checkPhase(response.data, output)
-                        output.searchResult.accept(output.searchResult.value + response.data)
+                        let data = response.data.map { $0.toEntity() }
+                        owner.checkPhase(data, output)
+                        output.searchResult.accept(output.searchResult.value + data)
                     } onError: { owner, error in
                         output.phaseResult.accept(.notFound)
                         output.searchResult.accept([])
@@ -89,7 +90,7 @@ extension SearchViewModel {
         self.db.recentSearch.append(text)
     }
     
-    private func checkPhase(_ data: [AnimateData] ,_ output: Output) {
+    private func checkPhase(_ data: [AnimateDataEntity] ,_ output: Output) {
         if (data.isEmpty) && (output.searchPage.value == 1) {
             output.phaseResult.accept(.notFound)
         } else if (data.isEmpty) {

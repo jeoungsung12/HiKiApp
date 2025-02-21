@@ -13,11 +13,11 @@ final class TeaserTableViewModel: BaseViewModel {
     private var disposeBag = DisposeBag()
     
     struct Input {
-        let inputTrigger: PublishSubject<[VideoPromo]>
+        let inputTrigger: PublishSubject<[AnimateVideoEntity]>
     }
     
     struct Output {
-        let teaserResult: BehaviorRelay<[VideoPromo]>
+        let teaserResult: BehaviorRelay<[AnimateVideoEntity]>
     }
     
 }
@@ -25,7 +25,7 @@ final class TeaserTableViewModel: BaseViewModel {
 extension TeaserTableViewModel {
     
     func transform(_ input: Input) -> Output {
-        let output: BehaviorRelay<[VideoPromo]> = BehaviorRelay(value: [])
+        let output: BehaviorRelay<[AnimateVideoEntity]> = BehaviorRelay(value: [])
         
         input.inputTrigger
             .bind(to: output)

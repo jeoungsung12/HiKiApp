@@ -24,7 +24,7 @@ final class ReviewViewModel: BaseViewModel {
     
     struct Output {
         let reviewPage: BehaviorRelay<Int> = BehaviorRelay(value: 1)
-        let reviewResult: BehaviorRelay<[ReviewData]> = BehaviorRelay(value: [])
+        let reviewResult: BehaviorRelay<[AnimateReviewEntity]> = BehaviorRelay(value: [])
         let phaseResult: BehaviorSubject<ReviewPhase> = BehaviorSubject(value: .notRequest)
     }
     
@@ -46,7 +46,7 @@ extension ReviewViewModel {
             .bind(with: self, onNext: { owner, page in
                 AnimateServices().getReviews(page: page)
                     .subscribe { response in
-                        let data = response.data
+                        let data = response.data.map { $0.toEntity() }
                         owner.checkPhase(data, output)
                         output.reviewResult.accept(output.reviewResult.value + data)
                     } onError: { error in
@@ -59,7 +59,7 @@ extension ReviewViewModel {
         return output
     }
     
-    private func checkPhase(_ data: [ReviewData] ,_ output: Output) {
+    private func checkPhase(_ data: [AnimateReviewEntity] ,_ output: Output) {
         if (data.isEmpty) {
             output.phaseResult.onNext(.endPage)
         } else {

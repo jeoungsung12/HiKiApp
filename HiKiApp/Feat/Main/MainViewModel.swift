@@ -21,7 +21,7 @@ final class MainViewModel: BaseViewModel {
     }
     
     struct Output {
-        let dataLoadResult: BehaviorRelay<[[AnimateData]]?> = BehaviorRelay(value: nil)
+        let dataLoadResult: BehaviorRelay<[[AnimateDataEntity]]?> = BehaviorRelay(value: nil)
     }
     
     init() {
@@ -46,7 +46,7 @@ extension MainViewModel {
                     AnimateServices().getTopAnime(request: AnimateRequest(page: 3, rating: "g", filter: type.filter))
                 )
                 .map { result in
-                    return [result.0.data, result.1.data, result.2.data]
+                    return [result.0.data.map { $0.toEntity() }, result.1.data.map { $0.toEntity() }, result.2.data.map { $0.toEntity() }]
                 }
                 .subscribe { data in
                     output.dataLoadResult.accept(data)
@@ -59,7 +59,7 @@ extension MainViewModel {
         return output
     }
     
-    func setData(_ data: [[AnimateData]]) -> SectionItem {
+    func setData(_ data: [[AnimateDataEntity]]) -> SectionItem {
         let headerSection = HomeSection.header
         let semiHeaderSection = HomeSection.semiHeader(title: HomeSection.semiHeader(title: "").title)
         let middleSection = HomeSection.middle(title: HomeSection.middle(title: "").title)
@@ -69,26 +69,26 @@ extension MainViewModel {
         let section = [headerSection, semiHeaderSection, middleSection, semiFooterSection, footerSection]
         
         let totalData = data.flatMap({$0})
-            .filter { $0.title_english != nil }
+            .filter { $0.enTitle != nil }
         
         let sortedData = totalData
             .filter { $0.rank != nil }
             .sorted { $0.rank! < $1.rank! }
         
         let headerData = Set(sortedData.prefix(9)).compactMap {
-            return HomeItem.poster(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0, genre: $0.genres?.compactMap({$0}))) }
+            return HomeItem.poster(ItemModel(id: $0.id, title: $0.enTitle, synopsis: $0.synopsis, image: $0.imageURL, star: $0.score, genre: $0.genres)) }
         
         let semiHeaderData = Set(totalData.shuffled().prefix(10)).compactMap {
-            return HomeItem.recommand(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0, genre: nil)) }
+            return HomeItem.recommand(ItemModel(id: $0.id, title: $0.enTitle, synopsis: $0.synopsis, image: $0.imageURL, star: $0.score, genre: nil)) }
         
-        let middleData = Set(totalData.filter({$0.score ?? 0 > 8.0})).compactMap {
-            return HomeItem.rank(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0, genre: nil)) }
+        let middleData = Set(totalData.filter({$0.score > 8.0})).compactMap {
+            return HomeItem.rank(ItemModel(id: $0.id, title: $0.enTitle, synopsis: $0.synopsis, image: $0.imageURL, star: $0.score, genre: nil)) }
         
-        let semiFooterData = Set(totalData.filter({$0.type?.uppercased() == "TV"})).compactMap {
-            return HomeItem.tvList(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0, genre: nil)) }
+        let semiFooterData = Set(totalData.filter({$0.type.uppercased() == "TV"})).compactMap {
+            return HomeItem.tvList(ItemModel(id: $0.id, title: $0.enTitle, synopsis: $0.synopsis, image: $0.imageURL, star: $0.score, genre: nil)) }
         
-        let footerData = Set(totalData.filter({$0.type?.uppercased() == "ONA"})).compactMap {
-            return HomeItem.onaList(ItemModel(id: $0.mal_id, title: $0.title_english, synopsis: $0.synopsis, image: $0.images.jpg.image_url, star: $0.score ?? 0.0, genre: nil)) }
+        let footerData = Set(totalData.filter({$0.type.uppercased() == "ONA"})).compactMap {
+            return HomeItem.onaList(ItemModel(id: $0.id, title: $0.enTitle, synopsis: $0.synopsis, image: $0.imageURL, star: $0.score, genre: nil)) }
         
         let item = [headerData, semiHeaderData, middleData, semiFooterData, footerData]
         
