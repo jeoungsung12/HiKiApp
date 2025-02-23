@@ -42,7 +42,7 @@ class SearchTableViewCell: BaseTableViewCell, ReusableIdentifier {
         
         output.heartBtnResult
             .drive(with: self) { owner, valid in
-                let image = (valid) ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
+                let image = (valid) ? UIImage(systemName: "heart.circle.fill") : UIImage(systemName: "heart.circle")
                 owner.heartButton.setImage(image, for: .normal)
             }
             .disposed(by: disposeBag)
@@ -80,7 +80,7 @@ class SearchTableViewCell: BaseTableViewCell, ReusableIdentifier {
         }
         
         heartButton.snp.makeConstraints { make in
-            make.size.equalTo(30)
+            make.size.equalTo(50)
             make.bottom.trailing.equalToSuperview().inset(12)
         }
         
@@ -109,6 +109,7 @@ class SearchTableViewCell: BaseTableViewCell, ReusableIdentifier {
         dateLabel.font = .systemFont(ofSize: 13, weight: .regular)
         
         heartButton.tintColor = .point
+        heartButton.imageView?.contentMode = .scaleToFill
     }
     
     func configure(_ search: String,_ model: AnimateDataEntity) {

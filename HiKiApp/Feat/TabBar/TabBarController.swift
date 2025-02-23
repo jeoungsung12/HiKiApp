@@ -35,7 +35,7 @@ extension TabBarController {
         
         items[0].title = "Cinema"
         items[1].title = "Search"
-        items[2].title = "My review"
+        items[2].title = "My Review"
         items[3].title = "Review"
         items[4].title = "Profile"
            

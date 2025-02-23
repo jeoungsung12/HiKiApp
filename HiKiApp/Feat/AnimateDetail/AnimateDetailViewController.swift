@@ -12,14 +12,16 @@ import RxSwift
 import RxCocoa
 
 final class AnimateDetailViewController: BaseViewController {
-    let heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: nil, action: nil)
+    let heartButton = UIBarButtonItem(image: UIImage(systemName: "heart.circle"), style: .plain, target: nil, action: nil)
+    let createReviewButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil.circle.fill"), style: .plain, target: nil, action: nil)
     private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
     private let tableView = UITableView()
     
     let viewModel: AnimateDetailViewModel
     private lazy var inputTrigger = AnimateDetailViewModel.Input(
         didLoadTrigger: PublishSubject<Void>(),
-        heartBtnTrigger: heartButton.rx.tap
+        heartBtnTrigger: heartButton.rx.tap,
+        createReviewTrigger: PublishRelay()
     )
     private lazy var outputResult = viewModel.transform(inputTrigger)
     init(viewModel: AnimateDetailViewModel) {
@@ -43,10 +45,23 @@ final class AnimateDetailViewController: BaseViewController {
         loadingIndicator.startAnimating()
     }
     
+    override func setBindView() {
+        createReviewButton.rx.tap
+            .withLatestFrom(outputResult.animeData)
+            .bind(with: self) { owner, value in
+                
+//                guard let title = value.synopsis?.title,
+//                      let image = value.synopsis?.imageURL else { return }
+//                let userReview = UserReview(title: title, image: image, review: review, answer: "")
+//                owner.inputTrigger.createReviewTrigger.accept(userReview)
+            }
+            .disposed(by: disposeBag)
+    }
+    
     override func setBinding() {
         outputResult.heartResult
             .drive(with: self) { owner, valid in
-                owner.heartButton.image = (valid) ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
+                owner.heartButton.image = (valid) ? UIImage(systemName: "heart.circle.fill") : UIImage(systemName: "heart.circle")
             }
             .disposed(by: disposeBag)
         
@@ -78,7 +93,7 @@ final class AnimateDetailViewController: BaseViewController {
     override func configureView() {
         self.setNavigation(apperanceColor: .clear)
         self.view.backgroundColor = .white
-        self.navigationItem.rightBarButtonItem = heartButton
+        self.navigationItem.rightBarButtonItems = [heartButton, createReviewButton]
         self.navigationController?.navigationBar.backgroundColor = .clear
         self.navigationController?.navigationBar.tintColor = .point
         

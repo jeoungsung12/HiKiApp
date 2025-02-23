@@ -41,7 +41,7 @@ final class AnimeArchiveTableViewCell: BaseTableViewCell, ReusableIdentifier {
         
         output.heartBtnResult
             .drive(with: self) { owner, valid in
-                let image = (valid) ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
+                let image = (valid) ? UIImage(systemName: "heart.circle.fill") : UIImage(systemName: "heart.circle")
                 owner.heartButton.setImage(image, for: .normal)
             }
             .disposed(by: disposeBag)

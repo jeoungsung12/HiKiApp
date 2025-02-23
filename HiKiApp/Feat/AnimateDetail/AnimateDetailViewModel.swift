@@ -36,6 +36,7 @@ final class AnimateDetailViewModel: BaseViewModel {
     struct Input {
         let didLoadTrigger: PublishSubject<Void>
         let heartBtnTrigger: ControlEvent<Void>
+        let createReviewTrigger: PublishRelay<UserReview>
     }
     
     struct Output {
@@ -74,6 +75,12 @@ extension AnimateDetailViewModel {
             }
             .disposed(by: disposeBag)
         
+        input.createReviewTrigger
+            .bind(with: self) { owner, review in
+                owner.createReview(review)
+            }
+            .disposed(by: disposeBag)
+        
         return Output(
             heartResult: heartResult.asDriver(),
             animeData: resultData
@@ -93,5 +100,11 @@ extension AnimateDetailViewModel {
     
     private func heartResult() -> Bool {
         return db.userInfo.saveAnimateID.contains(self.id)
+    }
+    
+    private func createReview(_ review: UserReview) {
+        var data = UserDefaultManager.shared.userReview
+        data.append(review)
+        UserDefaultManager.shared.userReview = data
     }
 }

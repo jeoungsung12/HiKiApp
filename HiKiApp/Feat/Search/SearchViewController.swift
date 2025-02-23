@@ -136,7 +136,7 @@ class SearchViewController: BaseViewController {
         
         searchBar.searchBarStyle = .minimal
         searchBar.searchTextField.textColor = .black
-        searchBar.searchTextField.placeholder =  "애니를 검색해보세요."
+        searchBar.searchTextField.placeholder =  "Search for anime"
         
         resultLabel.textColor = .black
         resultLabel.textAlignment = .center
