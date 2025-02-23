@@ -21,7 +21,7 @@ final class MainViewController: BaseViewController {
     
     private let viewModel = MainViewModel()
     private let inputTrigger = MainViewModel.Input(
-        dataLoadTrigger: BehaviorRelay(value: (AnimateType.airing))
+        dataLoadTrigger: BehaviorRelay(value: (AnimateType.Airing))
     )
     private var disposeBag = DisposeBag()
     

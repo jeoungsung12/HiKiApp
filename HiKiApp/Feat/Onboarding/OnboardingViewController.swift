@@ -45,7 +45,7 @@ final class OnboardingViewController: BaseViewController {
         imageView.snp.makeConstraints { make in
             make.height.equalTo(250)
             make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(self.view.safeAreaLayoutGuide).offset(24)
+            make.centerY.equalToSuperview().offset(-120)
         }
         
         titleLabel.snp.makeConstraints { make in
@@ -79,11 +79,11 @@ final class OnboardingViewController: BaseViewController {
         descriptionLabel.numberOfLines = 2
         descriptionLabel.textAlignment = .center
         descriptionLabel.textColor = .lightGray
-        descriptionLabel.text = "당신만의 애니 세상 📺,\n하이키를 시작해보세요"
+        descriptionLabel.text = "Your own anime world 📺,\nStart HiKi"
         descriptionLabel.font = .systemFont(ofSize: 16, weight: .semibold)
         
         startButton.setBorder()
-        startButton.setTitle("시작하기", for: .normal)
+        startButton.setTitle("Start", for: .normal)
         startButton.setTitleColor(.point, for: .normal)
     }
     

@@ -15,16 +15,16 @@ final class MyPageViewModel: BaseViewModel {
     private var disposeBag = DisposeBag()
     
     enum MyPageCategoryType: String, CaseIterable {
-        case aniBox = "애니 보관함"
-        case reviewBox = "리뷰 보관함"
-        case profile = "프로필 수정"
+        case aniBox = " Anime\nArchive"
+        case reviewBox = " Review\nArchives"
+        case profile = "  Edit\nProfile"
         
         var image: String {
             switch self {
             case .aniBox:
                 "cube.box"
             case .reviewBox:
-                "bubble.and.pencil.rtl"
+                "star.bubble"
             case .profile:
                 "person.text.rectangle"
             }
@@ -32,9 +32,9 @@ final class MyPageViewModel: BaseViewModel {
     }
     
     enum MyPageButtonType: String, CaseIterable {
-        case oftenQS = "자주 묻는 질문"
-        case feedback = "피드백 보내기"
-        case withdraw = "탈퇴하기"
+        case oftenQS = "Frequently Asked Questions"
+        case feedback = "Send Feedback"
+        case withdraw = "Unsubscribe"
     }
     
     struct Input {
@@ -94,7 +94,7 @@ extension MyPageViewModel {
     }
     
     func getSaveAnime() -> String {
-        return db.userInfo.saveAnimateID.count.formatted() + "개 보관중"
+        return db.userInfo.saveAnimateID.count.formatted() + "in storage"
     }
     
 }

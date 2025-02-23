@@ -50,23 +50,27 @@ final class MyPageViewController: BaseViewController {
         let output = viewModel.transform(inputTrigger)
         
         output.profileResult
+            .observe(on: MainScheduler.instance)
             .bind(with: self, onNext: { owner, userInfo in
                 owner.myProfileView.configure(userInfo)
                 owner.countLabel.text = owner.viewModel.getSaveAnime()
             }).disposed(by: disposeBag)
         
         output.listBtnResult
+            .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, type in
                 switch type {
                 case .oftenQS:
-                    print("자주묻는 질문")
+                    owner.push(FAQViewController())
                 case .feedback:
-                    print("피드백")
+                    if let url = URL(string: AnimeRouter.detailAnime(id: 1).feedbackURL) {
+                        UIApplication.shared.open(url)
+                    }
                 case .withdraw:
                     owner.customAlert(
-                        "탈퇴하기",
-                        "탈퇴를 하면 데이터가 모두 초기화됩니다. 탈퇴 하시겠습니까?",
-                        [.ok, .cancel]
+                        "Unsubscribe",
+                        "If you cancel your subscription, all data will be initialized. Do you want to unsubscribe?",
+                        [.Ok, .Cancel]
                     ) {
                         owner.viewModel.removeUserInfo()
                         owner.setRootView(UINavigationController(rootViewController: OnboardingViewController()))
@@ -75,6 +79,7 @@ final class MyPageViewController: BaseViewController {
             }.disposed(by: disposeBag)
         
         output.categoryBtnResult
+            .observe(on: MainScheduler.instance)
             .bind(with: self, onNext: { owner, type in
                 switch type {
                 case .aniBox:
@@ -98,7 +103,8 @@ final class MyPageViewController: BaseViewController {
     
     override func configureLayout() {
         
-        myProfileView.snp.makeConstraints { make in            make.height.equalTo(230)
+        myProfileView.snp.makeConstraints { make in
+            make.height.equalTo(230)
             make.top.equalTo(self.view.safeAreaLayoutGuide)
             make.horizontalEdges.equalToSuperview().inset(12)
         }
@@ -116,7 +122,7 @@ final class MyPageViewController: BaseViewController {
         }
         
         countLabel.snp.makeConstraints { make in
-            make.width.equalTo(70)
+            make.width.equalTo(100)
             make.height.equalTo(20)
             make.centerX.equalTo(aniBoxButton.snp.centerX)
             make.top.equalTo(aniBoxButton.snp.top).offset(-20)
@@ -125,7 +131,7 @@ final class MyPageViewController: BaseViewController {
     }
     
     override func configureView() {
-        self.setNavigation("프로필")
+        self.setNavigation("Profile")
         self.view.backgroundColor = .customWhite
         aniBoxButton.tag = 0
         aniBoxButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.aniBox.rawValue, MyPageViewModel.MyPageCategoryType.aniBox.image)
@@ -167,12 +173,10 @@ extension MyPageViewController {
         buttonStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         for (type) in MyPageViewModel.MyPageButtonType.allCases {
             let button = MyPageSectionButton()
-            if type == .withdraw {
-                button.rx.tap
-                    .bind(with: self) { owner, _ in
-                        owner.inputTrigger.listBtnTrigger.accept(type)
-                    }.disposed(by: disposeBag)
-            }
+            button.rx.tap
+                .bind(with: self) { owner, _ in
+                    owner.inputTrigger.listBtnTrigger.accept(type)
+                }.disposed(by: disposeBag)
             button.configure(type.rawValue)
             buttonStackView.addArrangedSubview(button)
         }
@@ -183,6 +187,7 @@ extension MyPageViewController {
         var config = UIButton.Configuration.plain()
         config.image = image
         config.title = title
+        config.titleAlignment = .center
         config.imagePlacement = .top
         config.imagePadding = CGFloat(12)
         config.baseForegroundColor = .black

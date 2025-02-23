@@ -72,7 +72,7 @@ final class SynopsisTableViewCell: BaseTableViewCell, ReusableIdentifier {
         titleLabel.textAlignment = .left
         titleLabel.font = .boldSystemFont(ofSize: 20)
         
-        moreButton.setTitle(isSelected ? "숨김" : "더보기", for: .normal)
+        moreButton.setTitle(isSelected ? "Hide" : "More", for: .normal)
         moreButton.setTitleColor(.point, for: .normal)
         moreButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
         

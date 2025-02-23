@@ -24,7 +24,6 @@ final class ReviewViewController: BaseViewController {
     }
     
     override func setBinding() {
-        //TODO: Toast - Phase
         let outputResult = viewModel.transform(inputTrigger)
         outputResult.reviewPage
             .bind(with: self, onNext: { owner, page in
@@ -32,12 +31,21 @@ final class ReviewViewController: BaseViewController {
             })
             .disposed(by: disposeBag)
 
-        //TODO: 약한참조?
         outputResult.reviewResult
-            .bind(to: tableView.rx.items(cellIdentifier: ReviewTableViewCell.id, cellType: ReviewTableViewCell.self)) { row, element, cell in
+            .bind(to: tableView.rx.items(cellIdentifier: ReviewTableViewCell.id, cellType: ReviewTableViewCell.self)) { [weak self] row, element, cell in
                 cell.configure(element)
                 cell.heightDeleate = self
-                self.loadingIndicator.stopAnimating()
+                self?.loadingIndicator.stopAnimating()
+            }
+            .disposed(by: disposeBag)
+        
+        Observable.zip(tableView.rx.itemSelected, tableView.rx.modelSelected(AnimateReviewEntity.self))
+            .map { $0.1 }
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, value in
+                let vm = AnimateDetailViewModel(id: value.animeId)
+                let vc = AnimateDetailViewController(viewModel: vm)
+                owner.push(vc)
             }
             .disposed(by: disposeBag)
         
@@ -71,7 +79,7 @@ final class ReviewViewController: BaseViewController {
     }
     
     override func configureView() {
-        self.setNavigation("리뷰 모아보기")
+        self.setNavigation("Everyone's review")
         self.view.backgroundColor = .white
         tableView.register(ReviewTableViewCell.self, forCellReuseIdentifier: ReviewTableViewCell.id)
     }

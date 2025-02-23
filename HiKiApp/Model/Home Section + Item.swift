@@ -19,13 +19,13 @@ enum HomeSection: Hashable {
         case .header:
             ""
         case .semiHeader:
-            "이런 애니 어때요?"
+            "How about like this?👀"
         case .middle:
-            "평점 8점 이상 🌟"
+            "Rating 8 or higher 🌟"
         case .semiFooter:
-            "TV 방영"
+            "Aired on TV"
         case .footer:
-            "OTT 방영"
+            "Original Net Animation"
         }
     }
 }

@@ -10,15 +10,15 @@ import Foundation
 struct NickName {
     enum NickNameType: String {
         case nilText = ""
-        case success = "사용할 수 있는 닉네임이에요"
-        case notCount = "2글자 이상 10글자 미만으로 설정해 주세요"
-        case notSpecial = "닉네임에 @, #, $, % 는 포함할 수 없어요"
-        case notNumeric = "닉네임에 숫자는 포함할 수 없어요"
+        case success = "This is a nickname you can use."
+        case notCount = "Please set it to at least 2 characters but less than 15 characters."
+        case notSpecial = "Nickname cannot contain @, #, $, or %"
+        case notNumeric = "Nicknames cannot contain numbers"
     }
     
     func checkNickName(_ text: String?) -> NickNameType {
         guard let text, !text.isEmpty else { return .nilText }
-        if ((text.count < 2) || (text.count >= 10)) {
+        if ((text.count < 2) || (text.count >= 15)) {
             return NickNameType.notCount
         }
         if (text.rangeOfCharacter(from: CharacterSet(charactersIn: "@#$%")) != nil) {

@@ -80,7 +80,7 @@ final class ProfileViewController: BaseViewController {
                     let rootVC = TabBarController()
                     owner.setRootView(rootVC)
                 } else {
-                    owner.customAlert("설정 실패!", "설정 사항을 다시 확인해 주세요!", [.ok]) { }
+                    owner.customAlert("Setup failed!", "Please check your settings again!", [.Ok]) { }
                 }
             }).disposed(by: disposeBag)
         
@@ -148,7 +148,7 @@ final class ProfileViewController: BaseViewController {
         nameTextField.delegate = self
         nameTextField.textColor = .black
         nameTextField.textAlignment = .left
-        nameTextField.placeholder = "닉네임을 설정해 주세요 :)"
+        nameTextField.placeholder = "Please set a nickname :)"
         nameTextField.font = .systemFont(ofSize: 15, weight: .semibold)
         
         spacingView.backgroundColor = .customDarkGray
@@ -162,7 +162,7 @@ final class ProfileViewController: BaseViewController {
         successButton.clipsToBounds = true
         successButton.layer.cornerRadius = 20
         successButton.backgroundColor = .customDarkGray
-        successButton.setTitle("완료", for: .normal)
+        successButton.setTitle("Complete", for: .normal)
         successButton.setTitleColor(.white, for: .normal)
         
     }

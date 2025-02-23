@@ -7,39 +7,22 @@
 
 import Foundation
 
-enum AnimateType: CaseIterable {
-    case airing
-    case bypopularity
-    case favorite
-    case age
-    case upcoming
+enum AnimateType: String, CaseIterable {
+    case Airing
+    case Popular
+    case Favorite
+    case Random
     
     var filter: String {
         switch self {
-        case .airing,
-                .age:
+        case .Airing:
             "airing"
-        case .upcoming:
+        case .Random:
             "upcoming"
-        case .bypopularity:
+        case .Popular:
             "bypopularity"
-        case .favorite:
+        case .Favorite:
             "favorite"
-        }
-    }
-    
-    var title: String {
-        switch self {
-        case .airing:
-            "방영"
-        case .upcoming:
-            "랜덤추천"
-        case .bypopularity:
-            "최신인기"
-        case .favorite:
-            "즐겨보는"
-        case .age:
-            "연령별"
         }
     }
 }

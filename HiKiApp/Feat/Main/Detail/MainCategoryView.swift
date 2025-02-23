@@ -10,7 +10,7 @@ import SnapKit
 
 class MainCategoryView: BaseView {
     private let categories = AnimateType.allCases
-    private var selectedCategory: AnimateType = .airing {
+    private var selectedCategory: AnimateType = .Airing {
         didSet {
             updateSelection()
         }
@@ -33,6 +33,7 @@ class MainCategoryView: BaseView {
     
     override func configureView() {
         self.backgroundColor = .clear
+        stackView.distribution = .fillEqually
     }
     
     override func configureHierarchy() {
@@ -55,7 +56,7 @@ class MainCategoryView: BaseView {
             button.backgroundColor = .white
             button.setTitleColor(.point, for: .selected)
             button.setTitleColor(.lightGray, for: .normal)
-            button.setTitle(category.title, for: .normal)
+            button.setTitle(category.rawValue, for: .normal)
             button.titleLabel?.font = .boldSystemFont(ofSize: 15)
             button.tag = categories.firstIndex(of: category) ?? 0
             button.titleLabel?.font = .systemFont(ofSize: 16, weight: .heavy)

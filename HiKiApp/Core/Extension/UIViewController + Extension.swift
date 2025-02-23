@@ -8,8 +8,8 @@
 import UIKit
 
 enum AlertType: String, CaseIterable {
-    case ok = "확인"
-    case cancel = "취소"
+    case Ok
+    case Cancel
 }
 
 extension UIViewController {
@@ -62,16 +62,16 @@ extension UIViewController {
         navigationBar.scrollEdgeAppearance = appearance
     }
     
-    func customAlert(_ title: String = "",_ message: String = "",_ action: [AlertType] = [.ok],_ method: @escaping () -> Void) {
+    func customAlert(_ title: String = "",_ message: String = "",_ action: [AlertType] = [.Ok],_ method: @escaping () -> Void) {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         for type in action {
             switch type {
-            case .ok:
+            case .Ok:
                 let action = UIAlertAction(title: type.rawValue, style: .default) { _ in
                     method()
                 }
                 alertVC.addAction(action)
-            case .cancel:
+            case .Cancel:
                 let action = UIAlertAction(title: type.rawValue, style: .destructive )
                 alertVC.addAction(action)
             }

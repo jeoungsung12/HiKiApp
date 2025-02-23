@@ -21,8 +21,8 @@ extension TabBarController {
     private func configure() {
         let firstVC = UINavigationController(rootViewController: MainViewController())
         let secondVC = UINavigationController(rootViewController: SearchViewController())
-        let thirdVC = UINavigationController(rootViewController: ReviewViewController())
-        let forthVC = UINavigationController(rootViewController: MineReviewViewController())
+        let thirdVC = UINavigationController(rootViewController: MineReviewViewController())
+        let forthVC = UINavigationController(rootViewController: ReviewViewController())
         let fifthVC = UINavigationController(rootViewController: MyPageViewController())
         
         self.setViewControllers([firstVC, secondVC, thirdVC, forthVC, fifthVC], animated: true)
@@ -30,14 +30,14 @@ extension TabBarController {
         items[0].image = UIImage(systemName: "popcorn")
         items[1].image = UIImage(systemName: "magnifyingglass")
         items[2].image = UIImage(systemName: "star.bubble")
-        items[3].image = UIImage(systemName: "bubble.and.pencil.rtl")
+        items[3].image = UIImage(systemName: "bubble")
         items[4].image = UIImage(systemName: "person.circle")
         
-        items[0].title = "시네마"
-        items[1].title = "검색"
-        items[2].title = "모두의 리뷰"
-        items[3].title = "나만의 리뷰"
-        items[4].title = "프로필"
+        items[0].title = "Cinema"
+        items[1].title = "Search"
+        items[2].title = "My review"
+        items[3].title = "Review"
+        items[4].title = "Profile"
            
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()

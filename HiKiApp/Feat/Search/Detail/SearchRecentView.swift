@@ -17,20 +17,20 @@ final class SearchRecentView: BaseView {
     private let stackView = UIStackView()
     private let scrollView = UIScrollView()
     
-    var removeAll: (()->Void)?
-    var recentTapped: ((String)->Void)?
-    var removeTapped: ((String)->Void)?
-    
+    private let viewModel = SearchRecentViewModel()
     private var disposeBag = DisposeBag()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
     
     override func setBindView() {
-        removeButton.rx.tap
-            .bind(with: self) { owner, _ in
-                owner.removeAll?()
-            }.disposed(by: disposeBag)
+        let input = SearchRecentViewModel.Input(
+            removeBtnTrigger: removeButton.rx.tap
+        )
+        let output = viewModel.transform(input)
+        
+        
     }
     
     override func configureHierarchy() {
@@ -66,11 +66,11 @@ final class SearchRecentView: BaseView {
     }
     
     override func configureView() {
-        removeButton.setTitle("전체 삭제", for: .normal)
+        removeButton.setTitle("Delete All", for: .normal)
         removeButton.setTitleColor(.point, for: .normal)
         removeButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
         
-        titleLabel.text = "최근검색어"
+        titleLabel.text = "Recent Searches"
         titleLabel.textColor = .black
         titleLabel.textAlignment = .left
         titleLabel.font = .boldSystemFont(ofSize: 16)
@@ -89,7 +89,7 @@ final class SearchRecentView: BaseView {
     func configure(_ recentSearch: [String]) {
         configureStackView(recentSearch)
         removeButton.isHidden = (recentSearch.isEmpty) ? true : false
-        resultLabel.text = (recentSearch.isEmpty) ? "최근 검색어 내역이 없습니다." : ""
+        resultLabel.text = (recentSearch.isEmpty) ? "There is no recent search history." : ""
     }
     
 }
@@ -102,25 +102,10 @@ extension SearchRecentView {
         for search in recentSearch {
             let recentView = RecentView()
             recentView.configure(search)
-            recentView.titleTapped = recentItemTapped
-            recentView.removeTapped = removeItemTapped
+//            recentView.titleTapped = recentItemTapped
+//            recentView.removeTapped = removeItemTapped
             stackView.addArrangedSubview(recentView)
         }
-    }
-    
-}
-
-//MARK: - Action
-extension SearchRecentView {
-    
-    private func recentItemTapped(_ sender: String) {
-        print(#function)
-        recentTapped?(sender)
-    }
-    
-    private func removeItemTapped(_ sender: String) {
-        print(#function)
-        removeTapped?(sender)
     }
     
 }

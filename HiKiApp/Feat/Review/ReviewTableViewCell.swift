@@ -121,9 +121,8 @@ class ReviewTableViewCell: BaseTableViewCell, ReusableIdentifier {
     
     override func configureView() {
         self.backgroundColor = .white
-        //TODO: Opt
         [nameLabel, titleLabel].forEach({
-            $0.numberOfLines = 2
+            $0.numberOfLines = 3
             $0.textAlignment = .left
             $0.font = .boldSystemFont(ofSize: 16)
         })
@@ -136,7 +135,7 @@ class ReviewTableViewCell: BaseTableViewCell, ReusableIdentifier {
         dateLabel.font = .systemFont(ofSize: 12, weight: .regular)
         
         moreButton.setTitleColor(.point, for: .normal)
-        moreButton.setTitle(isSelected ? "숨기기" : "더보기", for: .normal)
+        moreButton.setTitle(isSelected ? "Hide" : "More", for: .normal)
         moreButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .heavy)
         
         reviewLabel.textColor = .darkGray
@@ -154,9 +153,9 @@ class ReviewTableViewCell: BaseTableViewCell, ReusableIdentifier {
         profileImageView.image = UIImage(systemName: "person.circle")
         
         cosmosView.settings.starSize = 15
-        cosmosView.settings.totalStars = 10
+        cosmosView.settings.totalStars = 5
         cosmosView.isUserInteractionEnabled = false
-        cosmosView.settings.emptyColor = .systemYellow
+        cosmosView.settings.emptyColor = .white
         cosmosView.settings.filledColor = .systemYellow
         
         spoilerLabel.font = .boldSystemFont(ofSize: 13)
@@ -167,9 +166,9 @@ class ReviewTableViewCell: BaseTableViewCell, ReusableIdentifier {
         titleLabel.text = data.animeTitle
         nameLabel.text = data.username
         dateLabel.text = .stringToDate(data.date)
-        spoilerLabel.text = (data.isSpoiler) ? "스포일러 주의!" : nil
+        spoilerLabel.text = (data.isSpoiler) ? "Beware of Spoilers!" : nil
         spoilerLabel.textColor = (data.isSpoiler) ? .systemRed.withAlphaComponent(0.7) : .white
-        cosmosView.rating = Double(data.score)
+        cosmosView.rating = Double(data.score) / 2.0
         
         if let url = URL(string: data.imageUrl) {
             posterImageView.kf.setImage(with: url)

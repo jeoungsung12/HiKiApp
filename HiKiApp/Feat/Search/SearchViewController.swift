@@ -131,7 +131,7 @@ class SearchViewController: BaseViewController {
     }
     
     override func configureView() {
-        self.setNavigation("애니검색")
+        self.setNavigation("Anime Search")
         self.view.backgroundColor = .white
         
         searchBar.searchBarStyle = .minimal
@@ -142,7 +142,8 @@ class SearchViewController: BaseViewController {
         resultLabel.textAlignment = .center
         resultLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         
-//        recentView.configure(viewModel.db.recentSearch)
+        recentView.configure(viewModel.db.recentSearch)
+
         tapGesture.cancelsTouchesInView = false
         
         setTableView()
