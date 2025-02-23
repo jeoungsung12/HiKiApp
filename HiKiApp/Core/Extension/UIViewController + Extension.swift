@@ -43,7 +43,7 @@ extension UIViewController {
         window.rootViewController = rootVC
     }
     
-    func setNavigation(_ title: String = "",_ backTitle: String = "",_ color: UIColor = .point,apperanceColor: UIColor = .white) {
+    func setNavigation(_ title: String = "",_ backTitle: String = "",_ color: UIColor = .point, apperanceColor: UIColor = .white) {
         guard let navigationBar = navigationController?.navigationBar else { return }
         
         self.navigationItem.title = title

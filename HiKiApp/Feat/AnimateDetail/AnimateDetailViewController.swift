@@ -17,7 +17,10 @@ final class AnimateDetailViewController: BaseViewController {
     private let tableView = UITableView()
     
     let viewModel: AnimateDetailViewModel
-    private lazy var inputTrigger = AnimateDetailViewModel.Input(heartBtnTrigger:heartButton.rx.tap)
+    private lazy var inputTrigger = AnimateDetailViewModel.Input(
+        didLoadTrigger: PublishSubject<Void>(),
+        heartBtnTrigger: heartButton.rx.tap
+    )
     private lazy var outputResult = viewModel.transform(inputTrigger)
     init(viewModel: AnimateDetailViewModel) {
         self.viewModel = viewModel
@@ -34,9 +37,15 @@ final class AnimateDetailViewController: BaseViewController {
         super.viewDidLoad()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        inputTrigger.didLoadTrigger.onNext(())
+        loadingIndicator.startAnimating()
+    }
+    
     override func setBinding() {
         outputResult.heartResult
-            .bind(with: self) { owner, valid in
+            .drive(with: self) { owner, valid in
                 owner.heartButton.image = (valid) ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
             }
             .disposed(by: disposeBag)
@@ -64,8 +73,6 @@ final class AnimateDetailViewController: BaseViewController {
         loadingIndicator.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-        
-        loadingIndicator.startAnimating()
     }
     
     override func configureView() {
@@ -109,11 +116,11 @@ extension AnimateDetailViewController: UITableViewDelegate, UITableViewDataSourc
         case .poster:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: PosterTableViewCell.id, for: indexPath) as? PosterTableViewCell else { return UITableViewCell() }
             let value = outputResult.animeData.value
-            cell.configure(title: value?.synopsis?.enTitle, image: value?.synopsis?.imageURL)
+            cell.configure(title: value.synopsis?.enTitle, image: value.synopsis?.imageURL)
             return cell
             
         case .synopsis:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: SynopsisTableViewCell.id, for: indexPath) as? SynopsisTableViewCell, let synopsis = outputResult.animeData.value?.synopsis?.synopsis else { return UITableViewCell() }
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: SynopsisTableViewCell.id, for: indexPath) as? SynopsisTableViewCell, let synopsis = outputResult.animeData.value.synopsis?.synopsis else { return UITableViewCell() }
             cell.configure(synopsis)
             cell.reloadCell = {
                 tableView.beginUpdates()
@@ -122,12 +129,12 @@ extension AnimateDetailViewController: UITableViewDelegate, UITableViewDataSourc
             return cell
             
         case .teaser:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: TeaserTableViewCell.id, for: indexPath) as? TeaserTableViewCell, let teaser = outputResult.animeData.value?.teaser else { return UITableViewCell() }
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: TeaserTableViewCell.id, for: indexPath) as? TeaserTableViewCell, let teaser = outputResult.animeData.value.teaser else { return UITableViewCell() }
             cell.input.inputTrigger.onNext(teaser)
             return cell
             
         case .characters:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: CharactersTableViewCell.id, for: indexPath) as? CharactersTableViewCell, let characters = outputResult.animeData.value?.characters  else { return UITableViewCell() }
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: CharactersTableViewCell.id, for: indexPath) as? CharactersTableViewCell, let characters = outputResult.animeData.value.characters else { return UITableViewCell() }
             cell.input.inputTrigger.onNext(characters)
             return cell
         }

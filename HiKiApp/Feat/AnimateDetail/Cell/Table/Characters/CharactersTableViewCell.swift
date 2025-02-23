@@ -13,6 +13,7 @@ import RxCocoa
 final class CharactersTableViewCell: BaseTableViewCell, ReusableIdentifier {
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.setCollectionViewLayout())
     private let titleLabel = UILabel()
+    private let resultLabel = UILabel()
     
     private let viewModel = CharactersTableViewModel()
     let input = CharactersTableViewModel.Input(
@@ -31,6 +32,12 @@ final class CharactersTableViewCell: BaseTableViewCell, ReusableIdentifier {
         let output = viewModel.transform(input)
         
         output.charactersResult
+            .bind(with: self) { owner, data in
+                owner.resultLabel.text = (data.isEmpty) ? NetworkError.noImage : nil
+            }
+            .disposed(by: disposeBag)
+        
+        output.charactersResult
             .bind(to: collectionView.rx.items(cellIdentifier: CharactersCollectionViewCell.id, cellType: CharactersCollectionViewCell.self)) { items, element, cell in
                 cell.configure(nameEntity: element.names, imageEntity: element.images)
             }
@@ -38,7 +45,7 @@ final class CharactersTableViewCell: BaseTableViewCell, ReusableIdentifier {
     }
     
     override func configureHierarchy() {
-        [titleLabel, collectionView].forEach({
+        [titleLabel, collectionView, resultLabel].forEach({
             self.contentView.addSubview($0)
         })
     }
@@ -54,6 +61,11 @@ final class CharactersTableViewCell: BaseTableViewCell, ReusableIdentifier {
             make.bottom.equalToSuperview().inset(24)
             make.top.equalTo(titleLabel.snp.bottom).offset(12)
         }
+        
+        resultLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.horizontalEdges.equalToSuperview().inset(24)
+        }
     }
     
     override func configureView() {
@@ -63,6 +75,10 @@ final class CharactersTableViewCell: BaseTableViewCell, ReusableIdentifier {
         titleLabel.textColor = .black
         titleLabel.textAlignment = .left
         titleLabel.font = .boldSystemFont(ofSize: 20)
+        
+        resultLabel.textColor = .gray
+        resultLabel.textAlignment = .center
+        resultLabel.font = .boldSystemFont(ofSize: 15)
         
         configureCollectionView()
     }

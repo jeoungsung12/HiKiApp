@@ -34,12 +34,13 @@ final class AnimateDetailViewModel: BaseViewModel {
     }
     
     struct Input {
+        let didLoadTrigger: PublishSubject<Void>
         let heartBtnTrigger: ControlEvent<Void>
     }
     
     struct Output {
-        let heartResult: BehaviorRelay<Bool> = BehaviorRelay(value: false)
-        let animeData: BehaviorRelay<AnimateDetailData?> = BehaviorRelay(value: nil)
+        let heartResult: Driver<Bool>
+        let animeData: BehaviorRelay<AnimateDetailData>
     }
     
     deinit {
@@ -51,28 +52,32 @@ final class AnimateDetailViewModel: BaseViewModel {
 extension AnimateDetailViewModel {
     
     func transform(_ input: Input) -> Output {
-        let output = Output()
-        
+        let heartResult: BehaviorRelay<Bool> = BehaviorRelay(value: heartResult())
         input.heartBtnTrigger
             .bind(with: self) { owner, _ in
                 owner.heartBtnTapped(self.id)
-                output.heartResult.accept(owner.heartResult())
+                heartResult.accept(owner.heartResult())
             }.disposed(by: disposeBag)
         
-        let resultData = AnimateDetailData(synopsis: nil, teaser: nil, characters: nil)
-        Observable.zip(AnimateServices().getDetailAnime(id: self.id), AnimateServices().getTeaser(id: self.id), AnimateServices().getCharacters(id: self.id))
-            .map { response in
-                return AnimateDetailData(synopsis: response.0.data.toEntity(), teaser: response.1.toEntity(), characters: response.2.toEntity())
+        let resultData: BehaviorRelay<AnimateDetailData> = BehaviorRelay(value: AnimateDetailData(synopsis: nil, teaser: nil, characters: nil))
+        input.didLoadTrigger
+            .bind(with: self) { owner, _ in
+                Observable.zip(AnimateServices().getDetailAnime(id: self.id), AnimateServices().getTeaser(id: self.id), AnimateServices().getCharacters(id: self.id))
+                    .map { response in
+                        return AnimateDetailData(synopsis: response.0.data.toEntity(), teaser: response.1.toEntity(), characters: response.2.toEntity())
+                    }
+                    .subscribe(with: self) { owner, data in
+                        resultData.accept(data)
+                    } onError: { owner, error in
+                        resultData.accept(resultData.value)
+                    }.disposed(by: owner.disposeBag)
             }
-            .subscribe(with: self) { owner, data in
-                output.animeData.accept(data)
-            } onError: { owner, error in
-                output.animeData.accept(resultData)
-            }.disposed(by: disposeBag)
+            .disposed(by: disposeBag)
         
-        output.heartResult.accept(heartResult())
-        
-        return output
+        return Output(
+            heartResult: heartResult.asDriver(),
+            animeData: resultData
+        )
     }
     
     //TODO: Optimistic UI
