@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 
 final class SheetProfileViewController: BaseViewController {
-    private lazy var successButton = UIBarButtonItem(title: "저장", style: .plain, target: nil, action: nil)
+    private lazy var successButton = UIBarButtonItem(systemItem: .save)
     private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapGesture))
     private let profileButton = CustomProfileButton(120, true)
     private let nameTextField = UITextField()

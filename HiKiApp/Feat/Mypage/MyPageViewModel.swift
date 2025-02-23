@@ -16,15 +16,12 @@ final class MyPageViewModel: BaseViewModel {
     
     enum MyPageCategoryType: String, CaseIterable {
         case aniBox = " Anime\nArchive"
-        case reviewBox = " Review\nArchives"
         case profile = "  Edit\nProfile"
         
         var image: String {
             switch self {
             case .aniBox:
                 "cube.box"
-            case .reviewBox:
-                "star.bubble"
             case .profile:
                 "person.text.rectangle"
             }
@@ -94,7 +91,7 @@ extension MyPageViewModel {
     }
     
     func getSaveAnime() -> String {
-        return db.userInfo.saveAnimateID.count.formatted() + "in storage"
+        return db.userInfo.saveAnimateID.count.formatted() + " in storage"
     }
     
 }

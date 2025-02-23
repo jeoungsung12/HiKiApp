@@ -16,7 +16,6 @@ final class MyPageViewController: BaseViewController {
     private let categoryStackView = UIStackView()
     private let countLabel = UILabel()
     private let aniBoxButton = UIButton()
-    private let teaserBoxButton = UIButton()
     private let changeProfileButton = UIButton()
     
     private let viewModel = MyPageViewModel()
@@ -37,7 +36,7 @@ final class MyPageViewController: BaseViewController {
     }
     
     override func setBindView() {
-        [aniBoxButton, teaserBoxButton, changeProfileButton].forEach({ btn in
+        [aniBoxButton, changeProfileButton].forEach({ btn in
             btn.rx.tap
                 .bind(with: self) { owner, _ in
                     let type = MyPageViewModel.MyPageCategoryType.allCases[btn.tag]
@@ -83,9 +82,7 @@ final class MyPageViewController: BaseViewController {
             .bind(with: self, onNext: { owner, type in
                 switch type {
                 case .aniBox:
-                    owner.push(SheetProfileViewController())
-                case .reviewBox:
-                    owner.push(SheetProfileViewController())
+                    owner.push(AnimeArchiveViewController())
                 case .profile:
                     owner.push(SheetProfileViewController())
                 }
@@ -93,7 +90,7 @@ final class MyPageViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [aniBoxButton, teaserBoxButton, changeProfileButton].forEach({
+        [aniBoxButton, changeProfileButton].forEach({
             self.categoryStackView.addArrangedSubview($0)
         })
         [myProfileView, categoryStackView, buttonStackView, countLabel].forEach({
@@ -136,13 +133,10 @@ final class MyPageViewController: BaseViewController {
         aniBoxButton.tag = 0
         aniBoxButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.aniBox.rawValue, MyPageViewModel.MyPageCategoryType.aniBox.image)
         
-        aniBoxButton.tag = 1
-        teaserBoxButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.reviewBox.rawValue, MyPageViewModel.MyPageCategoryType.reviewBox.image)
-        
-        aniBoxButton.tag = 2
+        changeProfileButton.tag = 1
         changeProfileButton.configuration = self.buttonConfiguration(MyPageViewModel.MyPageCategoryType.profile.rawValue, MyPageViewModel.MyPageCategoryType.profile.image)
         
-        [aniBoxButton, teaserBoxButton, changeProfileButton].forEach({
+        [aniBoxButton, changeProfileButton].forEach({
             $0.tintColor = .black
         })
         categoryStackView.axis = .horizontal
