@@ -14,7 +14,6 @@ import RxCocoa
 final class DetailTeaserCollectionViewCell: BaseCollectionViewCell, ReusableIdentifier {
     private var player: YouTubePlayer?
     private var playerHostingView: YouTubePlayerHostingView
-    private let playButton = UIButton()
     private var videoURL: String?
     private var disposeBag = DisposeBag()
 
@@ -22,19 +21,8 @@ final class DetailTeaserCollectionViewCell: BaseCollectionViewCell, ReusableIden
         let initialPlayer = YouTubePlayer(urlString: "")
         self.playerHostingView = YouTubePlayerHostingView(player: initialPlayer)
         super.init(frame: frame)
-    }
-    
-    private func setBinding() {
-        playButton.rx.tap
-            .bind(with: self) { owner, _ in
-                owner.playButton.isHidden = true
-                owner.playButton.imageView?.contentMode = .scaleAspectFit
-                
-                Task {
-                    try await owner.playerHostingView.player.play()
-                }
-            }
-            .disposed(by: disposeBag)
+        
+        self.contentView.isUserInteractionEnabled = true
     }
 
     override func configureView() {
@@ -42,26 +30,17 @@ final class DetailTeaserCollectionViewCell: BaseCollectionViewCell, ReusableIden
         self.contentView.layer.cornerRadius = 15
         self.contentView.backgroundColor = .black
         
-        playButton.setImage(UIImage(systemName: "play"), for: .normal)
     }
 
     override func configureHierarchy() {
         playerHostingView.clipsToBounds = true
         playerHostingView.layer.cornerRadius = 15
-        
-        [playerHostingView, playButton].forEach({
-            self.contentView.addSubview($0)
-        })
+        self.contentView.addSubview(playerHostingView)
     }
 
     override func configureLayout() {
         playerHostingView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-        }
-        
-        playButton.snp.makeConstraints { make in
-            make.size.equalTo(100)
-            make.center.equalToSuperview()
         }
     }
     
@@ -74,8 +53,9 @@ final class DetailTeaserCollectionViewCell: BaseCollectionViewCell, ReusableIden
         playerHostingView = YouTubePlayerHostingView(player: player!)
         playerHostingView.isUserInteractionEnabled = true
         
+        print(url)
         Task {
-            try await playerHostingView.player.pause()
+            try await playerHostingView.player.play()
         }
         configureHierarchy()
     }

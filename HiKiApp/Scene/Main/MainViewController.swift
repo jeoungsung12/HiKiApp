@@ -16,7 +16,6 @@ final class MainViewController: BaseViewController {
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout())
     private let leftLogo = UIBarButtonItem(customView: MainNavigationView())
     private let category = MainCategoryView()
-    private var categoryTopConstraint: Constraint?
     private var dataSource: UICollectionViewDiffableDataSource<HomeSection,HomeItem>?
     
     private let viewModel = MainViewModel()
@@ -35,19 +34,6 @@ final class MainViewController: BaseViewController {
             self?.category.isUserInteractionEnabled = false
             self?.loadingIndicator.startAnimating()
         }
-        
-        collectionView.rx.didScroll
-            .bind(with: self) { owner, _ in
-                let defaultOffset = owner.view.safeAreaInsets.top
-                let scrollOffset = owner.collectionView.contentOffset.y
-                let newTopOffset = max(defaultOffset - scrollOffset, 60)
-                UIView.animate(withDuration: 0.5) {
-                    owner.navigationController?.navigationBar.transform =
-                        .init(translationX: 0, y: -scrollOffset)
-                    owner.categoryTopConstraint?.update(offset: newTopOffset)
-                }
-            }
-            .disposed(by: disposeBag)
     }
     
     override func setBinding() {
@@ -72,7 +58,7 @@ final class MainViewController: BaseViewController {
         category.snp.makeConstraints { make in
             make.height.equalTo(40)
             make.horizontalEdges.equalToSuperview()
-            self.categoryTopConstraint = make.top.equalToSuperview().constraint
+            make.top.equalTo(self.view.safeAreaLayoutGuide)
         }
         
         collectionView.snp.makeConstraints { make in
@@ -106,7 +92,7 @@ extension MainViewController {
     private func setSnapShot(_ sectionItem: SectionItem?) {
         guard let sectionItem = sectionItem else { return }
         var snapShot = NSDiffableDataSourceSnapshot<HomeSection,HomeItem>()
-       
+        
         sectionItem.section.forEach({
             snapShot.appendSections([$0])
         })

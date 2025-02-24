@@ -12,6 +12,7 @@
 APIKey.swift
 APIEndpoint.swift
 AnimeRouter.swift
+ReviewRouter.swift
 
 
 ## User settings

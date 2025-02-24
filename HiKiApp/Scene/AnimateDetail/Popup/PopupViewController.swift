@@ -11,15 +11,25 @@ import RxSwift
 import RxCocoa
 
 final class PopupViewController: BaseViewController {
+    private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapGesture))
     private let containerView = UIView()
     private let descriptionLabel = UILabel()
     private let textView = UITextView()
     private let stackView = UIStackView()
     private let cancelBtn = UIButton()
-    private let startBtn = UIButton()
+    private let saveBtn = UIButton()
     
-    private let viewModel = PopupViewModel()
+    private let viewModel: PopupViewModel
     private var disposeBag = DisposeBag()
+    
+    init(viewModel: PopupViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @MainActor required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,10 +41,21 @@ final class PopupViewController: BaseViewController {
     
     override func setBinding() {
         let input = PopupViewModel.Input(
-            startBtnTrigger:
-                startBtn.rx.tap
+            startBtnTrigger: PublishRelay<String>()
         )
         let output = viewModel.transform(input)
+        
+        saveBtn.rx.tap
+            .withLatestFrom(textView.rx.text.orEmpty)
+            .map { value in
+                if value.count >= 10 && value.count <= 100{
+                    return value
+                } else { return "" }
+            }
+            .bind(with: self) { owner, text in
+                input.startBtnTrigger.accept(text)
+            }
+            .disposed(by: disposeBag)
         
         output.startBtnResult
             .drive(with: self) { owner, _ in
@@ -56,22 +77,29 @@ final class PopupViewController: BaseViewController {
         containerView.layer.cornerRadius = 10
         containerView.backgroundColor = .white
         
-        descriptionLabel.numberOfLines = 0
-        descriptionLabel.font = .systemFont(ofSize: 13, weight: .semibold)
+        descriptionLabel.numberOfLines = 1
+        descriptionLabel.textColor = .black
+        descriptionLabel.textAlignment = .center
+        descriptionLabel.text = "Please write a review! 🌟"
+        descriptionLabel.font = .systemFont(ofSize: 15, weight: .semibold)
+        
+        textView.textColor = .darkGray
+        textView.textAlignment = .left
+        textView.clipsToBounds = true
+        textView.layer.cornerRadius = 10
+        textView.backgroundColor = .systemGray5
+        textView.font = .systemFont(ofSize: 15, weight: .semibold)
         
         stackView.spacing = 0
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.distribution = .fillEqually
         
-        descriptionLabel.textColor = .black
-        descriptionLabel.textAlignment = .center
-        
-        cancelBtn.setTitle("취소", for: .normal)
-        startBtn.setTitle("시작하기", for: .normal)
-        [cancelBtn, startBtn].forEach({
+        cancelBtn.setTitle("Cancel", for: .normal)
+        saveBtn.setTitle("Save", for: .normal)
+        [cancelBtn, saveBtn].forEach({
             $0.layer.borderWidth = 0.5
-            $0.layer.borderColor = UIColor.point.withAlphaComponent(0.5).cgColor
+            $0.layer.borderColor = UIColor.gray.cgColor
             $0.setTitleColor(.point, for: .normal)
             $0.titleLabel?.font = .boldSystemFont(ofSize: 15)
         })
@@ -79,31 +107,39 @@ final class PopupViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [cancelBtn, startBtn].forEach({
+        [cancelBtn, saveBtn].forEach({
             self.stackView.addArrangedSubview($0)
         })
-        [descriptionLabel, stackView].forEach({
+        [descriptionLabel, textView, stackView].forEach({
             self.containerView.addSubview($0)
         })
         self.view.addSubview(containerView)
+        self.view.addGestureRecognizer(tapGesture)
     }
     
     override func configureLayout() {
         containerView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+            make.centerY.equalToSuperview().offset(-100)
             make.height.equalToSuperview().dividedBy(2)
             make.horizontalEdges.equalToSuperview().inset(28)
         }
         
         descriptionLabel.snp.makeConstraints { make in
+            make.height.equalTo(20)
             make.top.equalToSuperview().offset(12)
             make.horizontalEdges.equalToSuperview().inset(24)
+        }
+        
+        textView.snp.makeConstraints { make in
+            make.height.equalToSuperview().dividedBy(1.5)
+            make.horizontalEdges.equalToSuperview().inset(12)
+            make.top.greaterThanOrEqualTo(descriptionLabel.snp.bottom).offset(12)
         }
         
         stackView.snp.makeConstraints { make in
             make.height.equalTo(50)
             make.bottom.horizontalEdges.equalToSuperview()
-            make.top.lessThanOrEqualTo(descriptionLabel.snp.bottom).offset(12)
+            make.top.greaterThanOrEqualTo(textView.snp.bottom).offset(12)
         }
         
         cancelBtn.snp.makeConstraints { make in
@@ -112,7 +148,7 @@ final class PopupViewController: BaseViewController {
             make.leading.equalToSuperview().offset(-2)
         }
         
-        startBtn.snp.makeConstraints { make in
+        saveBtn.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.bottom.trailing.equalToSuperview().offset(2)
         }

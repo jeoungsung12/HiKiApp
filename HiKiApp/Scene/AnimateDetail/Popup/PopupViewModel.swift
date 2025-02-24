@@ -17,8 +17,13 @@ final class PopupViewModel: BaseViewModel {
     private var disposeBag = DisposeBag()
     weak var delegate: CreateReviewDelegate?
     
+    var userReview: UserReview
+    init(userReview: UserReview) {
+        self.userReview = userReview
+    }
+    
     struct Input {
-        let startBtnTrigger: ControlEvent<Void>
+        let startBtnTrigger: PublishRelay<String>
     }
     
     struct Output {
@@ -34,11 +39,11 @@ final class PopupViewModel: BaseViewModel {
 extension PopupViewModel {
     
     func transform(_ input: Input) -> Output {
-        let startResult: PublishSubject<Void?> = PublishSubject()
+        let startResult: PublishRelay<Void?> = PublishRelay()
         input.startBtnTrigger
             .bind(with: self) { owner, review in
-                startResult.onNext(())
-                
+                owner.createReview(review)
+                startResult.accept(())
             }
             .disposed(by: disposeBag)
         
@@ -47,8 +52,15 @@ extension PopupViewModel {
         )
     }
     
-    private func createReview() {
+    //TODO: UserDefaultManager
+    private func createReview(_ review: String) {
+        var data = self.userReview
+        data.review = review
         
+        var userReview = UserDefaultManager.shared.userReview
+        userReview.append(data)
+        
+        UserDefaultManager.shared.userReview = userReview
     }
     
 }

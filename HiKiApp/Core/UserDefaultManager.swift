@@ -14,7 +14,7 @@ struct UserInfo: Codable {
     var date: String
 }
 
-struct UserReview: Codable {
+struct UserReview: Codable, Equatable {
     var title: String
     var image: String
     var review: String

@@ -91,9 +91,9 @@ final class MainHeaderCell: BaseCollectionViewCell, ReusableIdentifier {
         rankLabel.font = .boldItalicFont(130)
         
         titleLabel.numberOfLines = 2
-        titleLabel.textColor = .black
+        titleLabel.textColor = .black.withAlphaComponent(0.8)
         titleLabel.textAlignment = .center
-        titleLabel.font = .systemFont(ofSize: 18, weight: .bold)
+        titleLabel.font = .systemFont(ofSize: 16, weight: .bold)
         
         genreLabel.numberOfLines = 1
         genreLabel.textAlignment = .center

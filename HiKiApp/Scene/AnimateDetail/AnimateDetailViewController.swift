@@ -12,16 +12,15 @@ import RxSwift
 import RxCocoa
 
 final class AnimateDetailViewController: BaseViewController {
-    let heartButton = UIBarButtonItem(image: UIImage(systemName: "heart.circle"), style: .plain, target: nil, action: nil)
-    let createReviewButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil.circle.fill"), style: .plain, target: nil, action: nil)
+    private let heartButton = UIBarButtonItem(image: UIImage(systemName: "heart.circle"), style: .plain, target: nil, action: nil)
+    private let createReviewButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil.circle.fill"), style: .plain, target: nil, action: nil)
     private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
     private let tableView = UITableView()
     
     let viewModel: AnimateDetailViewModel
     private lazy var inputTrigger = AnimateDetailViewModel.Input(
         didLoadTrigger: PublishSubject<Void>(),
-        heartBtnTrigger: heartButton.rx.tap,
-        createReviewTrigger: PublishRelay()
+        heartBtnTrigger: heartButton.rx.tap
     )
     private lazy var outputResult = viewModel.transform(inputTrigger)
     init(viewModel: AnimateDetailViewModel) {
@@ -49,11 +48,14 @@ final class AnimateDetailViewController: BaseViewController {
         createReviewButton.rx.tap
             .withLatestFrom(outputResult.animeData)
             .bind(with: self) { owner, value in
-                
-//                guard let title = value.synopsis?.title,
-//                      let image = value.synopsis?.imageURL else { return }
-//                let userReview = UserReview(title: title, image: image, review: review, answer: "")
-//                owner.inputTrigger.createReviewTrigger.accept(userReview)
+                guard let title = value.synopsis?.title,
+                      let image = value.synopsis?.imageURL else { return }
+                let userReview = UserReview(title: title, image: image, review: "", answer: "")
+                let vm = PopupViewModel(userReview: userReview)
+                let vc = PopupViewController(viewModel: vm)
+                vc.modalTransitionStyle = .crossDissolve
+                vc.modalPresentationStyle = .overCurrentContext
+                owner.present(vc, animated: true)
             }
             .disposed(by: disposeBag)
     }

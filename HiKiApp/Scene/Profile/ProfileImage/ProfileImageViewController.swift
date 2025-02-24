@@ -62,7 +62,7 @@ final class ProfileImageViewController: BaseViewController {
     }
     
     override func configureView() {
-        self.setNavigation("프로필 이미지 설정")
+        self.setNavigation("Profile Image Settings")
         self.view.backgroundColor = .white
         
         profileButton.isUserInteractionEnabled = false

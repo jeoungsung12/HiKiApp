@@ -18,7 +18,7 @@ class MainCategoryView: BaseView {
     
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
-        stackView.spacing = 20
+        stackView.spacing = 10
         stackView.axis = .horizontal
         stackView.alignment = .leading
         return stackView
@@ -44,7 +44,7 @@ class MainCategoryView: BaseView {
         stackView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.verticalEdges.equalToSuperview()
-            make.horizontalEdges.equalToSuperview().inset(36)
+            make.horizontalEdges.equalToSuperview().inset(24)
         }
         
         createCategoryButtons()
