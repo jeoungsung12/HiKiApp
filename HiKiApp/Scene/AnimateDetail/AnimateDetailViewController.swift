@@ -50,7 +50,7 @@ final class AnimateDetailViewController: BaseViewController {
             .bind(with: self) { owner, value in
                 guard let title = value.synopsis?.title,
                       let image = value.synopsis?.imageURL else { return }
-                let userReview = UserReview(title: title, image: image, review: "", answer: "")
+                let userReview = UserReview(title: title, image: image, review: "", answer: "", reviewValue: 0.0)
                 let vm = PopupViewModel(userReview: userReview)
                 let vc = PopupViewController(viewModel: vm)
                 vc.modalTransitionStyle = .crossDissolve

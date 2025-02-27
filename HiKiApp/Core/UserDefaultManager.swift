@@ -19,6 +19,7 @@ struct UserReview: Codable, Equatable {
     var image: String
     var review: String
     var answer: String
+    var reviewValue: Double
 }
 
 @propertyWrapper
@@ -69,7 +70,7 @@ final class UserDefaultManager {
     
     @UserDefaultStruct(
         key: Key.userReview.rawValue,
-        defaultValue: [UserReview(title: "", image: "", review: "", answer: "")])
+        defaultValue: [UserReview(title: "", image: "", review: "", answer: "", reviewValue: 0.0)])
     var userReview
     
     func removeUserDefault(_ key: Key) {

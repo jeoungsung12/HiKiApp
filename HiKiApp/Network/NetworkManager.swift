@@ -20,8 +20,10 @@ final class NetworkManager {
             AF.request(api)
                 .validate(statusCode: 200...500)
                 .responseDecodable(of: T.self) { response in
-    //                dump(response.debugDescription)
-    //                print(response.debugDescription)
+//                    dump(response.debugDescription)
+                    if U.self == ReviewRouter.self {
+                        print(response.debugDescription)
+                    }
                     let statucCode = NetworkError().checkErrorType(response.response?.statusCode)
                     switch response.result {
                     case let .success(data):

@@ -9,11 +9,15 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import Cosmos
+import NVActivityIndicatorView
 
 final class PopupViewController: BaseViewController {
+    private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
     private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapGesture))
     private let containerView = UIView()
     private let descriptionLabel = UILabel()
+    private let cosmosView = CosmosView()
     private let textView = UITextView()
     private let stackView = UIStackView()
     private let cancelBtn = UIButton()
@@ -41,25 +45,25 @@ final class PopupViewController: BaseViewController {
     
     override func setBinding() {
         let input = PopupViewModel.Input(
-            startBtnTrigger: PublishRelay<String>()
+            startBtnTrigger: PublishRelay<PopModel>()
         )
         let output = viewModel.transform(input)
         
         saveBtn.rx.tap
-            .withLatestFrom(textView.rx.text.orEmpty)
-            .map { value in
-                if value.count >= 10 && value.count <= 100{
-                    return value
-                } else { return "" }
+            .withUnretained(self)
+            .map { _ in
+                return PopModel(review: self.textView.text, reviewValue: self.cosmosView.rating )
             }
-            .bind(with: self) { owner, text in
-                input.startBtnTrigger.accept(text)
+            .bind(with: self) { owner, value in
+                input.startBtnTrigger.accept(value)
+                owner.loadingIndicator.startAnimating()
             }
             .disposed(by: disposeBag)
         
         output.startBtnResult
             .drive(with: self) { owner, _ in
                 owner.dismiss(animated: true)
+                owner.loadingIndicator.stopAnimating()
             }
             .disposed(by: disposeBag)
         
@@ -95,6 +99,12 @@ final class PopupViewController: BaseViewController {
         stackView.alignment = .center
         stackView.distribution = .fillEqually
         
+        cosmosView.settings.starSize = 30
+        cosmosView.settings.totalStars = 5
+        cosmosView.settings.emptyColor = .white
+        cosmosView.isUserInteractionEnabled = true
+        cosmosView.settings.filledColor = .systemYellow
+        
         cancelBtn.setTitle("Cancel", for: .normal)
         saveBtn.setTitle("Save", for: .normal)
         [cancelBtn, saveBtn].forEach({
@@ -110,7 +120,7 @@ final class PopupViewController: BaseViewController {
         [cancelBtn, saveBtn].forEach({
             self.stackView.addArrangedSubview($0)
         })
-        [descriptionLabel, textView, stackView].forEach({
+        [descriptionLabel, cosmosView, textView, stackView].forEach({
             self.containerView.addSubview($0)
         })
         self.view.addSubview(containerView)
@@ -120,7 +130,7 @@ final class PopupViewController: BaseViewController {
     override func configureLayout() {
         containerView.snp.makeConstraints { make in
             make.centerY.equalToSuperview().offset(-100)
-            make.height.equalToSuperview().dividedBy(2)
+            make.height.equalToSuperview().dividedBy(2.5)
             make.horizontalEdges.equalToSuperview().inset(28)
         }
         
@@ -130,10 +140,17 @@ final class PopupViewController: BaseViewController {
             make.horizontalEdges.equalToSuperview().inset(24)
         }
         
+        cosmosView.snp.makeConstraints { make in
+            make.height.equalTo(50)
+            make.centerX.equalToSuperview()
+//            make.horizontalEdges.equalToSuperview().inset(24)
+            make.top.equalTo(descriptionLabel.snp.bottom).offset(12)
+        }
+        
         textView.snp.makeConstraints { make in
-            make.height.equalToSuperview().dividedBy(1.5)
-            make.horizontalEdges.equalToSuperview().inset(12)
-            make.top.greaterThanOrEqualTo(descriptionLabel.snp.bottom).offset(12)
+            make.height.equalToSuperview().dividedBy(2)
+            make.horizontalEdges.equalToSuperview().inset(24)
+            make.top.equalTo(cosmosView.snp.bottom).offset(12)
         }
         
         stackView.snp.makeConstraints { make in

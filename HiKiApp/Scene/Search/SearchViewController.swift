@@ -40,6 +40,12 @@ class SearchViewController: BaseViewController {
                 owner.viewModel.setSearchText(text)
             }
             .disposed(by: disposeBag)
+        
+        searchBar.rx.searchButtonClicked
+            .bind(with: self) { owner, _ in
+                owner.view.endEditing(true)
+            }
+            .disposed(by: disposeBag)
     }
     
     override func setBinding() {
