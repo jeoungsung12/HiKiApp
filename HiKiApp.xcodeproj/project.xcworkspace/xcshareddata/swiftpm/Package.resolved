@@ -1,5 +1,5 @@
 {
-  "originHash" : "634cc0b7ab91b9aec6a6fe2e178b2c9b131ae6ec3257d2ab4c9bb0a4ec1497e4",
+  "originHash" : "4413ed43bfa1434ee9ccb6dbcef079955780aa84003f1cef3ce7b9b944995c1a",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -20,30 +20,12 @@
       }
     },
     {
-      "identity" : "flanimatedimage",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Flipboard/FLAnimatedImage.git",
-      "state" : {
-        "revision" : "d4f07b6f164d53c1212c3e54d6460738b1981e9f",
-        "version" : "1.0.17"
-      }
-    },
-    {
       "identity" : "kingfisher",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher.git",
       "state" : {
         "revision" : "3db26ab625d194c38e68c1a40e43d1bc12743fe0",
         "version" : "8.2.0"
-      }
-    },
-    {
-      "identity" : "lottie-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/airbnb/lottie-ios.git",
-      "state" : {
-        "revision" : "047aa81b77adcbf583a966dfef620d17650cc656",
-        "version" : "4.5.1"
       }
     },
     {

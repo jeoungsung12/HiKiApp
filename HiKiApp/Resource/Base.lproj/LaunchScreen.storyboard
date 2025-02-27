@@ -25,22 +25,12 @@
                                 <rect key="frame" x="-5" y="-5" width="403" height="862"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="HiKi" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6eQ-Cs-zEH">
-                                <rect key="frame" x="24" y="244.66666666666663" width="345" height="123"/>
-                                <fontDescription key="fontDescription" name="Impact" family="Impact" pointSize="100"/>
-                                <color key="textColor" red="1" green="0.59414612993295868" blue="0.1891854715199166" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                                <color key="shadowColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <size key="shadowOffset" width="-1" height="-1"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="나만의 애니 저장소" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iBI-N7-FmP">
-                                <rect key="frame" x="24" y="391.66666666666669" width="345" height="25"/>
-                                <fontDescription key="fontDescription" name="HelveticaNeue-BoldItalic" family="Helvetica Neue" pointSize="20"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                                <color key="shadowColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <size key="shadowOffset" width="-1" height="-1"/>
-                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="clearLogo.png" translatesAutoresizingMaskIntoConstraints="NO" id="shq-H2-EFF">
+                                <rect key="frame" x="24" y="231" width="345" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="150" id="XUI-q4-xcs"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -51,16 +41,12 @@
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="N3v-pR-xoq" secondAttribute="trailing" constant="-5" id="1PF-BT-siQ"/>
                             <constraint firstItem="N3v-pR-xoq" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" constant="-5" id="7cH-88-yIl"/>
                             <constraint firstItem="N3v-pR-xoq" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="LMh-bF-UMQ"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="iBI-N7-FmP" secondAttribute="trailing" constant="24" id="MDH-WZ-aeC"/>
-                            <constraint firstItem="6eQ-Cs-zEH" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="-120" id="TA8-k5-zIk"/>
+                            <constraint firstItem="shq-H2-EFF" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="24" id="QXj-5h-ffp"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="shq-H2-EFF" secondAttribute="trailing" constant="24" id="SiY-hF-u2K"/>
                             <constraint firstItem="Uce-6i-5nG" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="-5" id="Ton-5d-C5K"/>
-                            <constraint firstAttribute="trailing" secondItem="6eQ-Cs-zEH" secondAttribute="trailing" constant="24" id="WLh-gq-i0k"/>
-                            <constraint firstItem="6eQ-Cs-zEH" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="d4H-nM-1c2"/>
-                            <constraint firstItem="iBI-N7-FmP" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="24" id="dUR-Uo-4fU"/>
+                            <constraint firstItem="shq-H2-EFF" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="-120" id="UMC-vv-PYt"/>
                             <constraint firstItem="Uce-6i-5nG" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="ebA-6L-Wp3"/>
-                            <constraint firstItem="6eQ-Cs-zEH" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" constant="24" id="ecf-VF-cyv"/>
                             <constraint firstAttribute="bottom" secondItem="N3v-pR-xoq" secondAttribute="bottom" constant="-5" id="eo3-JE-eQo"/>
-                            <constraint firstItem="iBI-N7-FmP" firstAttribute="top" secondItem="6eQ-Cs-zEH" secondAttribute="bottom" constant="24" id="fht-EA-sCu"/>
                             <constraint firstAttribute="bottom" secondItem="Uce-6i-5nG" secondAttribute="bottom" constant="-5" id="k3s-bj-2tv"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Uce-6i-5nG" secondAttribute="trailing" constant="-5" id="qIc-Ri-fmF"/>
                             <constraint firstItem="N3v-pR-xoq" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="-5" id="r9A-cn-dPM"/>
@@ -74,6 +60,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="clearLogo.png" width="1024" height="600"/>
         <image name="splash.png" width="4096" height="2734"/>
         <namedColor name="customWhite">
             <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

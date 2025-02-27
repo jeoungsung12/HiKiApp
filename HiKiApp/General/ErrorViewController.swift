@@ -56,6 +56,6 @@ class ErrorViewController: BaseViewController {
         descriptionLabel.textAlignment = .center
         descriptionLabel.textColor = .lightGray
         descriptionLabel.font = .systemFont(ofSize: 15, weight: .semibold)
-        descriptionLabel.text = "서비스 이용에 불편을 드려 죄송합니다.\n잠시 후 다시 시도해 주세요.😢"
+        descriptionLabel.text = "We apologize for any inconvenience caused in using our service.\nPlease try again later.😢"
     }
 }

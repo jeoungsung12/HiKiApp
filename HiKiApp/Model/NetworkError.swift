@@ -8,7 +8,7 @@
 import Foundation
 
 struct NetworkError {
-    static let noImage: String = "정보 준비 중 입니다..⚠️"
+    static let noImage: String = "Information is being prepared..⚠️"
     
     enum CustomError: Int, Error, CaseIterable, LocalizedError {
         case badRequest = 400
@@ -21,17 +21,17 @@ struct NetworkError {
         var errorDescription: String? {
             switch self {
             case .badRequest:
-                "잘못된 요청입니다"
+                "This is an invalid request"
             case .unauthorized:
-                "인증 오류가 발생했습니다"
+                "An authentication error occurred"
             case .forbidden:
-                "접근이 거부되었습니다"
+                "Access is denied"
             case .notFount:
-                "페이지를 찾을 수 없습니다"
+                "Page not found"
             case .server:
-                "서버의 접속이 원활하지 않습니다"
+                "The connection to the server is not smooth."
             case .network:
-                "네트워크 연결상태가 좋지 않습니다."
+                "The network connection is poor."
             }
         }
     }

@@ -7,7 +7,6 @@
 import UIKit
 import SnapKit
 import Kingfisher
-import FLAnimatedImage
 
 final class LoadingView: BaseView {
     private let imageView = AnimatedImageView()
@@ -30,7 +29,7 @@ final class LoadingView: BaseView {
         self.backgroundColor = .clear
         imageView.contentMode = .scaleToFill
         
-        if let imageData = Bundle.main.url(forResource: "onboarding", withExtension: "gif") {
+        if let imageData = Bundle.main.url(forResource: "onboardingGIF", withExtension: "gif") {
             imageView.kf.setImage(with: imageData)
         }
     }

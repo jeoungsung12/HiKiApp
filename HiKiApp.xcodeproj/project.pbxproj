@@ -10,12 +10,10 @@
 		E46EB9112D43653E00F0E536 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = E46EB9102D43653E00F0E536 /* .gitignore */; };
 		E472DABB2D57CD0E0054E7EA /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E472DABA2D57CD0E0054E7EA /* Alamofire */; };
 		E472DAC12D57CD270054E7EA /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = E472DAC02D57CD270054E7EA /* SnapKit */; };
-		E472DAC42D57CD350054E7EA /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = E472DAC32D57CD350054E7EA /* Lottie */; };
 		E472DAC72D57CD3D0054E7EA /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E472DAC62D57CD3D0054E7EA /* Kingfisher */; };
 		E472E5722D59762E0054E7EA /* YouTubePlayerKit in Frameworks */ = {isa = PBXBuildFile; productRef = E472E5712D59762E0054E7EA /* YouTubePlayerKit */; };
 		E474B0E32D5C3ADE0086FD5B /* Cosmos in Frameworks */ = {isa = PBXBuildFile; productRef = E474B0E22D5C3ADE0086FD5B /* Cosmos */; };
 		E474B5992D622BAA0086FD5B /* NVActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = E474B5982D622BAA0086FD5B /* NVActivityIndicatorView */; };
-		E474B6F52D62DE1F0086FD5B /* FLAnimatedImage in Frameworks */ = {isa = PBXBuildFile; productRef = E474B6F42D62DE1F0086FD5B /* FLAnimatedImage */; };
 		E474B6FA2D62F3AC0086FD5B /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = E474B6F92D62F3AC0086FD5B /* RxCocoa */; };
 		E474B6FC2D62F3AC0086FD5B /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E474B6FB2D62F3AC0086FD5B /* RxSwift */; };
 /* End PBXBuildFile section */
@@ -52,14 +50,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				E474B6FA2D62F3AC0086FD5B /* RxCocoa in Frameworks */,
-				E474B6F52D62DE1F0086FD5B /* FLAnimatedImage in Frameworks */,
 				E474B6FC2D62F3AC0086FD5B /* RxSwift in Frameworks */,
 				E474B5992D622BAA0086FD5B /* NVActivityIndicatorView in Frameworks */,
 				E472DAC12D57CD270054E7EA /* SnapKit in Frameworks */,
 				E474B0E32D5C3ADE0086FD5B /* Cosmos in Frameworks */,
 				E472E5722D59762E0054E7EA /* YouTubePlayerKit in Frameworks */,
 				E472DABB2D57CD0E0054E7EA /* Alamofire in Frameworks */,
-				E472DAC42D57CD350054E7EA /* Lottie in Frameworks */,
 				E472DAC72D57CD3D0054E7EA /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -106,12 +102,10 @@
 			packageProductDependencies = (
 				E472DABA2D57CD0E0054E7EA /* Alamofire */,
 				E472DAC02D57CD270054E7EA /* SnapKit */,
-				E472DAC32D57CD350054E7EA /* Lottie */,
 				E472DAC62D57CD3D0054E7EA /* Kingfisher */,
 				E472E5712D59762E0054E7EA /* YouTubePlayerKit */,
 				E474B0E22D5C3ADE0086FD5B /* Cosmos */,
 				E474B5982D622BAA0086FD5B /* NVActivityIndicatorView */,
-				E474B6F42D62DE1F0086FD5B /* FLAnimatedImage */,
 				E474B6F92D62F3AC0086FD5B /* RxCocoa */,
 				E474B6FB2D62F3AC0086FD5B /* RxSwift */,
 			);
@@ -146,12 +140,10 @@
 			packageReferences = (
 				E472DAB92D57CD0E0054E7EA /* XCRemoteSwiftPackageReference "Alamofire" */,
 				E472DABF2D57CD270054E7EA /* XCRemoteSwiftPackageReference "SnapKit" */,
-				E472DAC22D57CD350054E7EA /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				E472DAC52D57CD3D0054E7EA /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				E472E5702D59762E0054E7EA /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
 				E474B0E12D5C3ADE0086FD5B /* XCRemoteSwiftPackageReference "Cosmos" */,
 				E474B5972D622BAA0086FD5B /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */,
-				E474B6F32D62DE1F0086FD5B /* XCRemoteSwiftPackageReference "FLAnimatedImage" */,
 				E474B6F82D62F3AC0086FD5B /* XCRemoteSwiftPackageReference "RxSwift" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -196,7 +188,7 @@
 				DEVELOPMENT_TEAM = Q653PU93R6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HiKiApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "하이키";
+				INFOPLIST_KEY_CFBundleDisplayName = HiKi;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -231,7 +223,7 @@
 				DEVELOPMENT_TEAM = Q653PU93R6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HiKiApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "하이키";
+				INFOPLIST_KEY_CFBundleDisplayName = HiKi;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -415,14 +407,6 @@
 				minimumVersion = 5.7.1;
 			};
 		};
-		E472DAC22D57CD350054E7EA /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.5.1;
-			};
-		};
 		E472DAC52D57CD3D0054E7EA /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -455,14 +439,6 @@
 				minimumVersion = 5.2.0;
 			};
 		};
-		E474B6F32D62DE1F0086FD5B /* XCRemoteSwiftPackageReference "FLAnimatedImage" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Flipboard/FLAnimatedImage.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.17;
-			};
-		};
 		E474B6F82D62F3AC0086FD5B /* XCRemoteSwiftPackageReference "RxSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
@@ -484,11 +460,6 @@
 			package = E472DABF2D57CD270054E7EA /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
-		E472DAC32D57CD350054E7EA /* Lottie */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E472DAC22D57CD350054E7EA /* XCRemoteSwiftPackageReference "lottie-ios" */;
-			productName = Lottie;
-		};
 		E472DAC62D57CD3D0054E7EA /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E472DAC52D57CD3D0054E7EA /* XCRemoteSwiftPackageReference "Kingfisher" */;
@@ -508,11 +479,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E474B5972D622BAA0086FD5B /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */;
 			productName = NVActivityIndicatorView;
-		};
-		E474B6F42D62DE1F0086FD5B /* FLAnimatedImage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E474B6F32D62DE1F0086FD5B /* XCRemoteSwiftPackageReference "FLAnimatedImage" */;
-			productName = FLAnimatedImage;
 		};
 		E474B6F92D62F3AC0086FD5B /* RxCocoa */ = {
 			isa = XCSwiftPackageProductDependency;
