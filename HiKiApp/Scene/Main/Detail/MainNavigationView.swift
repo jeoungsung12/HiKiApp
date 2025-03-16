@@ -7,7 +7,6 @@
 
 import UIKit
 import SnapKit
-import Lottie
 
 final class MainNavigationView: BaseView {
     private let logoImageView = UIImageView()
