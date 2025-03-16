@@ -9,7 +9,11 @@ import Foundation
 import Alamofire
 import RxSwift
 
-final class NetworkManager {
+protocol NetworkManagerType: AnyObject {
+    func getData<T: Decodable, U: Router>(_ api: U) -> Observable<T>
+}
+
+final class NetworkManager: NetworkManagerType {
     static let shared = NetworkManager()
     
     private init() { }

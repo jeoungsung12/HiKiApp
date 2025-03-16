@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E4365B342D86C36400247FF6 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E4365B332D86C36400247FF6 /* RealmSwift */; };
+		E4365B352D86C37300247FF6 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = E4365B332D86C36400247FF6 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		E46EB9112D43653E00F0E536 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = E46EB9102D43653E00F0E536 /* .gitignore */; };
 		E472DABB2D57CD0E0054E7EA /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E472DABA2D57CD0E0054E7EA /* Alamofire */; };
 		E472DAC12D57CD270054E7EA /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = E472DAC02D57CD270054E7EA /* SnapKit */; };
@@ -17,6 +19,20 @@
 		E474B6FA2D62F3AC0086FD5B /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = E474B6F92D62F3AC0086FD5B /* RxCocoa */; };
 		E474B6FC2D62F3AC0086FD5B /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E474B6FB2D62F3AC0086FD5B /* RxSwift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E4365B362D86C37300247FF6 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				E4365B352D86C37300247FF6 /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		E46EB8F22D43631200F0E536 /* HiKiApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HiKiApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,6 +68,7 @@
 				E474B6FA2D62F3AC0086FD5B /* RxCocoa in Frameworks */,
 				E474B6FC2D62F3AC0086FD5B /* RxSwift in Frameworks */,
 				E474B5992D622BAA0086FD5B /* NVActivityIndicatorView in Frameworks */,
+				E4365B342D86C36400247FF6 /* RealmSwift in Frameworks */,
 				E472DAC12D57CD270054E7EA /* SnapKit in Frameworks */,
 				E474B0E32D5C3ADE0086FD5B /* Cosmos in Frameworks */,
 				E472E5722D59762E0054E7EA /* YouTubePlayerKit in Frameworks */,
@@ -90,6 +107,7 @@
 				E46EB8EE2D43631200F0E536 /* Sources */,
 				E46EB8EF2D43631200F0E536 /* Frameworks */,
 				E46EB8F02D43631200F0E536 /* Resources */,
+				E4365B362D86C37300247FF6 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -108,6 +126,7 @@
 				E474B5982D622BAA0086FD5B /* NVActivityIndicatorView */,
 				E474B6F92D62F3AC0086FD5B /* RxCocoa */,
 				E474B6FB2D62F3AC0086FD5B /* RxSwift */,
+				E4365B332D86C36400247FF6 /* RealmSwift */,
 			);
 			productName = NaMuApp;
 			productReference = E46EB8F22D43631200F0E536 /* HiKiApp.app */;
@@ -145,6 +164,7 @@
 				E474B0E12D5C3ADE0086FD5B /* XCRemoteSwiftPackageReference "Cosmos" */,
 				E474B5972D622BAA0086FD5B /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */,
 				E474B6F82D62F3AC0086FD5B /* XCRemoteSwiftPackageReference "RxSwift" */,
+				E4365B322D86C36400247FF6 /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E46EB8F32D43631200F0E536 /* Products */;
@@ -391,6 +411,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		E4365B322D86C36400247FF6 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		E472DAB92D57CD0E0054E7EA /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
@@ -450,6 +478,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E4365B332D86C36400247FF6 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E4365B322D86C36400247FF6 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
 		E472DABA2D57CD0E0054E7EA /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E472DAB92D57CD0E0054E7EA /* XCRemoteSwiftPackageReference "Alamofire" */;

@@ -121,7 +121,8 @@ class SearchViewController: BaseViewController {
             make.horizontalEdges.equalToSuperview().inset(12)
         }
         
-        tableView.snp.makeConstraints { make in            make.horizontalEdges.bottom.equalToSuperview()
+        tableView.snp.makeConstraints { make in
+            make.horizontalEdges.bottom.equalToSuperview()
             make.top.equalTo(recentView.snp.bottom).offset(8)
         }
         
@@ -148,7 +149,7 @@ class SearchViewController: BaseViewController {
         resultLabel.textAlignment = .center
         resultLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         
-        recentView.configure(viewModel.db.recentSearch)
+//        recentView.configure(viewModel.db.recentSearch)
 
         tapGesture.cancelsTouchesInView = false
         
