@@ -67,7 +67,7 @@ final class PopupViewController: BaseViewController {
                 owner.loadingIndicator.stopAnimating()
                 owner.view.makeToast((valid) ? "Review registration successful!" : "Review registration failed!", duration: 1.0, position: .center)
                 if valid {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         owner.dismiss(animated: true)
                     }
                 } else {
