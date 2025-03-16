@@ -48,15 +48,21 @@ final class DetailTeaserCollectionViewCell: BaseCollectionViewCell, ReusableIden
         guard var url = video else { return }
         url += "&cc_load_policy=1"
         videoURL = url
-        player = YouTubePlayer(urlString: url)
+        
         playerHostingView.removeFromSuperview()
+        player = YouTubePlayer(urlString: url)
         playerHostingView = YouTubePlayerHostingView(player: player!)
         playerHostingView.isUserInteractionEnabled = true
         
-        print(url)
-        Task {
-            try await playerHostingView.player.play()
+        contentView.addSubview(playerHostingView)
+        
+        playerHostingView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
-        configureHierarchy()
+        layoutIfNeeded()
+        Task {
+            try await playerHostingView.player.stop()
+        }
     }
+    
 }

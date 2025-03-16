@@ -101,14 +101,15 @@ extension MainViewController {
             snapShot.appendItems(sectionItem.item[index], toSection: section)
         }
         
-        self.dataSource?.apply(snapShot) {
-            if let firstIndexPath = self.collectionView.indexPathsForVisibleItems.first {
-                let targetIndexPath = IndexPath(item: 0, section: 0)
-                if firstIndexPath != targetIndexPath {
-                    self.collectionView.scrollToItem(at: targetIndexPath, at: .top, animated: true)
-                }
-            }
-        }
+        self.dataSource?.apply(snapShot)
+//        {
+//            if let firstIndexPath = self.collectionView.indexPathsForVisibleItems.first {
+//                let targetIndexPath = IndexPath(item: 0, section: 0)
+//                if firstIndexPath != targetIndexPath {
+//                    self.collectionView.scrollToItem(at: targetIndexPath, at: .top, animated: true)
+//                }
+//            }
+//        }
         loadingIndicator.stopAnimating()
     }
     

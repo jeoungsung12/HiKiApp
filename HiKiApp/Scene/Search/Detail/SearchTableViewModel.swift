@@ -15,7 +15,6 @@ final class SearchTableViewModel: BaseViewModel {
     var id: Int?
     struct Input {
         let heartBtnTrigger: ControlEvent<Void>
-        let heartLoadTrigger: PublishRelay<Int>
     }
     
     struct Output {
@@ -32,11 +31,6 @@ extension SearchTableViewModel {
     
     func transform(_ input: Input) -> Output {
         let heartResult = PublishSubject<Bool>()
-        input.heartLoadTrigger
-            .bind(with: self) { owner, id in
-                heartResult.onNext(owner.isContainedHeart(id))
-            }
-            .disposed(by: disposeBag)
         
         input.heartBtnTrigger
             .bind(with: self) { owner, _ in
@@ -47,7 +41,7 @@ extension SearchTableViewModel {
         return Output(heartBtnResult: heartResult.asDriver(onErrorJustReturn: false))
     }
     
-    private func isContainedHeart(_ id: Int) -> Bool {
+    func isContainedHeart(_ id: Int) -> Bool {
         if db.userInfo.saveAnimateID.contains(id) {
             return true
         } else {

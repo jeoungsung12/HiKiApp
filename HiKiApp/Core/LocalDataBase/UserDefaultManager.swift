@@ -17,6 +17,7 @@ struct UserInfo: Codable {
 struct UserReview: Codable, Equatable {
     var title: String
     var image: String
+    var date: String
     var review: String
     var answer: String
     var reviewValue: Double
@@ -70,7 +71,8 @@ final class UserDefaultManager {
     
     @UserDefaultStruct(
         key: Key.userReview.rawValue,
-        defaultValue: [UserReview(title: "", image: "", review: "", answer: "", reviewValue: 0.0)])
+        defaultValue: [UserReview]()
+    )
     var userReview
     
     func removeUserDefault(_ key: Key) {

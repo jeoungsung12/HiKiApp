@@ -15,10 +15,11 @@ final class MineReviewViewModel: BaseViewModel {
     
     struct Input {
         let loadTrigger: PublishRelay<Void>
+        let removeTrigger: PublishRelay<UserReview>
     }
     
     struct Output {
-        let dataResult: Driver<[UserReview]>
+        let dataResult: BehaviorRelay<[UserReview]>
     }
     
 }
@@ -26,7 +27,7 @@ final class MineReviewViewModel: BaseViewModel {
 extension MineReviewViewModel {
     
     func transform(_ input: Input) -> Output {
-        var dataResult = BehaviorRelay(value: shared.userReview)
+        let dataResult = BehaviorRelay(value: shared.userReview)
         
         input.loadTrigger
             .bind(with: self) { owner, _ in
@@ -34,8 +35,18 @@ extension MineReviewViewModel {
             }
             .disposed(by: disposeBag)
         
+        input.removeTrigger
+            .withUnretained(self)
+            .map { owner, value in
+                return owner.removeReview(value)
+            }
+            .bind(with: self) { owner, value in
+                dataResult.accept(owner.shared.userReview)
+            }
+            .disposed(by: disposeBag)
+        
         return Output(
-            dataResult: dataResult.asDriver()
+            dataResult: dataResult
         )
     }
     

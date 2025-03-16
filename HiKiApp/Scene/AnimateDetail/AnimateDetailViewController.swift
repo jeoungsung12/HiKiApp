@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import NVActivityIndicatorView
+import Toast
 import RxSwift
 import RxCocoa
 
@@ -50,7 +51,7 @@ final class AnimateDetailViewController: BaseViewController {
             .bind(with: self) { owner, value in
                 guard let title = value.synopsis?.title,
                       let image = value.synopsis?.imageURL else { return }
-                let userReview = UserReview(title: title, image: image, review: "", answer: "", reviewValue: 0.0)
+                let userReview = UserReview(title: title, image: image, date: .currentDate, review: "", answer: "", reviewValue: 0.0)
                 let vm = PopupViewModel(userReview: userReview)
                 let vc = PopupViewController(viewModel: vm)
                 vc.modalTransitionStyle = .crossDissolve
@@ -63,6 +64,7 @@ final class AnimateDetailViewController: BaseViewController {
     override func setBinding() {
         outputResult.heartResult
             .drive(with: self) { owner, valid in
+                owner.view.makeToast((valid) ? "Interest registration successful" : "Successfully deleted interest", duration: 1.0, position: .center)
                 owner.heartButton.image = (valid) ? UIImage(systemName: "heart.circle.fill") : UIImage(systemName: "heart.circle")
             }
             .disposed(by: disposeBag)
@@ -98,6 +100,7 @@ final class AnimateDetailViewController: BaseViewController {
         self.navigationItem.rightBarButtonItems = [heartButton, createReviewButton]
         self.navigationController?.navigationBar.backgroundColor = .clear
         self.navigationController?.navigationBar.tintColor = .point
+        heartButton.image = (viewModel.heartResult()) ? UIImage(systemName: "heart.circle.fill") : UIImage(systemName: "heart.circle")
         
         configureTableView()
     }

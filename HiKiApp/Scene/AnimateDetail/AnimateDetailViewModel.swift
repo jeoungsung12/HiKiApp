@@ -52,7 +52,7 @@ final class AnimateDetailViewModel: BaseViewModel {
 extension AnimateDetailViewModel {
     
     func transform(_ input: Input) -> Output {
-        let heartResult: BehaviorRelay<Bool> = BehaviorRelay(value: heartResult())
+        let heartResult: PublishRelay<Bool> = PublishRelay()
         input.heartBtnTrigger
             .bind(with: self) { owner, _ in
                 owner.heartBtnTapped(self.id)
@@ -75,7 +75,7 @@ extension AnimateDetailViewModel {
             .disposed(by: disposeBag)
         
         return Output(
-            heartResult: heartResult.asDriver(),
+            heartResult: heartResult.asDriver(onErrorJustReturn: false),
             animeData: resultData
         )
     }
@@ -91,7 +91,7 @@ extension AnimateDetailViewModel {
         db.userInfo = userInfo
     }
     
-    private func heartResult() -> Bool {
+    func heartResult() -> Bool {
         return db.userInfo.saveAnimateID.contains(self.id)
     }
 }
