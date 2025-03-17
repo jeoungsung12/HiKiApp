@@ -27,9 +27,9 @@ final class SearchViewModel: BaseViewModel {
             case .notRequest:
                 ""
             case .notFound:
-                "원하는 검색결과를 찾지 못했습니다"
+                "We couldn't find the search results you were looking for."
             case .endPage:
-                "마지막 페이지 입니다"
+                "This is the last page"
             }
         }
     }

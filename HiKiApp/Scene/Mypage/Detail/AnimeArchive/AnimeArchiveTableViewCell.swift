@@ -7,6 +7,8 @@
 
 import UIKit
 import SnapKit
+import Toast
+import Kingfisher
 import RxSwift
 import RxCocoa
 
@@ -20,8 +22,7 @@ final class AnimeArchiveTableViewCell: BaseTableViewCell, ReusableIdentifier {
     
     private let viewModel = SearchTableViewModel()
     private lazy var inputTigger = SearchTableViewModel.Input(
-        heartBtnTrigger: self.heartButton.rx.tap,
-        heartLoadTrigger: PublishRelay<Int>()
+        heartBtnTrigger: self.heartButton.rx.tap
     )
     private var disposeBag = DisposeBag()
     
@@ -41,6 +42,7 @@ final class AnimeArchiveTableViewCell: BaseTableViewCell, ReusableIdentifier {
         
         output.heartBtnResult
             .drive(with: self) { owner, valid in
+                owner.contentView.makeToast((valid) ? "Interest registration successful" : "Successfully deleted interest", duration: 1.0, position: .center)
                 let image = (valid) ? UIImage(systemName: "heart.circle.fill") : UIImage(systemName: "heart.circle")
                 owner.heartButton.setImage(image, for: .normal)
             }
@@ -115,7 +117,9 @@ final class AnimeArchiveTableViewCell: BaseTableViewCell, ReusableIdentifier {
         viewModel.id = model.id
         titleLabel.text = model.title
         dateLabel.text = model.synopsis
-        inputTigger.heartLoadTrigger.accept(model.id)
+        
+        let image = (viewModel.isContainedHeart(model.id)) ? UIImage(systemName: "heart.circle.fill") : UIImage(systemName: "heart.circle")
+        heartButton.setImage(image, for: .normal)
         if let url = URL(string: model.imageURL) {
             imageResult.text = nil
             posterImageView.kf.setImage(with: url)

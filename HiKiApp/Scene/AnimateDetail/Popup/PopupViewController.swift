@@ -10,6 +10,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 import Cosmos
+import Toast
 import NVActivityIndicatorView
 
 final class PopupViewController: BaseViewController {
@@ -61,9 +62,17 @@ final class PopupViewController: BaseViewController {
             .disposed(by: disposeBag)
         
         output.startBtnResult
-            .drive(with: self) { owner, _ in
-                owner.dismiss(animated: true)
+            .map { return $0 != nil }
+            .drive(with: self) { owner, valid in
                 owner.loadingIndicator.stopAnimating()
+                owner.view.makeToast((valid) ? "Review registration successful!" : "Review registration failed!", duration: 1.0, position: .center)
+                if valid {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        owner.dismiss(animated: true)
+                    }
+                } else {
+                    
+                }
             }
             .disposed(by: disposeBag)
         
@@ -124,14 +133,16 @@ final class PopupViewController: BaseViewController {
             self.containerView.addSubview($0)
         })
         self.view.addSubview(containerView)
+        self.view.addSubview(loadingIndicator)
         self.view.addGestureRecognizer(tapGesture)
     }
     
     override func configureLayout() {
         containerView.snp.makeConstraints { make in
-            make.centerY.equalToSuperview().offset(-100)
-            make.height.equalToSuperview().dividedBy(2.5)
+            make.top.lessThanOrEqualToSuperview().offset(100)
+            make.height.equalToSuperview().dividedBy(2)
             make.horizontalEdges.equalToSuperview().inset(28)
+            make.bottom.lessThanOrEqualTo(self.view.keyboardLayoutGuide.snp.top).inset(100)
         }
         
         descriptionLabel.snp.makeConstraints { make in
@@ -143,7 +154,6 @@ final class PopupViewController: BaseViewController {
         cosmosView.snp.makeConstraints { make in
             make.height.equalTo(50)
             make.centerX.equalToSuperview()
-//            make.horizontalEdges.equalToSuperview().inset(24)
             make.top.equalTo(descriptionLabel.snp.bottom).offset(12)
         }
         
@@ -168,6 +178,10 @@ final class PopupViewController: BaseViewController {
         saveBtn.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.bottom.trailing.equalToSuperview().offset(2)
+        }
+        
+        loadingIndicator.snp.makeConstraints { make in
+            make.center.equalToSuperview()
         }
     }
     

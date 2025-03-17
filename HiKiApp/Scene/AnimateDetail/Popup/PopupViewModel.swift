@@ -18,11 +18,13 @@ protocol CreateReviewDelegate: AnyObject {
 }
 
 final class PopupViewModel: BaseViewModel {
+    private var db = UserDefaultManager.shared
     private var disposeBag = DisposeBag()
     weak var delegate: CreateReviewDelegate?
 
     
     var userReview: UserReview
+    private var review: UserReview?
     init(userReview: UserReview) {
         self.userReview = userReview
     }
@@ -46,17 +48,22 @@ extension PopupViewModel {
     func transform(_ input: Input) -> Output {
         let startResult: PublishRelay<Void?> = PublishRelay()
         input.startBtnTrigger
-            .flatMapLatest { value in
-                var data = self.userReview
-                data.review = value.review
-                print(data)
-                return ReviewServices().getReview(data)
+            .withUnretained(self)
+            .flatMapLatest { owner, value in
+                owner.review = self.userReview
+                owner.review?.review = value.review
+                owner.review?.reviewValue = value.reviewValue
+                
+                return ReviewServices().getReview(self.userReview)
+                    .catch { error in
+                        return Observable.empty()
+                    }
             }
             .subscribe(with: self) { owner, answer in
                 owner.createReview(answer.toEntity().content)
                 startResult.accept(())
             } onError: { owner, error in
-                print(error)
+                startResult.accept(nil)
             }
             .disposed(by: disposeBag)
         
@@ -65,16 +72,13 @@ extension PopupViewModel {
         )
     }
     
-    //TODO: UserDefaultManager
     private func createReview(_ answer: String) {
-        var data = self.userReview
-        data.answer = answer
-        
-        var userReview = UserDefaultManager.shared.userReview
-        userReview.append(data)
-        
-        UserDefaultManager.shared.userReview = userReview
-        dump(UserDefaultManager.shared.userReview)
+        var userReview = db.userReview
+        review?.answer = answer
+        if let review = self.review {
+            userReview.append(review)
+            UserDefaultManager.shared.userReview = userReview
+        }
     }
     
 }

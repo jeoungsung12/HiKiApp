@@ -15,7 +15,7 @@ import RxCocoa
 class SearchViewController: BaseViewController {
     private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapGesture))
     private let loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40), type: .ballPulseSync, color: .point)
-    private let recentView = SearchRecentView()
+//    private let recentView = SearchRecentView()
     private let tableView = UITableView()
     private let resultLabel = UILabel()
     private let searchBar = UISearchBar()
@@ -103,7 +103,7 @@ class SearchViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [searchBar, tableView, recentView, resultLabel, loadingIndicator].forEach({
+        [searchBar, tableView, resultLabel, loadingIndicator].forEach({
             self.view.addSubview($0)
         })
         self.view.addGestureRecognizer(tapGesture)
@@ -114,15 +114,16 @@ class SearchViewController: BaseViewController {
             make.top.equalTo(self.view.safeAreaLayoutGuide)
             make.horizontalEdges.equalToSuperview().inset(12)
         }
+//        
+//        recentView.snp.makeConstraints { make in
+//            make.height.equalTo(70)
+//            make.top.equalTo(searchBar.snp.bottom)
+//            make.horizontalEdges.equalToSuperview().inset(12)
+//        }
         
-        recentView.snp.makeConstraints { make in
-            make.height.equalTo(70)
-            make.top.equalTo(searchBar.snp.bottom)
-            make.horizontalEdges.equalToSuperview().inset(12)
-        }
-        
-        tableView.snp.makeConstraints { make in            make.horizontalEdges.bottom.equalToSuperview()
-            make.top.equalTo(recentView.snp.bottom).offset(8)
+        tableView.snp.makeConstraints { make in
+            make.horizontalEdges.bottom.equalToSuperview()
+            make.top.equalTo(searchBar.snp.bottom).offset(8)
         }
         
         resultLabel.snp.makeConstraints { make in
@@ -148,7 +149,7 @@ class SearchViewController: BaseViewController {
         resultLabel.textAlignment = .center
         resultLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         
-        recentView.configure(viewModel.db.recentSearch)
+//        recentView.configure(viewModel.db.recentSearch)
 
         tapGesture.cancelsTouchesInView = false
         
